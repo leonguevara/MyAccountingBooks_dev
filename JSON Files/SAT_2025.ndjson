@@ -1,0 +1,1076 @@
+{"code":"000.00.000.00","parent_code":null,"level":0,"name":"Raíz","kind":0,"role":0,"type":"SYSTEM","is_placeholder":true}
+{"code":"100.00.000.00","parent_code":"000.00.000.00","level":1,"name":"Activo","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100.01.000.00","parent_code":"100.00.000.00","level":2,"name":"Activo a corto plazo","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100.01.101.00","parent_code":"100.01.000.00","level":3,"name":"Caja","kind":1,"role":100,"type":"CASH","is_placeholder":false}
+{"code":"100.01.101.01","parent_code":"100.01.101.00","level":4,"name":"Caja y efectivo","kind":1,"role":100,"type":"CASH","is_placeholder":false}
+{"code":"100.01.102.00","parent_code":"100.01.000.00","level":3,"name":"Bancos","kind":1,"role":101,"type":"BANK","is_placeholder":false}
+{"code":"100.01.102.01","parent_code":"100.01.102.00","level":4,"name":"Bancos nacionales","kind":1,"role":101,"type":"BANK","is_placeholder":false}
+{"code":"100.01.102.02","parent_code":"100.01.102.00","level":4,"name":"Bancos extranjeros","kind":1,"role":101,"type":"BANK","is_placeholder":false}
+{"code":"100.01.103.00","parent_code":"100.01.000.00","level":3,"name":"Inversiones","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.103.01","parent_code":"100.01.103.00","level":4,"name":"Inversiones temporales","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.103.02","parent_code":"100.01.103.00","level":4,"name":"Inversiones en fideicomisos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.103.03","parent_code":"100.01.103.00","level":4,"name":"Otras inversiones","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.104.00","parent_code":"100.01.000.00","level":3,"name":"Otros instrumentos financieros","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.104.01","parent_code":"100.01.104.00","level":4,"name":"Otros instrumentos financieros","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.105.00","parent_code":"100.01.000.00","level":3,"name":"Clientes","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.105.01","parent_code":"100.01.105.00","level":4,"name":"Clientes nacionales","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.105.02","parent_code":"100.01.105.00","level":4,"name":"Clientes extranjeros","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.105.03","parent_code":"100.01.105.00","level":4,"name":"Clientes nacionales parte relacionada","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.105.04","parent_code":"100.01.105.00","level":4,"name":"Clientes extranjeros parte relacionada","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.106.00","parent_code":"100.01.000.00","level":3,"name":"Cuentas y documentos por cobrar a corto plazo","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.106.01","parent_code":"100.01.106.00","level":4,"name":"Cuentas y documentos por cobrar a corto plazo nacional","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.106.02","parent_code":"100.01.106.00","level":4,"name":"Cuentas y documentos por cobrar a corto plazo extranjero","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.106.03","parent_code":"100.01.106.00","level":4,"name":"Cuentas y documentos por cobrar a corto plazo nacional parte relacionada","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.106.04","parent_code":"100.01.106.00","level":4,"name":"Cuentas y documentos por cobrar a corto plazo extranjero parte relacionada","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.106.05","parent_code":"100.01.106.00","level":4,"name":"Intereses por cobrar a corto plazo nacional","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.106.06","parent_code":"100.01.106.00","level":4,"name":"Intereses por cobrar a corto plazo extranjero","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.106.07","parent_code":"100.01.106.00","level":4,"name":"Intereses por cobrar a corto plazo nacional parte relacionada","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.106.08","parent_code":"100.01.106.00","level":4,"name":"Intereses por cobrar a corto plazo extranjero parte relacionada","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.106.09","parent_code":"100.01.106.00","level":4,"name":"Otras cuentas y documentos por cobrar a corto plazo","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.106.10","parent_code":"100.01.106.00","level":4,"name":"Otras cuentas y documentos por cobrar a corto plazo parte relacionada","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.107.00","parent_code":"100.01.000.00","level":3,"name":"Deudores diversos","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.107.01","parent_code":"100.01.107.00","level":4,"name":"Funcionarios y empleados","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.107.02","parent_code":"100.01.107.00","level":4,"name":"Socios y accionistas","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.107.03","parent_code":"100.01.107.00","level":4,"name":"Partes relacionadas nacionales","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.107.04","parent_code":"100.01.107.00","level":4,"name":"Partes relacionadas extranjeros","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.107.05","parent_code":"100.01.107.00","level":4,"name":"Otros deudores diversos","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.01.108.00","parent_code":"100.01.000.00","level":3,"name":"Estimación de cuentas incobrables","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.108.01","parent_code":"100.01.108.00","level":4,"name":"Estimación de cuentas incobrables nacional","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.108.02","parent_code":"100.01.108.00","level":4,"name":"Estimación de cuentas incobrables extranjero","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.108.03","parent_code":"100.01.108.00","level":4,"name":"Estimación de cuentas incobrables nacional parte relacionada","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.108.04","parent_code":"100.01.108.00","level":4,"name":"Estimación de cuentas incobrables extranjero parte relacionada","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.109.00","parent_code":"100.01.000.00","level":3,"name":"Pagos anticipados","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.01","parent_code":"100.01.109.00","level":4,"name":"Seguros y fianzas pagados por anticipado nacional","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.02","parent_code":"100.01.109.00","level":4,"name":"Seguros y fianzas pagados por anticipado extranjero","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.03","parent_code":"100.01.109.00","level":4,"name":"Seguros y fianzas pagados por anticipado nacional parte relacionada","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.04","parent_code":"100.01.109.00","level":4,"name":"Seguros y fianzas pagados por anticipado extranjero parte relacionada","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.05","parent_code":"100.01.109.00","level":4,"name":"Rentas pagados por anticipado nacional","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.06","parent_code":"100.01.109.00","level":4,"name":"Rentas pagados por anticipado extranjero","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.07","parent_code":"100.01.109.00","level":4,"name":"Rentas pagados por anticipado nacional parte relacionada","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.08","parent_code":"100.01.109.00","level":4,"name":"Rentas pagados por anticipado extranjero parte relacionada","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.09","parent_code":"100.01.109.00","level":4,"name":"Intereses pagados por anticipado nacional","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.10","parent_code":"100.01.109.00","level":4,"name":"Intereses pagados por anticipado extranjero","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.11","parent_code":"100.01.109.00","level":4,"name":"Intereses pagados por anticipado nacional parte relacionada","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.12","parent_code":"100.01.109.00","level":4,"name":"Intereses pagados por anticipado extranjero parte relacionada","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.13","parent_code":"100.01.109.00","level":4,"name":"Factoraje financiero pagados por anticipado nacional","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.14","parent_code":"100.01.109.00","level":4,"name":"Factoraje financiero pagados por anticipado extranjero","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.15","parent_code":"100.01.109.00","level":4,"name":"Factoraje financiero pagados por anticipado nacional parte relacionada","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.16","parent_code":"100.01.109.00","level":4,"name":"Factoraje financiero pagados por anticipado extranjero parte relacionada","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.17","parent_code":"100.01.109.00","level":4,"name":"Arrendamiento financiero pagados por anticipado nacional","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.18","parent_code":"100.01.109.00","level":4,"name":"Arrendamiento financiero pagados por anticipado extranjero","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.19","parent_code":"100.01.109.00","level":4,"name":"Arrendamiento financiero pagados por anticipado nacional parte relacionada","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.20","parent_code":"100.01.109.00","level":4,"name":"Arrendamiento financiero pagados por anticipado extranjero parte relacionada","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.21","parent_code":"100.01.109.00","level":4,"name":"Pérdida por deterioro de pagos anticipados","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.22","parent_code":"100.01.109.00","level":4,"name":"Derechos fiduciarios","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.109.23","parent_code":"100.01.109.00","level":4,"name":"Otros pagos anticipados","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.110.00","parent_code":"100.01.000.00","level":3,"name":"Subsidio al empleo por aplicar","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.110.01","parent_code":"100.01.110.00","level":4,"name":"Subsidio al empleo por aplicar","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.111.00","parent_code":"100.01.000.00","level":3,"name":"Crédito al diesel por acreditar","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.111.01","parent_code":"100.01.111.00","level":4,"name":"Crédito al diesel por acreditar","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.112.00","parent_code":"100.01.000.00","level":3,"name":"Otros estímulos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.112.01","parent_code":"100.01.112.00","level":4,"name":"Otros estímulos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.113.00","parent_code":"100.01.000.00","level":3,"name":"Impuestos a favor","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.113.01","parent_code":"100.01.113.00","level":4,"name":"IVA a favor","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.113.02","parent_code":"100.01.113.00","level":4,"name":"ISR a favor","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.113.03","parent_code":"100.01.113.00","level":4,"name":"IETU a favor","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.113.04","parent_code":"100.01.113.00","level":4,"name":"IDE a favor","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.113.05","parent_code":"100.01.113.00","level":4,"name":"IA a favor","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.113.06","parent_code":"100.01.113.00","level":4,"name":"Subsidio al empleo","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.113.07","parent_code":"100.01.113.00","level":4,"name":"Pago de lo indebido","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.113.08","parent_code":"100.01.113.00","level":4,"name":"Otros impuestos a favor","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.114.00","parent_code":"100.01.000.00","level":3,"name":"Pagos provisionales","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.114.01","parent_code":"100.01.114.00","level":4,"name":"Pagos provisionales de ISR","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.115.00","parent_code":"100.01.000.00","level":3,"name":"Inventario","kind":1,"role":120,"type":"INVENTORY","is_placeholder":false}
+{"code":"100.01.115.01","parent_code":"100.01.115.00","level":4,"name":"Inventario","kind":1,"role":120,"type":"INVENTORY","is_placeholder":false}
+{"code":"100.01.115.02","parent_code":"100.01.115.00","level":4,"name":"Materia prima y materiales","kind":1,"role":120,"type":"INVENTORY","is_placeholder":false}
+{"code":"100.01.115.03","parent_code":"100.01.115.00","level":4,"name":"Producción en proceso","kind":1,"role":120,"type":"INVENTORY","is_placeholder":false}
+{"code":"100.01.115.04","parent_code":"100.01.115.00","level":4,"name":"Productos terminados","kind":1,"role":120,"type":"INVENTORY","is_placeholder":false}
+{"code":"100.01.115.05","parent_code":"100.01.115.00","level":4,"name":"Mercancías en tránsito","kind":1,"role":120,"type":"INVENTORY","is_placeholder":false}
+{"code":"100.01.115.06","parent_code":"100.01.115.00","level":4,"name":"Mercancías en poder de terceros","kind":1,"role":120,"type":"INVENTORY","is_placeholder":false}
+{"code":"100.01.115.07","parent_code":"100.01.115.00","level":4,"name":"Otros","kind":1,"role":120,"type":"INVENTORY","is_placeholder":false}
+{"code":"100.01.116.00","parent_code":"100.01.000.00","level":3,"name":"Estimación de inventarios obsoletos y de lento movimiento","kind":1,"role":120,"type":"INVENTORY","is_placeholder":false}
+{"code":"100.01.116.01","parent_code":"100.01.116.00","level":4,"name":"Estimación de inventarios obsoletos y de lento movimiento","kind":1,"role":120,"type":"INVENTORY","is_placeholder":false}
+{"code":"100.01.117.00","parent_code":"100.01.000.00","level":3,"name":"Obras en proceso de inmuebles","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.117.01","parent_code":"100.01.117.00","level":4,"name":"Obras en proceso de inmuebles","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.118.00","parent_code":"100.01.000.00","level":3,"name":"Impuestos acreditables pagados","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.118.01","parent_code":"100.01.118.00","level":4,"name":"IVA acreditable pagado","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.118.02","parent_code":"100.01.118.00","level":4,"name":"IVA acreditable de importación pagado","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.118.03","parent_code":"100.01.118.00","level":4,"name":"IEPS acreditable pagado","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.118.04","parent_code":"100.01.118.00","level":4,"name":"IEPS pagado en importación","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.119.00","parent_code":"100.01.000.00","level":3,"name":"Impuestos acreditables por pagar","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.119.01","parent_code":"100.01.119.00","level":4,"name":"IVA pendiente de pago","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.119.02","parent_code":"100.01.119.00","level":4,"name":"IVA de importación pendiente de pago","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.119.03","parent_code":"100.01.119.00","level":4,"name":"IEPS pendiente de pago","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.119.04","parent_code":"100.01.119.00","level":4,"name":"IEPS pendiente de pago en importación","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.120.00","parent_code":"100.01.000.00","level":3,"name":"Anticipo a proveedores","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.120.01","parent_code":"100.01.120.00","level":4,"name":"Anticipo a proveedores nacional","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.120.02","parent_code":"100.01.120.00","level":4,"name":"Anticipo a proveedores extranjero","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.120.03","parent_code":"100.01.120.00","level":4,"name":"Anticipo a proveedores nacional parte relacionada","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.120.04","parent_code":"100.01.120.00","level":4,"name":"Anticipo a proveedores extranjero parte relacionada","kind":1,"role":199,"type":"PREPAID","is_placeholder":false}
+{"code":"100.01.121.00","parent_code":"100.01.000.00","level":3,"name":"Otros activos a corto plazo","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.01.121.01","parent_code":"100.01.121.00","level":4,"name":"Otros activos a corto plazo","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.000.00","parent_code":"100.00.000.00","level":2,"name":"Activo a largo plazo","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100.02.151.00","parent_code":"100.02.000.00","level":3,"name":"Terrenos","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.151.01","parent_code":"100.02.151.00","level":4,"name":"Terrenos","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.152.00","parent_code":"100.02.000.00","level":3,"name":"Edificios","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.152.01","parent_code":"100.02.152.00","level":4,"name":"Edificios","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.153.00","parent_code":"100.02.000.00","level":3,"name":"Maquinaria y equipo","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.153.01","parent_code":"100.02.153.00","level":4,"name":"Maquinaria y equipo","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.154.00","parent_code":"100.02.000.00","level":3,"name":"Automóviles, autobuses, camiones de carga, tractocamiones, montacargas y remolques","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.154.01","parent_code":"100.02.154.00","level":4,"name":"Automóviles, autobuses, camiones de carga, tractocamiones, montacargas y remolques","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.155.00","parent_code":"100.02.000.00","level":3,"name":"Mobiliario y equipo de oficina","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.155.01","parent_code":"100.02.155.00","level":4,"name":"Mobiliario y equipo de oficina","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.156.00","parent_code":"100.02.000.00","level":3,"name":"Equipo de cómputo","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.156.01","parent_code":"100.02.156.00","level":4,"name":"Equipo de cómputo","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.157.00","parent_code":"100.02.000.00","level":3,"name":"Equipo de comunicación","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.157.01","parent_code":"100.02.157.00","level":4,"name":"Equipo de comunicación","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.158.00","parent_code":"100.02.000.00","level":3,"name":"Activos biológicos, vegetales y semovientes","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.158.01","parent_code":"100.02.158.00","level":4,"name":"Activos biológicos, vegetales y semovientes","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.159.00","parent_code":"100.02.000.00","level":3,"name":"Obras en proceso de activos fijos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.159.01","parent_code":"100.02.159.00","level":4,"name":"Obras en proceso de activos fijos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.160.00","parent_code":"100.02.000.00","level":3,"name":"Otros activos fijos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.160.01","parent_code":"100.02.160.00","level":4,"name":"Otros activos fijos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.161.00","parent_code":"100.02.000.00","level":3,"name":"Ferrocarriles","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.161.01","parent_code":"100.02.161.00","level":4,"name":"Ferrocarriles","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.162.00","parent_code":"100.02.000.00","level":3,"name":"Embarcaciones","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.162.01","parent_code":"100.02.162.00","level":4,"name":"Embarcaciones","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.163.00","parent_code":"100.02.000.00","level":3,"name":"Aviones","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.163.01","parent_code":"100.02.163.00","level":4,"name":"Aviones","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.164.00","parent_code":"100.02.000.00","level":3,"name":"Troqueles, moldes, matrices y herramental","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.164.01","parent_code":"100.02.164.00","level":4,"name":"Troqueles, moldes, matrices y herramental","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.165.00","parent_code":"100.02.000.00","level":3,"name":"Equipo de comunicaciones telefónicas","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.165.01","parent_code":"100.02.165.00","level":4,"name":"Equipo de comunicaciones telefónicas","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.166.00","parent_code":"100.02.000.00","level":3,"name":"Equipo de comunicación satelital","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.166.01","parent_code":"100.02.166.00","level":4,"name":"Equipo de comunicación satelital","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.167.00","parent_code":"100.02.000.00","level":3,"name":"Equipo de adaptaciones para personas con capacidades diferentes","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.167.01","parent_code":"100.02.167.00","level":4,"name":"Equipo de adaptaciones para personas con capacidades diferentes","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.168.00","parent_code":"100.02.000.00","level":3,"name":"Maquinaria y equipo de generación de energía de fuentes renovables o de sistemas de 1 cogeneración de electricidad eficiente","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.168.01","parent_code":"100.02.168.00","level":4,"name":"Maquinaria y equipo de generación de energía de fuentes renovables o de sistemas de cogeneración de electricidad eficiente","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.169.00","parent_code":"100.02.000.00","level":3,"name":"Otra maquinaria y equipo","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.169.01","parent_code":"100.02.169.00","level":4,"name":"Otra maquinaria y equipo","kind":1,"role":130,"type":"FIXED_ASSET","is_placeholder":false}
+{"code":"100.02.170.00","parent_code":"100.02.000.00","level":3,"name":"Adaptaciones y mejoras","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.170.01","parent_code":"100.02.170.00","level":4,"name":"Adaptaciones y mejoras","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.171.00","parent_code":"100.02.000.00","level":3,"name":"Depreciación acumulada de activos fijos","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.01","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de edificios","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.02","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de maquinaria y equipo","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.03","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de automóviles, autobuses, camiones de carga, tractocamiones, montacargas y remolques","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.04","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de mobiliario y equipo de oficina","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.05","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de equipo de cómputo","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.06","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de equipo de comunicación","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.07","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de activos biológicos, vegetales y semovientes","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.08","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de otros activos fijos","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.09","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de ferrocarriles","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.10","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de embarcaciones","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.11","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de aviones","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.12","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de troqueles, moldes, matrices y herramental","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.13","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de equipo de comunicaciones telefónicas","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.14","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de equipo de comunicación satelital","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.15","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de equipo de adaptaciones para personas con capacidades diferentes","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.16","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de maquinaria y equipo de generación de energía de fuentes renovables o de sistemas de cogeneración de electricidad eficiente","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.17","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de adaptaciones y mejoras","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.171.18","parent_code":"100.02.171.00","level":4,"name":"Depreciación acumulada de otra maquinaria y equipo","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.00","parent_code":"100.02.000.00","level":3,"name":"Pérdida por deterioro acumulado de activos fijos","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.01","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de edificios","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.02","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de maquinaria y equipo","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.03","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de automóviles, autobuses, camiones de carga, tractocamiones, montacargas y remolques","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.04","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de mobiliario y equipo de oficina","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.05","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de equipo de cómputo","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.06","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de equipo de comunicación","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.07","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de activos biológicos, vegetales y semovientes","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.08","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de otros activos fijos","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.09","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de ferrocarriles","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.10","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de embarcaciones","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.11","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de aviones","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.12","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de troqueles, moldes, matrices y herramental","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.13","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de equipo de comunicaciones telefónicas","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.14","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de equipo de comunicación satelital","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.15","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de equipo de adaptaciones para personas con capacidades diferentes","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.16","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de maquinaria y equipo de generación de energía de fuentes renovables o de sistemas de cogeneración de electricidad eficiente","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.17","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de adaptaciones y mejoras","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.172.18","parent_code":"100.02.172.00","level":4,"name":"Pérdida por deterioro acumulado de otra maquinaria y equipo","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.173.00","parent_code":"100.02.000.00","level":3,"name":"Gastos diferidos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.173.01","parent_code":"100.02.173.00","level":4,"name":"Gastos diferidos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.174.00","parent_code":"100.02.000.00","level":3,"name":"Gastos pre operativos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.174.01","parent_code":"100.02.174.00","level":4,"name":"Gastos pre operativos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.175.00","parent_code":"100.02.000.00","level":3,"name":"Regalías, asistencia técnica y otros gastos diferidos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.175.01","parent_code":"100.02.175.00","level":4,"name":"Regalías, asistencia técnica y otros gastos diferidos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.176.00","parent_code":"100.02.000.00","level":3,"name":"Activos intangibles","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.176.01","parent_code":"100.02.176.00","level":4,"name":"Activos intangibles","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.177.00","parent_code":"100.02.000.00","level":3,"name":"Gastos de organización","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.177.01","parent_code":"100.02.177.00","level":4,"name":"Gastos de organización","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.178.00","parent_code":"100.02.000.00","level":3,"name":"Investigación y desarrollo de mercado","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.178.01","parent_code":"100.02.178.00","level":4,"name":"Investigación y desarrollo de mercado","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.179.00","parent_code":"100.02.000.00","level":3,"name":"Marcas y patentes","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.179.01","parent_code":"100.02.179.00","level":4,"name":"Marcas y patentes","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.180.00","parent_code":"100.02.000.00","level":3,"name":"Crédito mercantil","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.180.01","parent_code":"100.02.180.00","level":4,"name":"Crédito mercantil","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.181.00","parent_code":"100.02.000.00","level":3,"name":"Gastos de instalación","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.181.01","parent_code":"100.02.181.00","level":4,"name":"Gastos de instalación","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.182.00","parent_code":"100.02.000.00","level":3,"name":"Otros activos diferidos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.182.01","parent_code":"100.02.182.00","level":4,"name":"Otros activos diferidos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.183.00","parent_code":"100.02.000.00","level":3,"name":"Amortización acumulada de activos diferidos","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.183.01","parent_code":"100.02.183.00","level":4,"name":"Amortización acumulada de gastos diferidos","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.183.02","parent_code":"100.02.183.00","level":4,"name":"Amortización acumulada de gastos pre operativos","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.183.03","parent_code":"100.02.183.00","level":4,"name":"Amortización acumulada de regalías, asistencia técnica y otros gastos diferidos","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.183.04","parent_code":"100.02.183.00","level":4,"name":"Amortización acumulada de activos intangibles","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.183.05","parent_code":"100.02.183.00","level":4,"name":"Amortización acumulada de gastos de organización","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.183.06","parent_code":"100.02.183.00","level":4,"name":"Amortización acumulada de investigación y desarrollo de mercado","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.183.07","parent_code":"100.02.183.00","level":4,"name":"Amortización acumulada de marcas y patentes","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.183.08","parent_code":"100.02.183.00","level":4,"name":"Amortización acumulada de crédito mercantil","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.183.09","parent_code":"100.02.183.00","level":4,"name":"Amortización acumulada de gastos de instalación","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.183.10","parent_code":"100.02.183.00","level":4,"name":"Amortización acumulada de otros activos diferidos","kind":1,"role":131,"type":"ACCUM_DEPR","is_placeholder":false}
+{"code":"100.02.184.00","parent_code":"100.02.000.00","level":3,"name":"Depósitos en garantía","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.184.01","parent_code":"100.02.184.00","level":4,"name":"Depósitos de fianzas","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.184.02","parent_code":"100.02.184.00","level":4,"name":"Depósitos de arrendamiento de bienes inmuebles","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.184.03","parent_code":"100.02.184.00","level":4,"name":"Otros depósitos en garantía","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.185.00","parent_code":"100.02.000.00","level":3,"name":"Impuestos diferidos","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.185.01","parent_code":"100.02.185.00","level":4,"name":"Impuestos diferidos ISR","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.186.00","parent_code":"100.02.000.00","level":3,"name":"Cuentas y documentos por cobrar a largo plazo","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.02.186.01","parent_code":"100.02.186.00","level":4,"name":"Cuentas y documentos por cobrar a largo plazo nacional","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.02.186.02","parent_code":"100.02.186.00","level":4,"name":"Cuentas y documentos por cobrar a largo plazo extranjero","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.02.186.03","parent_code":"100.02.186.00","level":4,"name":"Cuentas y documentos por cobrar a largo plazo nacional parte relacionada","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.02.186.04","parent_code":"100.02.186.00","level":4,"name":"Cuentas y documentos por cobrar a largo plazo extranjero parte relacionada","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.02.186.05","parent_code":"100.02.186.00","level":4,"name":"Intereses por cobrar a largo plazo nacional","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.02.186.06","parent_code":"100.02.186.00","level":4,"name":"Intereses por cobrar a largo plazo extranjero","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.02.186.07","parent_code":"100.02.186.00","level":4,"name":"Intereses por cobrar a largo plazo nacional parte relacionada","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.02.186.08","parent_code":"100.02.186.00","level":4,"name":"Intereses por cobrar a largo plazo extranjero parte relacionada","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.02.186.09","parent_code":"100.02.186.00","level":4,"name":"Otras cuentas y documentos por cobrar a largo plazo","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.02.186.10","parent_code":"100.02.186.00","level":4,"name":"Otras cuentas y documentos por cobrar a largo plazo parte relacionada","kind":1,"role":110,"type":"AR","is_placeholder":false}
+{"code":"100.02.187.00","parent_code":"100.02.000.00","level":3,"name":"Participación de los trabajadores en las utilidades diferidas","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.187.01","parent_code":"100.02.187.00","level":4,"name":"Participación de los trabajadores en las utilidades diferidas","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.188.00","parent_code":"100.02.000.00","level":3,"name":"Inversiones permanentes en acciones","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.188.01","parent_code":"100.02.188.00","level":4,"name":"Inversiones a largo plazo en subsidiarias","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.188.02","parent_code":"100.02.188.00","level":4,"name":"Inversiones a largo plazo en asociadas","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.188.03","parent_code":"100.02.188.00","level":4,"name":"Otras inversiones permanentes en acciones","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.189.00","parent_code":"100.02.000.00","level":3,"name":"Estimación por deterioro de inversiones permanentes en acciones","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.189.01","parent_code":"100.02.189.00","level":4,"name":"Estimación por deterioro de inversiones permanentes en acciones","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.190.00","parent_code":"100.02.000.00","level":3,"name":"Otros instrumentos financieros","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.190.01","parent_code":"100.02.190.00","level":4,"name":"Otros instrumentos financieros","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.191.00","parent_code":"100.02.000.00","level":3,"name":"Otros activos a largo plazo","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"100.02.191.01","parent_code":"100.02.191.00","level":4,"name":"Otros activos a largo plazo","kind":1,"role":199,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"200.00.000.00","parent_code":"000.00.000.00","level":1,"name":"Pasivo","kind":2,"role":0,"type":"OTHER_LIAB","is_placeholder":true}
+{"code":"200.01.000.00","parent_code":"200.00.000.00","level":2,"name":"Pasivo a corto plazo","kind":2,"role":0,"type":"OTHER_LIAB","is_placeholder":true}
+{"code":"200.01.201.00","parent_code":"200.01.000.00","level":3,"name":"Proveedores","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.201.01","parent_code":"200.01.201.00","level":4,"name":"Proveedores nacionales","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.201.02","parent_code":"200.01.201.00","level":4,"name":"Proveedores extranjeros","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.201.03","parent_code":"200.01.201.00","level":4,"name":"Proveedores nacionales parte relacionada","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.201.04","parent_code":"200.01.201.00","level":4,"name":"Proveedores extranjeros parte relacionada","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.202.00","parent_code":"200.01.000.00","level":3,"name":"Cuentas por pagar a corto plazo","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.202.01","parent_code":"200.01.202.00","level":4,"name":"Documentos por pagar bancario y financiero nacional","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.01.202.02","parent_code":"200.01.202.00","level":4,"name":"Documentos por pagar bancario y financiero extranjero","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.01.202.03","parent_code":"200.01.202.00","level":4,"name":"Documentos y cuentas por pagar a corto plazo nacional","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.202.04","parent_code":"200.01.202.00","level":4,"name":"Documentos y cuentas por pagar a corto plazo extranjero","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.202.05","parent_code":"200.01.202.00","level":4,"name":"Documentos y cuentas por pagar a corto plazo nacional parte relacionada","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.202.06","parent_code":"200.01.202.00","level":4,"name":"Documentos y cuentas por pagar a corto plazo extranjero parte relacionada","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.202.07","parent_code":"200.01.202.00","level":4,"name":"Intereses por pagar a corto plazo nacional","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.202.08","parent_code":"200.01.202.00","level":4,"name":"Intereses por pagar a corto plazo extranjero","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.202.09","parent_code":"200.01.202.00","level":4,"name":"Intereses por pagar a corto plazo nacional parte relacionada","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.202.10","parent_code":"200.01.202.00","level":4,"name":"Intereses por pagar a corto plazo extranjero parte relacionada","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.202.11","parent_code":"200.01.202.00","level":4,"name":"Dividendo por pagar nacional","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.202.12","parent_code":"200.01.202.00","level":4,"name":"Dividendo por pagar extranjero","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.01.203.00","parent_code":"200.01.000.00","level":3,"name":"Cobros anticipados a corto plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.203.01","parent_code":"200.01.203.00","level":4,"name":"Rentas cobradas por anticipado a corto plazo nacional","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.203.02","parent_code":"200.01.203.00","level":4,"name":"Rentas cobradas por anticipado a corto plazo extranjero","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.203.03","parent_code":"200.01.203.00","level":4,"name":"Rentas cobradas por anticipado a corto plazo nacional parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.203.04","parent_code":"200.01.203.00","level":4,"name":"Rentas cobradas por anticipado a corto plazo extranjero parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.203.05","parent_code":"200.01.203.00","level":4,"name":"Intereses cobrados por anticipado a corto plazo nacional","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.203.06","parent_code":"200.01.203.00","level":4,"name":"Intereses cobrados por anticipado a corto plazo extranjero","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.203.07","parent_code":"200.01.203.00","level":4,"name":"Intereses cobrados por anticipado a corto plazo nacional parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.203.08","parent_code":"200.01.203.00","level":4,"name":"Intereses cobrados por anticipado a corto plazo extranjero parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.203.09","parent_code":"200.01.203.00","level":4,"name":"Factoraje financiero cobrados por anticipado a corto plazo nacional","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.203.10","parent_code":"200.01.203.00","level":4,"name":"Factoraje financiero cobrados por anticipado a corto plazo extranjero","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.203.11","parent_code":"200.01.203.00","level":4,"name":"Factoraje financiero cobrados por anticipado a corto plazo nacional parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.203.12","parent_code":"200.01.203.00","level":4,"name":"Factoraje financiero cobrados por anticipado a corto plazo extranjero parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.203.13","parent_code":"200.01.203.00","level":4,"name":"Arrendamiento financiero cobrados por anticipado a corto plazo nacional","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.01.203.14","parent_code":"200.01.203.00","level":4,"name":"Arrendamiento financiero cobrados por anticipado a corto plazo extranjero","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.01.203.15","parent_code":"200.01.203.00","level":4,"name":"Arrendamiento financiero cobrados por anticipado a corto plazo nacional parte relacionada","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.01.203.16","parent_code":"200.01.203.00","level":4,"name":"Arrendamiento financiero cobrados por anticipado a corto plazo extranjero parte relacionada","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.01.203.17","parent_code":"200.01.203.00","level":4,"name":"Derechos fiduciarios","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.203.18","parent_code":"200.01.203.00","level":4,"name":"Otros cobros anticipados","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.204.00","parent_code":"200.01.000.00","level":3,"name":"Instrumentos financieros a corto plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.204.01","parent_code":"200.01.204.00","level":4,"name":"Instrumentos financieros a corto plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.205.00","parent_code":"200.01.000.00","level":3,"name":"Acreedores diversos a corto plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.205.01","parent_code":"200.01.205.00","level":4,"name":"Socios, accionistas o representante legal","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.205.02","parent_code":"200.01.205.00","level":4,"name":"Acreedores diversos a corto plazo nacional","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.205.03","parent_code":"200.01.205.00","level":4,"name":"Acreedores diversos a corto plazo extranjero","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.205.04","parent_code":"200.01.205.00","level":4,"name":"Acreedores diversos a corto plazo nacional parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.205.05","parent_code":"200.01.205.00","level":4,"name":"Acreedores diversos a corto plazo extranjero parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.205.06","parent_code":"200.01.205.00","level":4,"name":"Otros acreedores diversos a corto plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.206.00","parent_code":"200.01.000.00","level":3,"name":"Anticipo de cliente","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.206.01","parent_code":"200.01.206.00","level":4,"name":"Anticipo de cliente nacional","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.206.02","parent_code":"200.01.206.00","level":4,"name":"Anticipo de cliente extranjero","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.206.03","parent_code":"200.01.206.00","level":4,"name":"Anticipo de cliente nacional parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.206.04","parent_code":"200.01.206.00","level":4,"name":"Anticipo de cliente extranjero parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.206.05","parent_code":"200.01.206.00","level":4,"name":"Otros anticipos de clientes","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.207.00","parent_code":"200.01.000.00","level":3,"name":"Impuestos trasladados","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.207.01","parent_code":"200.01.207.00","level":4,"name":"IVA trasladado","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.207.02","parent_code":"200.01.207.00","level":4,"name":"IEPS trasladado","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.208.00","parent_code":"200.01.000.00","level":3,"name":"Impuestos trasladados cobrados","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.208.01","parent_code":"200.01.208.00","level":4,"name":"IVA trasladado cobrado","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.208.02","parent_code":"200.01.208.00","level":4,"name":"IEPS trasladado cobrado","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.209.00","parent_code":"200.01.000.00","level":3,"name":"Impuestos trasladados no cobrados","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.209.01","parent_code":"200.01.209.00","level":4,"name":"IVA trasladado no cobrado","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.209.02","parent_code":"200.01.209.00","level":4,"name":"IEPS trasladado no cobrado","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.210.00","parent_code":"200.01.000.00","level":3,"name":"Provisión de sueldos y salarios por pagar","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.210.01","parent_code":"200.01.210.00","level":4,"name":"Provisión de sueldos y salarios por pagar","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.210.02","parent_code":"200.01.210.00","level":4,"name":"Provisión de vacaciones por pagar","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.210.03","parent_code":"200.01.210.00","level":4,"name":"Provisión de aguinaldo por pagar","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.210.04","parent_code":"200.01.210.00","level":4,"name":"Provisión de fondo de ahorro por pagar","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.210.05","parent_code":"200.01.210.00","level":4,"name":"Provisión de asimilados a salarios por pagar","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.210.06","parent_code":"200.01.210.00","level":4,"name":"Provisión de anticipos o remanentes por distribuir","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.210.07","parent_code":"200.01.210.00","level":4,"name":"Provisión de otros sueldos y salarios por pagar","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.211.00","parent_code":"200.01.000.00","level":3,"name":"Provisión de contribuciones de seguridad social por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.211.01","parent_code":"200.01.211.00","level":4,"name":"Provisión de IMSS patronal por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.211.02","parent_code":"200.01.211.00","level":4,"name":"Provisión de SAR por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.211.03","parent_code":"200.01.211.00","level":4,"name":"Provisión de infonavit por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.212.00","parent_code":"200.01.000.00","level":3,"name":"Provisión de impuesto estatal sobre nómina por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.212.01","parent_code":"200.01.212.00","level":4,"name":"Provisión de impuesto estatal sobre nómina por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.213.00","parent_code":"200.01.000.00","level":3,"name":"Impuestos y derechos por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.213.01","parent_code":"200.01.213.00","level":4,"name":"IVA por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.213.02","parent_code":"200.01.213.00","level":4,"name":"IEPS por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.213.03","parent_code":"200.01.213.00","level":4,"name":"ISR por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.213.04","parent_code":"200.01.213.00","level":4,"name":"Impuesto estatal sobre nómina por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.213.05","parent_code":"200.01.213.00","level":4,"name":"Impuesto estatal y municipal por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.213.06","parent_code":"200.01.213.00","level":4,"name":"Derechos por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.213.07","parent_code":"200.01.213.00","level":4,"name":"Otros impuestos por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.214.00","parent_code":"200.01.000.00","level":3,"name":"Dividendos por pagar","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.214.01","parent_code":"200.01.214.00","level":4,"name":"Dividendos por pagar","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.215.00","parent_code":"200.01.000.00","level":3,"name":"PTU por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.215.01","parent_code":"200.01.215.00","level":4,"name":"PTU por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.215.02","parent_code":"200.01.215.00","level":4,"name":"PTU por pagar de ejercicios anteriores","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.215.03","parent_code":"200.01.215.00","level":4,"name":"Provisión de PTU por pagar","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.216.00","parent_code":"200.01.000.00","level":3,"name":"Impuestos retenidos","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.216.01","parent_code":"200.01.216.00","level":4,"name":"Impuestos retenidos de ISR por sueldos y salarios","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.216.02","parent_code":"200.01.216.00","level":4,"name":"Impuestos retenidos de ISR por asimilados a salarios","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.216.03","parent_code":"200.01.216.00","level":4,"name":"Impuestos retenidos de ISR por arrendamiento","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.216.04","parent_code":"200.01.216.00","level":4,"name":"Impuestos retenidos de ISR por servicios profesionales","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.216.05","parent_code":"200.01.216.00","level":4,"name":"Impuestos retenidos de ISR por dividendos","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.216.06","parent_code":"200.01.216.00","level":4,"name":"Impuestos retenidos de ISR por intereses","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.216.07","parent_code":"200.01.216.00","level":4,"name":"Impuestos retenidos de ISR por pagos al extranjero","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.216.08","parent_code":"200.01.216.00","level":4,"name":"Impuestos retenidos de ISR por venta de acciones","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.216.09","parent_code":"200.01.216.00","level":4,"name":"Impuestos retenidos de ISR por venta de partes sociales","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.216.10","parent_code":"200.01.216.00","level":4,"name":"Impuestos retenidos de IVA","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.216.11","parent_code":"200.01.216.00","level":4,"name":"Retenciones de IMSS a los trabajadores","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.216.12","parent_code":"200.01.216.00","level":4,"name":"Otras impuestos retenidos","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.01.217.00","parent_code":"200.01.000.00","level":3,"name":"Pagos realizados por cuenta de terceros","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.217.01","parent_code":"200.01.217.00","level":4,"name":"Pagos realizados por cuenta de terceros","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.218.00","parent_code":"200.01.000.00","level":3,"name":"Otros pasivos a corto plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.01.218.01","parent_code":"200.01.000.00","level":4,"name":"Otros pasivos a corto plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.000.00","parent_code":"200.00.000.00","level":2,"name":"Pasivo a largo plazo","kind":2,"role":0,"type":"OTHER_LIAB","is_placeholder":true}
+{"code":"200.02.251.00","parent_code":"200.02.000.00","level":3,"name":"Acreedores diversos a largo plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.251.01","parent_code":"200.02.251.00","level":4,"name":"Socios, accionistas o representante legal","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.251.02","parent_code":"200.02.251.00","level":4,"name":"Acreedores diversos a largo plazo nacional","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.251.03","parent_code":"200.02.251.00","level":4,"name":"Acreedores diversos a largo plazo extranjero","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.251.04","parent_code":"200.02.251.00","level":4,"name":"Acreedores diversos a largo plazo nacional parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.251.05","parent_code":"200.02.251.00","level":4,"name":"Acreedores diversos a largo plazo extranjero parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.251.06","parent_code":"200.02.251.00","level":4,"name":"Otros acreedores diversos a largo plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.252.00","parent_code":"200.02.000.00","level":3,"name":"Cuentas por pagar a largo plazo","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.02.252.01","parent_code":"200.02.252.00","level":4,"name":"Documentos bancarios y financieros por pagar a largo plazo nacional","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.02.252.02","parent_code":"200.02.252.00","level":4,"name":"Documentos bancarios y financieros por pagar a largo plazo extranjero","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.02.252.03","parent_code":"200.02.252.00","level":4,"name":"Documentos y cuentas por pagar a largo plazo nacional","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.02.252.04","parent_code":"200.02.252.00","level":4,"name":"Documentos y cuentas por pagar a largo plazo extranjero","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.02.252.05","parent_code":"200.02.252.00","level":4,"name":"Documentos y cuentas por pagar a largo plazo nacional parte relacionada","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.02.252.06","parent_code":"200.02.252.00","level":4,"name":"Documentos y cuentas por pagar a largo plazo extranjero parte relacionada","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.02.252.07","parent_code":"200.02.252.00","level":4,"name":"Hipotecas por pagar a largo plazo nacional","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.02.252.08","parent_code":"200.02.252.00","level":4,"name":"Hipotecas por pagar a largo plazo extranjero","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.02.252.09","parent_code":"200.02.252.00","level":4,"name":"Hipotecas por pagar a largo plazo nacional parte relacionada","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.02.252.10","parent_code":"200.02.252.00","level":4,"name":"Hipotecas por pagar a largo plazo extranjero parte relacionada","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.02.252.11","parent_code":"200.02.252.00","level":4,"name":"Intereses por pagar a largo plazo nacional","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.02.252.12","parent_code":"200.02.252.00","level":4,"name":"Intereses por pagar a largo plazo extranjero","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.02.252.13","parent_code":"200.02.252.00","level":4,"name":"Intereses por pagar a largo plazo nacional parte relacionada","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.02.252.14","parent_code":"200.02.252.00","level":4,"name":"Intereses por pagar a largo plazo extranjero parte relacionada","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.02.252.15","parent_code":"200.02.252.00","level":4,"name":"Dividendos por pagar nacionales","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.02.252.16","parent_code":"200.02.252.00","level":4,"name":"Dividendos por pagar extranjeros","kind":2,"role":200,"type":"AP","is_placeholder":false}
+{"code":"200.02.252.17","parent_code":"200.02.252.00","level":4,"name":"Otras cuentas y documentos por pagar a largo plazo","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.02.253.00","parent_code":"200.02.000.00","level":3,"name":"Cobros anticipados a largo plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.253.01","parent_code":"200.02.253.00","level":4,"name":"Rentas cobradas por anticipado a largo plazo nacional","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.253.02","parent_code":"200.02.253.00","level":4,"name":"Rentas cobradas por anticipado a largo plazo extranjero","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.253.03","parent_code":"200.02.253.00","level":4,"name":"Rentas cobradas por anticipado a largo plazo nacional parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.253.04","parent_code":"200.02.253.00","level":4,"name":"Rentas cobradas por anticipado a largo plazo extranjero parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.253.05","parent_code":"200.02.253.00","level":4,"name":"Intereses cobrados por anticipado a largo plazo nacional","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.253.06","parent_code":"200.02.253.00","level":4,"name":"Intereses cobrados por anticipado a largo plazo extranjero","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.253.07","parent_code":"200.02.253.00","level":4,"name":"Intereses cobrados por anticipado a largo plazo nacional parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.253.08","parent_code":"200.02.253.00","level":4,"name":"Intereses cobrados por anticipado a largo plazo extranjero parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.253.09","parent_code":"200.02.253.00","level":4,"name":"Factoraje financiero cobrados por anticipado a largo plazo nacional","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.253.10","parent_code":"200.02.253.00","level":4,"name":"Factoraje financiero cobrados por anticipado a largo plazo extranjero","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.253.11","parent_code":"200.02.253.00","level":4,"name":"Factoraje financiero cobrados por anticipado a largo plazo nacional parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.253.12","parent_code":"200.02.253.00","level":4,"name":"Factoraje financiero cobrados por anticipado a largo plazo extranjero parte relacionada","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.253.13","parent_code":"200.02.253.00","level":4,"name":"Arrendamiento financiero cobrados por anticipado a largo plazo nacional","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.02.253.14","parent_code":"200.02.253.00","level":4,"name":"Arrendamiento financiero cobrados por anticipado a largo plazo extranjero","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.02.253.15","parent_code":"200.02.253.00","level":4,"name":"Arrendamiento financiero cobrados por anticipado a largo plazo nacional parte relacionada","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.02.253.16","parent_code":"200.02.253.00","level":4,"name":"Arrendamiento financiero cobrados por anticipado a largo plazo extranjero parte relacionada","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.02.253.17","parent_code":"200.02.253.00","level":4,"name":"Derechos fiduciarios","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.02.253.18","parent_code":"200.02.253.00","level":4,"name":"Otros cobros anticipados","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.254.00","parent_code":"200.02.000.00","level":3,"name":"Instrumentos financieros a largo plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.254.01","parent_code":"200.02.254.00","level":4,"name":"Instrumentos financieros a largo plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.255.00","parent_code":"200.02.000.00","level":3,"name":"Pasivos por beneficios a los empleados a largo plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.255.01","parent_code":"200.02.255.00","level":4,"name":"Pasivos por beneficios a los empleados a largo plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.256.00","parent_code":"200.02.000.00","level":3,"name":"Otros pasivos a largo plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.256.01","parent_code":"200.02.256.00","level":4,"name":"Otros pasivos a largo plazo","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.257.00","parent_code":"200.02.000.00","level":3,"name":"Participación de los trabajadores en las utilidades diferida","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.257.01","parent_code":"200.02.257.00","level":4,"name":"Participación de los trabajadores en las utilidades diferida","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.258.00","parent_code":"200.02.000.00","level":3,"name":"Obligaciones contraídas de fideicomisos","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.02.258.01","parent_code":"200.02.258.00","level":4,"name":"Obligaciones contraídas de fideicomisos","kind":2,"role":220,"type":"LOAN","is_placeholder":false}
+{"code":"200.02.259.00","parent_code":"200.02.000.00","level":3,"name":"Impuestos diferidos","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.02.259.01","parent_code":"200.02.259.00","level":4,"name":"ISR diferido","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.02.259.02","parent_code":"200.02.259.00","level":4,"name":"ISR por dividendo diferido","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.02.259.03","parent_code":"200.02.259.00","level":4,"name":"Otros impuestos diferidos","kind":2,"role":210,"type":"TAX_PAYABLE","is_placeholder":false}
+{"code":"200.02.260.00","parent_code":"200.02.000.00","level":3,"name":"Pasivos diferidos","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"200.02.260.01","parent_code":"200.02.260.00","level":4,"name":"Pasivos diferidos","kind":2,"role":299,"type":"OTHER_LIAB","is_placeholder":false}
+{"code":"300.00.000.00","parent_code":"000.00.000.00","level":1,"name":"Capital contable","kind":3,"role":0,"type":"CAPITAL","is_placeholder":true}
+{"code":"300.00.301.00","parent_code":"300.00.000.00","level":2,"name":"Capital social","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"300.00.301.01","parent_code":"300.00.301.00","level":3,"name":"Capital fijo","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"300.00.301.02","parent_code":"300.00.301.00","level":3,"name":"Capital variable","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"300.00.301.03","parent_code":"300.00.301.00","level":3,"name":"Aportaciones para futuros aumentos de capital","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"300.00.301.04","parent_code":"300.00.301.00","level":3,"name":"Prima en suscripción de acciones","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"300.00.301.05","parent_code":"300.00.301.00","level":3,"name":"Prima en suscripción de partes sociales","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"300.00.302.00","parent_code":"300.00.000.00","level":2,"name":"Patrimonio","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"300.00.302.01","parent_code":"300.00.302.00","level":3,"name":"Patrimonio","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"300.00.302.02","parent_code":"300.00.302.00","level":3,"name":"Aportación patrimonial","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"300.00.302.03","parent_code":"300.00.302.00","level":3,"name":"Déficit o remanente del ejercicio","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"300.00.303.00","parent_code":"300.00.000.00","level":2,"name":"Reserva legal","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"300.00.303.01","parent_code":"300.00.303.00","level":3,"name":"Reserva legal","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"300.00.304.00","parent_code":"300.00.000.00","level":2,"name":"Resultado de ejercicios anteriores","kind":3,"role":320,"type":"CURR_RESULT","is_placeholder":false}
+{"code":"300.00.304.01","parent_code":"300.00.304.00","level":3,"name":"Utilidad de ejercicios anteriores","kind":3,"role":320,"type":"CURR_RESULT","is_placeholder":false}
+{"code":"300.00.304.02","parent_code":"300.00.304.00","level":3,"name":"Pérdida de ejercicios anteriores","kind":3,"role":320,"type":"CURR_RESULT","is_placeholder":false}
+{"code":"300.00.304.03","parent_code":"300.00.304.00","level":3,"name":"Resultado integral de ejercicios anteriores","kind":3,"role":320,"type":"CURR_RESULT","is_placeholder":false}
+{"code":"300.00.304.04","parent_code":"300.00.304.00","level":3,"name":"Déficit o remanente de ejercicio anteriores","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"300.00.305.00","parent_code":"300.00.000.00","level":2,"name":"Resultado del ejercicio","kind":3,"role":320,"type":"CURR_RESULT","is_placeholder":false}
+{"code":"300.00.305.01","parent_code":"300.00.305.00","level":3,"name":"Utilidad del ejercicio","kind":3,"role":320,"type":"CURR_RESULT","is_placeholder":false}
+{"code":"300.00.305.02","parent_code":"300.00.305.00","level":3,"name":"Pérdida del ejercicio","kind":3,"role":320,"type":"CURR_RESULT","is_placeholder":false}
+{"code":"300.00.305.03","parent_code":"300.00.305.00","level":3,"name":"Resultado integral","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"300.00.306.00","parent_code":"300.00.000.00","level":2,"name":"Otras cuentas de capital","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"300.00.306.01","parent_code":"300.00.306.00","level":3,"name":"Otras cuentas de capital","kind":3,"role":300,"type":"CAPITAL","is_placeholder":false}
+{"code":"400.00.000.00","parent_code":"000.00.000.00","level":1,"name":"Ingresos","kind":4,"role":0,"type":"OTHER_INC","is_placeholder":true}
+{"code":"400.00.401.00","parent_code":"400.00.000.00","level":2,"name":"Ingresos","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.01","parent_code":"400.00.401.00","level":3,"name":"Ventas y/o servicios gravados a la tasa general","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.401.02","parent_code":"400.00.401.00","level":3,"name":"Ventas y/o servicios gravados a la tasa general de contado","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.401.03","parent_code":"400.00.401.00","level":3,"name":"Ventas y/o servicios gravados a la tasa general a crédito","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.401.04","parent_code":"400.00.401.00","level":3,"name":"Ventas y/o servicios gravados al 0%","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.401.05","parent_code":"400.00.401.00","level":3,"name":"Ventas y/o servicios gravados al 0% de contado","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.401.06","parent_code":"400.00.401.00","level":3,"name":"Ventas y/o servicios gravados al 0% a crédito","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.401.07","parent_code":"400.00.401.00","level":3,"name":"Ventas y/o servicios exentos","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.401.08","parent_code":"400.00.401.00","level":3,"name":"Ventas y/o servicios exentos de contado","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.401.09","parent_code":"400.00.401.00","level":3,"name":"Ventas y/o servicios exentos a crédito","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.401.10","parent_code":"400.00.401.00","level":3,"name":"Ventas y/o servicios gravados a la tasa general nacionales partes relacionadas","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.401.11","parent_code":"400.00.401.00","level":3,"name":"Ventas y/o servicios gravados a la tasa general extranjeros partes relacionadas","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.401.12","parent_code":"400.00.401.00","level":3,"name":"Ventas y/o servicios gravados al 0% nacionales partes relacionadas","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.401.13","parent_code":"400.00.401.00","level":3,"name":"Ventas y/o servicios gravados al 0% extranjeros partes relacionadas","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.401.14","parent_code":"400.00.401.00","level":3,"name":"Ventas y/o servicios exentos nacionales partes relacionadas","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.401.15","parent_code":"400.00.401.00","level":3,"name":"Ventas y/o servicios exentos extranjeros partes relacionadas","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.401.16","parent_code":"400.00.401.00","level":3,"name":"Ingresos por servicios administrativos","kind":4,"role":410,"type":"SERVICE_REV","is_placeholder":false}
+{"code":"400.00.401.17","parent_code":"400.00.401.00","level":3,"name":"Ingresos por servicios administrativos nacionales partes relacionadas","kind":4,"role":410,"type":"SERVICE_REV","is_placeholder":false}
+{"code":"400.00.401.18","parent_code":"400.00.401.00","level":3,"name":"Ingresos por servicios administrativos extranjeros partes relacionadas","kind":4,"role":410,"type":"SERVICE_REV","is_placeholder":false}
+{"code":"400.00.401.19","parent_code":"400.00.401.00","level":3,"name":"Ingresos por servicios profesionales","kind":4,"role":410,"type":"SERVICE_REV","is_placeholder":false}
+{"code":"400.00.401.20","parent_code":"400.00.401.00","level":3,"name":"Ingresos por servicios profesionales nacionales partes relacionadas","kind":4,"role":410,"type":"SERVICE_REV","is_placeholder":false}
+{"code":"400.00.401.21","parent_code":"400.00.401.00","level":3,"name":"Ingresos por servicios profesionales extranjeros partes relacionadas","kind":4,"role":410,"type":"SERVICE_REV","is_placeholder":false}
+{"code":"400.00.401.22","parent_code":"400.00.401.00","level":3,"name":"Ingresos por arrendamiento","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.23","parent_code":"400.00.401.00","level":3,"name":"Ingresos por arrendamiento nacionales partes relacionadas","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.24","parent_code":"400.00.401.00","level":3,"name":"Ingresos por arrendamiento extranjeros partes relacionadas","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.25","parent_code":"400.00.401.00","level":3,"name":"Ingresos por exportación","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.26","parent_code":"400.00.401.00","level":3,"name":"Ingresos por comisiones","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.27","parent_code":"400.00.401.00","level":3,"name":"Ingresos por maquila","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.28","parent_code":"400.00.401.00","level":3,"name":"Ingresos por coordinados","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.29","parent_code":"400.00.401.00","level":3,"name":"Ingresos por regalías","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.30","parent_code":"400.00.401.00","level":3,"name":"Ingresos por asistencia técnica","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.31","parent_code":"400.00.401.00","level":3,"name":"Ingresos por donativos","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.32","parent_code":"400.00.401.00","level":3,"name":"Ingresos por intereses (actividad propia)","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.33","parent_code":"400.00.401.00","level":3,"name":"Ingresos de copropiedad","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.34","parent_code":"400.00.401.00","level":3,"name":"Ingresos por fideicomisos","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.35","parent_code":"400.00.401.00","level":3,"name":"Ingresos por factoraje financiero","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.36","parent_code":"400.00.401.00","level":3,"name":"Ingresos por arrendamiento financiero","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.37","parent_code":"400.00.401.00","level":3,"name":"Ingresos de extranjeros con establecimiento en el país","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.401.38","parent_code":"400.00.401.00","level":3,"name":"Otros ingresos propios","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.402.00","parent_code":"400.00.000.00","level":2,"name":"Devoluciones, descuentos o bonificaciones sobre ingresos","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.402.01","parent_code":"400.00.402.00","level":3,"name":"Devoluciones, descuentos o bonificaciones sobre ventas y/o servicios a la tasa general","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.402.02","parent_code":"400.00.402.00","level":3,"name":"Devoluciones, descuentos o bonificaciones sobre ventas y/o servicios al 0%","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.402.03","parent_code":"400.00.402.00","level":3,"name":"Devoluciones, descuentos o bonificaciones sobre ventas y/o servicios exentos","kind":4,"role":400,"type":"SALES","is_placeholder":false}
+{"code":"400.00.402.04","parent_code":"400.00.402.00","level":3,"name":"Devoluciones, descuentos o bonificaciones de otros ingresos","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.403.00","parent_code":"400.00.000.00","level":2,"name":"Otros ingresos","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.403.01","parent_code":"400.00.403.00","level":3,"name":"Otros Ingresos","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.403.02","parent_code":"400.00.403.00","level":3,"name":"Otros ingresos nacionales parte relacionada","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.403.03","parent_code":"400.00.403.00","level":3,"name":"Otros ingresos extranjeros parte relacionada","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.403.04","parent_code":"400.00.403.00","level":3,"name":"Ingresos por operaciones discontinuas","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"400.00.403.05","parent_code":"400.00.403.00","level":3,"name":"Ingresos por condonación de adeudo","kind":4,"role":499,"type":"OTHER_INC","is_placeholder":false}
+{"code":"500.00.000.00","parent_code":"000.00.000.00","level":1,"name":"Costos","kind":5,"role":0,"type":"COGS","is_placeholder":true}
+{"code":"500.00.501.00","parent_code":"500.00.000.00","level":2,"name":"Costo de venta y/o servicio","kind":5,"role":510,"type":"COST_SERVICE","is_placeholder":false}
+{"code":"500.00.501.01","parent_code":"500.00.501.00","level":3,"name":"Costo de venta","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.501.02","parent_code":"500.00.501.00","level":3,"name":"Costo de servicios (Mano de obra)","kind":5,"role":510,"type":"COST_SERVICE","is_placeholder":false}
+{"code":"500.00.501.03","parent_code":"500.00.501.00","level":3,"name":"Materia prima directa utilizada para la producción","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.501.04","parent_code":"500.00.501.00","level":3,"name":"Materia prima consumida en el proceso productivo","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.501.05","parent_code":"500.00.501.00","level":3,"name":"Mano de obra directa consumida","kind":5,"role":510,"type":"COST_SERVICE","is_placeholder":false}
+{"code":"500.00.501.06","parent_code":"500.00.501.00","level":3,"name":"Mano de obra directa","kind":5,"role":510,"type":"COST_SERVICE","is_placeholder":false}
+{"code":"500.00.501.07","parent_code":"500.00.501.00","level":3,"name":"Cargos indirectos de producción","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.501.08","parent_code":"500.00.501.00","level":3,"name":"Otros conceptos de costo","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.502.00","parent_code":"500.00.000.00","level":2,"name":"Compras","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.502.01","parent_code":"500.00.502.00","level":3,"name":"Compras nacionales","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.502.02","parent_code":"500.00.502.00","level":3,"name":"Compras nacionales parte relacionada","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.502.03","parent_code":"500.00.502.00","level":3,"name":"Compras de Importación","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.502.04","parent_code":"500.00.502.00","level":3,"name":"Compras de Importación partes relacionadas","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.503.00","parent_code":"500.00.000.00","level":2,"name":"Devoluciones, descuentos o bonificaciones sobre compras","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.503.01","parent_code":"500.00.503.00","level":3,"name":"Devoluciones, descuentos o bonificaciones sobre compras","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.00","parent_code":"500.00.000.00","level":2,"name":"Otras cuentas de costos","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.01","parent_code":"500.00.504.00","level":3,"name":"Gastos indirectos de fabricación","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.02","parent_code":"500.00.504.00","level":3,"name":"Gastos indirectos de fabricación de partes relacionadas nacionales","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.03","parent_code":"500.00.504.00","level":3,"name":"Gastos indirectos de fabricación de partes relacionadas extranjeras","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.04","parent_code":"500.00.504.00","level":3,"name":"Otras cuentas de costos incurridos","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.05","parent_code":"500.00.504.00","level":3,"name":"Otras cuentas de costos incurridos con partes relacionadas nacionales","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.06","parent_code":"500.00.504.00","level":3,"name":"Otras cuentas de costos incurridos con partes relacionadas extranjeras","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.07","parent_code":"500.00.504.00","level":3,"name":"Depreciación de edificios","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.08","parent_code":"500.00.504.00","level":3,"name":"Depreciación de maquinaria y equipo","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.09","parent_code":"500.00.504.00","level":3,"name":"Depreciación de automóviles, autobuses, camiones de carga, tractocamiones, montacargas y remolques","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.10","parent_code":"500.00.504.00","level":3,"name":"Depreciación de mobiliario y equipo de oficina","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.11","parent_code":"500.00.504.00","level":3,"name":"Depreciación de equipo de cómputo","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.12","parent_code":"500.00.504.00","level":3,"name":"Depreciación de equipo de comunicación","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.13","parent_code":"500.00.504.00","level":3,"name":"Depreciación de activos biológicos, vegetales y semovientes","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.14","parent_code":"500.00.504.00","level":3,"name":"Depreciación de otros activos fijos","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.15","parent_code":"500.00.504.00","level":3,"name":"Depreciación de ferrocarriles","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.16","parent_code":"500.00.504.00","level":3,"name":"Depreciación de embarcaciones","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.17","parent_code":"500.00.504.00","level":3,"name":"Depreciación de aviones","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.18","parent_code":"500.00.504.00","level":3,"name":"Depreciación de troqueles, moldes, matrices y herramental","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.19","parent_code":"500.00.504.00","level":3,"name":"Depreciación de equipo de comunicaciones telefónicas","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.20","parent_code":"500.00.504.00","level":3,"name":"Depreciación de equipo de comunicación satelital","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.21","parent_code":"500.00.504.00","level":3,"name":"Depreciación de equipo de adaptaciones para personas con capacidades diferentes","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.22","parent_code":"500.00.504.00","level":3,"name":"Depreciación de maquinaria y equipo de generación de energía de fuentes renovables o de sistemas de cogeneración de electricidad eficiente","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.23","parent_code":"500.00.504.00","level":3,"name":"Depreciación de adaptaciones y mejoras","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.24","parent_code":"500.00.504.00","level":3,"name":"Depreciación de otra maquinaria y equipo","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.504.25","parent_code":"500.00.504.00","level":3,"name":"Otras cuentas de costos","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.505.00","parent_code":"500.00.000.00","level":2,"name":"Costo de activo fijo","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.505.01","parent_code":"500.00.505.00","level":3,"name":"Costo por venta de activo fijo","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"500.00.505.02","parent_code":"500.00.505.00","level":3,"name":"Costo por baja de activo fijo","kind":5,"role":500,"type":"COGS","is_placeholder":false}
+{"code":"600.00.000.00","parent_code":"000.00.000.00","level":1,"name":"Gastos","kind":6,"role":0,"type":"OTHER_EXP","is_placeholder":true}
+{"code":"600.00.601.00","parent_code":"600.00.000.00","level":2,"name":"Gastos generales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.01","parent_code":"600.00.601.00","level":3,"name":"Sueldos y salarios","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.02","parent_code":"600.00.601.00","level":3,"name":"Compensaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.03","parent_code":"600.00.601.00","level":3,"name":"Tiempos extras","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.04","parent_code":"600.00.601.00","level":3,"name":"Premios de asistencia","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.05","parent_code":"600.00.601.00","level":3,"name":"Premios de puntualidad","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.06","parent_code":"600.00.601.00","level":3,"name":"Vacaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.07","parent_code":"600.00.601.00","level":3,"name":"Prima vacacional","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.08","parent_code":"600.00.601.00","level":3,"name":"Prima dominical","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.09","parent_code":"600.00.601.00","level":3,"name":"Días festivos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.10","parent_code":"600.00.601.00","level":3,"name":"Gratificaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.11","parent_code":"600.00.601.00","level":3,"name":"Primas de antigüedad","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.12","parent_code":"600.00.601.00","level":3,"name":"Aguinaldo","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.13","parent_code":"600.00.601.00","level":3,"name":"Indemnizaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.14","parent_code":"600.00.601.00","level":3,"name":"Destajo","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.15","parent_code":"600.00.601.00","level":3,"name":"Despensa","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.16","parent_code":"600.00.601.00","level":3,"name":"Transporte","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.17","parent_code":"600.00.601.00","level":3,"name":"Servicio médico","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.18","parent_code":"600.00.601.00","level":3,"name":"Ayuda en gastos funerarios","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.19","parent_code":"600.00.601.00","level":3,"name":"Fondo de ahorro","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.20","parent_code":"600.00.601.00","level":3,"name":"Cuotas sindicales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.21","parent_code":"600.00.601.00","level":3,"name":"PTU","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.22","parent_code":"600.00.601.00","level":3,"name":"Estímulo al personal","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.23","parent_code":"600.00.601.00","level":3,"name":"Previsión social","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.24","parent_code":"600.00.601.00","level":3,"name":"Aportaciones para el plan de jubilación","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.25","parent_code":"600.00.601.00","level":3,"name":"Otras prestaciones al personal","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.26","parent_code":"600.00.601.00","level":3,"name":"Cuotas al IMSS","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.27","parent_code":"600.00.601.00","level":3,"name":"Aportaciones al infonavit","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.28","parent_code":"600.00.601.00","level":3,"name":"Aportaciones al SAR","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.29","parent_code":"600.00.601.00","level":3,"name":"Impuesto estatal sobre nóminas","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.30","parent_code":"600.00.601.00","level":3,"name":"Otras aportaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.31","parent_code":"600.00.601.00","level":3,"name":"Asimilados a salarios","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.601.32","parent_code":"600.00.601.00","level":3,"name":"Servicios administrativos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.33","parent_code":"600.00.601.00","level":3,"name":"Servicios administrativos partes relacionadas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.34","parent_code":"600.00.601.00","level":3,"name":"Honorarios a personas físicas residentes nacionales","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.601.35","parent_code":"600.00.601.00","level":3,"name":"Honorarios a personas físicas residentes nacionales partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.601.36","parent_code":"600.00.601.00","level":3,"name":"Honorarios a personas físicas residentes del extranjero","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.601.37","parent_code":"600.00.601.00","level":3,"name":"Honorarios a personas físicas residentes del extranjero partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.601.38","parent_code":"600.00.601.00","level":3,"name":"Honorarios a personas morales residentes nacionales","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.601.39","parent_code":"600.00.601.00","level":3,"name":"Honorarios a personas morales residentes nacionales partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.601.40","parent_code":"600.00.601.00","level":3,"name":"Honorarios a personas morales residentes del extranjero","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.601.41","parent_code":"600.00.601.00","level":3,"name":"Honorarios a personas morales residentes del extranjero partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.601.42","parent_code":"600.00.601.00","level":3,"name":"Honorarios aduanales personas físicas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.601.43","parent_code":"600.00.601.00","level":3,"name":"Honorarios aduanales personas morales","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.601.44","parent_code":"600.00.601.00","level":3,"name":"Honorarios al consejo de administración","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.601.45","parent_code":"600.00.601.00","level":3,"name":"Arrendamiento a personas físicas residentes nacionales","kind":6,"role":610,"type":"RENT","is_placeholder":false}
+{"code":"600.00.601.46","parent_code":"600.00.601.00","level":3,"name":"Arrendamiento a personas morales residentes nacionales","kind":6,"role":610,"type":"RENT","is_placeholder":false}
+{"code":"600.00.601.47","parent_code":"600.00.601.00","level":3,"name":"Arrendamiento a residentes del extranjero","kind":6,"role":610,"type":"RENT","is_placeholder":false}
+{"code":"600.00.601.48","parent_code":"600.00.601.00","level":3,"name":"Combustibles y lubricantes","kind":6,"role":600,"type":"FUEL","is_placeholder":false}
+{"code":"600.00.601.49","parent_code":"600.00.601.00","level":3,"name":"Viáticos y gastos de viaje","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.50","parent_code":"600.00.601.00","level":3,"name":"Teléfono, internet","kind":6,"role":610,"type":"INTERNET","is_placeholder":false}
+{"code":"600.00.601.51","parent_code":"600.00.601.00","level":3,"name":"Agua","kind":6,"role":610,"type":"UTILITIES","is_placeholder":false}
+{"code":"600.00.601.52","parent_code":"600.00.601.00","level":3,"name":"Energía eléctrica","kind":6,"role":610,"type":"UTILITIES","is_placeholder":false}
+{"code":"600.00.601.53","parent_code":"600.00.601.00","level":3,"name":"Vigilancia y seguridad","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.54","parent_code":"600.00.601.00","level":3,"name":"Limpieza","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.55","parent_code":"600.00.601.00","level":3,"name":"Papelería y artículos de oficina","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.56","parent_code":"600.00.601.00","level":3,"name":"Mantenimiento y conservación","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.57","parent_code":"600.00.601.00","level":3,"name":"Seguros y fianzas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.58","parent_code":"600.00.601.00","level":3,"name":"Otros impuestos y derechos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.59","parent_code":"600.00.601.00","level":3,"name":"Recargos fiscales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.60","parent_code":"600.00.601.00","level":3,"name":"Cuotas y suscripciones","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.61","parent_code":"600.00.601.00","level":3,"name":"Propaganda y publicidad","kind":6,"role":620,"type":"MARKETING","is_placeholder":false}
+{"code":"600.00.601.62","parent_code":"600.00.601.00","level":3,"name":"Capacitación al personal","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.63","parent_code":"600.00.601.00","level":3,"name":"Donativos y ayudas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.64","parent_code":"600.00.601.00","level":3,"name":"Asistencia técnica","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.65","parent_code":"600.00.601.00","level":3,"name":"Regalías sujetas a otros porcentajes","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.66","parent_code":"600.00.601.00","level":3,"name":"Regalías sujetas al 5%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.67","parent_code":"600.00.601.00","level":3,"name":"Regalías sujetas al 10%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.68","parent_code":"600.00.601.00","level":3,"name":"Regalías sujetas al 15%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.69","parent_code":"600.00.601.00","level":3,"name":"Regalías sujetas al 25%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.70","parent_code":"600.00.601.00","level":3,"name":"Regalías sujetas al 30%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.71","parent_code":"600.00.601.00","level":3,"name":"Regalías sin retención","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.72","parent_code":"600.00.601.00","level":3,"name":"Fletes y acarreos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.73","parent_code":"600.00.601.00","level":3,"name":"Gastos de importación","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.74","parent_code":"600.00.601.00","level":3,"name":"Comisiones sobre ventas","kind":6,"role":620,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.75","parent_code":"600.00.601.00","level":3,"name":"Comisiones por tarjetas de crédito","kind":6,"role":620,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.76","parent_code":"600.00.601.00","level":3,"name":"Patentes y marcas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.77","parent_code":"600.00.601.00","level":3,"name":"Uniformes","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.78","parent_code":"600.00.601.00","level":3,"name":"Prediales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.79","parent_code":"600.00.601.00","level":3,"name":"Gastos generales de urbanización","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.80","parent_code":"600.00.601.00","level":3,"name":"Gastos generales de construcción","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.81","parent_code":"600.00.601.00","level":3,"name":"Fletes del extranjero","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.82","parent_code":"600.00.601.00","level":3,"name":"Recolección de bienes del sector agropecuario y/o ganadero","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.83","parent_code":"600.00.601.00","level":3,"name":"Gastos no deducibles (sin requisitos fiscales)","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.601.84","parent_code":"600.00.601.00","level":3,"name":"Otros gastos generales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.00","parent_code":"600.00.000.00","level":2,"name":"Gastos de venta","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.01","parent_code":"600.00.602.00","level":3,"name":"Sueldos y salarios","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.02","parent_code":"600.00.602.00","level":3,"name":"Compensaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.03","parent_code":"600.00.602.00","level":3,"name":"Tiempos extras","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.04","parent_code":"600.00.602.00","level":3,"name":"Premios de asistencia","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.05","parent_code":"600.00.602.00","level":3,"name":"Premios de puntualidad","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.06","parent_code":"600.00.602.00","level":3,"name":"Vacaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.07","parent_code":"600.00.602.00","level":3,"name":"Prima vacacional","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.08","parent_code":"600.00.602.00","level":3,"name":"Prima dominical","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.09","parent_code":"600.00.602.00","level":3,"name":"Días festivos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.10","parent_code":"600.00.602.00","level":3,"name":"Gratificaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.11","parent_code":"600.00.602.00","level":3,"name":"Primas de antigüedad","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.12","parent_code":"600.00.602.00","level":3,"name":"Aguinaldo","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.13","parent_code":"600.00.602.00","level":3,"name":"Indemnizaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.14","parent_code":"600.00.602.00","level":3,"name":"Destajo","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.15","parent_code":"600.00.602.00","level":3,"name":"Despensa","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.16","parent_code":"600.00.602.00","level":3,"name":"Transporte","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.17","parent_code":"600.00.602.00","level":3,"name":"Servicio médico","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.18","parent_code":"600.00.602.00","level":3,"name":"Ayuda en gastos funerarios","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.19","parent_code":"600.00.602.00","level":3,"name":"Fondo de ahorro","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.20","parent_code":"600.00.602.00","level":3,"name":"Cuotas sindicales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.21","parent_code":"600.00.602.00","level":3,"name":"PTU","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.22","parent_code":"600.00.602.00","level":3,"name":"Estímulo al personal","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.23","parent_code":"600.00.602.00","level":3,"name":"Previsión social","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.24","parent_code":"600.00.602.00","level":3,"name":"Aportaciones para el plan de jubilación","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.25","parent_code":"600.00.602.00","level":3,"name":"Otras prestaciones al personal","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.26","parent_code":"600.00.602.00","level":3,"name":"Cuotas al IMSS","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.27","parent_code":"600.00.602.00","level":3,"name":"Aportaciones al infonavit","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.28","parent_code":"600.00.602.00","level":3,"name":"Aportaciones al SAR","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.29","parent_code":"600.00.602.00","level":3,"name":"Impuesto estatal sobre nóminas","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.30","parent_code":"600.00.602.00","level":3,"name":"Otras aportaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.31","parent_code":"600.00.602.00","level":3,"name":"Asimilados a salarios","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.602.32","parent_code":"600.00.602.00","level":3,"name":"Servicios administrativos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.33","parent_code":"600.00.602.00","level":3,"name":"Servicios administrativos partes relacionadas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.34","parent_code":"600.00.602.00","level":3,"name":"Honorarios a personas físicas residentes nacionales","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.602.35","parent_code":"600.00.602.00","level":3,"name":"Honorarios a personas físicas residentes nacionales partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.602.36","parent_code":"600.00.602.00","level":3,"name":"Honorarios a personas físicas residentes del extranjero","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.602.37","parent_code":"600.00.602.00","level":3,"name":"Honorarios a personas físicas residentes del extranjero partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.602.38","parent_code":"600.00.602.00","level":3,"name":"Honorarios a personas morales residentes nacionales","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.602.39","parent_code":"600.00.602.00","level":3,"name":"Honorarios a personas morales residentes nacionales partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.602.40","parent_code":"600.00.602.00","level":3,"name":"Honorarios a personas morales residentes del extranjero","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.602.41","parent_code":"600.00.602.00","level":3,"name":"Honorarios a personas morales residentes del extranjero partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.602.42","parent_code":"600.00.602.00","level":3,"name":"Honorarios aduanales personas físicas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.602.43","parent_code":"600.00.602.00","level":3,"name":"Honorarios aduanales personas morales","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.602.44","parent_code":"600.00.602.00","level":3,"name":"Honorarios al consejo de administración","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.602.45","parent_code":"600.00.602.00","level":3,"name":"Arrendamiento a personas físicas residentes nacionales","kind":6,"role":610,"type":"RENT","is_placeholder":false}
+{"code":"600.00.602.46","parent_code":"600.00.602.00","level":3,"name":"Arrendamiento a personas morales residentes nacionales","kind":6,"role":610,"type":"RENT","is_placeholder":false}
+{"code":"600.00.602.47","parent_code":"600.00.602.00","level":3,"name":"Arrendamiento a residentes del extranjero","kind":6,"role":610,"type":"RENT","is_placeholder":false}
+{"code":"600.00.602.48","parent_code":"600.00.602.00","level":3,"name":"Combustibles y lubricantes","kind":6,"role":600,"type":"FUEL","is_placeholder":false}
+{"code":"600.00.602.49","parent_code":"600.00.602.00","level":3,"name":"Viáticos y gastos de viaje","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.50","parent_code":"600.00.602.00","level":3,"name":"Teléfono, internet","kind":6,"role":610,"type":"INTERNET","is_placeholder":false}
+{"code":"600.00.602.51","parent_code":"600.00.602.00","level":3,"name":"Agua","kind":6,"role":610,"type":"UTILITIES","is_placeholder":false}
+{"code":"600.00.602.52","parent_code":"600.00.602.00","level":3,"name":"Energía eléctrica","kind":6,"role":610,"type":"UTILITIES","is_placeholder":false}
+{"code":"600.00.602.53","parent_code":"600.00.602.00","level":3,"name":"Vigilancia y seguridad","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.54","parent_code":"600.00.602.00","level":3,"name":"Limpieza","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.55","parent_code":"600.00.602.00","level":3,"name":"Papelería y artículos de oficina","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.56","parent_code":"600.00.602.00","level":3,"name":"Mantenimiento y conservación","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.57","parent_code":"600.00.602.00","level":3,"name":"Seguros y fianzas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.58","parent_code":"600.00.602.00","level":3,"name":"Otros impuestos y derechos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.59","parent_code":"600.00.602.00","level":3,"name":"Recargos fiscales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.60","parent_code":"600.00.602.00","level":3,"name":"Cuotas y suscripciones","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.61","parent_code":"600.00.602.00","level":3,"name":"Propaganda y publicidad","kind":6,"role":620,"type":"MARKETING","is_placeholder":false}
+{"code":"600.00.602.62","parent_code":"600.00.602.00","level":3,"name":"Capacitación al personal","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.63","parent_code":"600.00.602.00","level":3,"name":"Donativos y ayudas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.64","parent_code":"600.00.602.00","level":3,"name":"Asistencia técnica","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.65","parent_code":"600.00.602.00","level":3,"name":"Regalías sujetas a otros porcentajes","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.66","parent_code":"600.00.602.00","level":3,"name":"Regalías sujetas al 5%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.67","parent_code":"600.00.602.00","level":3,"name":"Regalías sujetas al 10%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.68","parent_code":"600.00.602.00","level":3,"name":"Regalías sujetas al 15%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.69","parent_code":"600.00.602.00","level":3,"name":"Regalías sujetas al 25%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.70","parent_code":"600.00.602.00","level":3,"name":"Regalías sujetas al 30%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.71","parent_code":"600.00.602.00","level":3,"name":"Regalías sin retención","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.72","parent_code":"600.00.602.00","level":3,"name":"Fletes y acarreos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.73","parent_code":"600.00.602.00","level":3,"name":"Gastos de importación","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.74","parent_code":"600.00.602.00","level":3,"name":"Comisiones sobre ventas","kind":6,"role":620,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.75","parent_code":"600.00.602.00","level":3,"name":"Comisiones por tarjetas de crédito","kind":6,"role":620,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.76","parent_code":"600.00.602.00","level":3,"name":"Patentes y marcas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.77","parent_code":"600.00.602.00","level":3,"name":"Uniformes","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.78","parent_code":"600.00.602.00","level":3,"name":"Prediales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.79","parent_code":"600.00.602.00","level":3,"name":"Gastos de venta de urbanización","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.80","parent_code":"600.00.602.00","level":3,"name":"Gastos de venta de construcción","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.81","parent_code":"600.00.602.00","level":3,"name":"Fletes del extranjero","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.82","parent_code":"600.00.602.00","level":3,"name":"Recolección de bienes del sector agropecuario y/o ganadero","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.83","parent_code":"600.00.602.00","level":3,"name":"Gastos no deducibles (sin requisitos fiscales)","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.602.84","parent_code":"600.00.602.00","level":3,"name":"Otros gastos de venta","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.00","parent_code":"600.00.000.00","level":2,"name":"Gastos de administración","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.01","parent_code":"600.00.603.00","level":3,"name":"Sueldos y salarios","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.02","parent_code":"600.00.603.00","level":3,"name":"Compensaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.03","parent_code":"600.00.603.00","level":3,"name":"Tiempos extras","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.04","parent_code":"600.00.603.00","level":3,"name":"Premios de asistencia","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.05","parent_code":"600.00.603.00","level":3,"name":"Premios de puntualidad","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.06","parent_code":"600.00.603.00","level":3,"name":"Vacaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.07","parent_code":"600.00.603.00","level":3,"name":"Prima vacacional","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.08","parent_code":"600.00.603.00","level":3,"name":"Prima dominical","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.09","parent_code":"600.00.603.00","level":3,"name":"Días festivos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.10","parent_code":"600.00.603.00","level":3,"name":"Gratificaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.11","parent_code":"600.00.603.00","level":3,"name":"Primas de antigüedad","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.12","parent_code":"600.00.603.00","level":3,"name":"Aguinaldo","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.13","parent_code":"600.00.603.00","level":3,"name":"Indemnizaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.14","parent_code":"600.00.603.00","level":3,"name":"Destajo","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.15","parent_code":"600.00.603.00","level":3,"name":"Despensa","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.16","parent_code":"600.00.603.00","level":3,"name":"Transporte","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.17","parent_code":"600.00.603.00","level":3,"name":"Servicio médico","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.18","parent_code":"600.00.603.00","level":3,"name":"Ayuda en gastos funerarios","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.19","parent_code":"600.00.603.00","level":3,"name":"Fondo de ahorro","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.20","parent_code":"600.00.603.00","level":3,"name":"Cuotas sindicales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.21","parent_code":"600.00.603.00","level":3,"name":"PTU","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.22","parent_code":"600.00.603.00","level":3,"name":"Estímulo al personal","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.23","parent_code":"600.00.603.00","level":3,"name":"Previsión social","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.24","parent_code":"600.00.603.00","level":3,"name":"Aportaciones para el plan de jubilación","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.25","parent_code":"600.00.603.00","level":3,"name":"Otras prestaciones al personal","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.26","parent_code":"600.00.603.00","level":3,"name":"Cuotas al IMSS","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.27","parent_code":"600.00.603.00","level":3,"name":"Aportaciones al infonavit","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.28","parent_code":"600.00.603.00","level":3,"name":"Aportaciones al SAR","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.29","parent_code":"600.00.603.00","level":3,"name":"Impuesto estatal sobre nóminas","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.30","parent_code":"600.00.603.00","level":3,"name":"Otras aportaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.31","parent_code":"600.00.603.00","level":3,"name":"Asimilados a salarios","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.603.32","parent_code":"600.00.603.00","level":3,"name":"Servicios administrativos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.33","parent_code":"600.00.603.00","level":3,"name":"Servicios administrativos partes relacionadas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.34","parent_code":"600.00.603.00","level":3,"name":"Honorarios a personas físicas residentes nacionales","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.603.35","parent_code":"600.00.603.00","level":3,"name":"Honorarios a personas físicas residentes nacionales partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.603.36","parent_code":"600.00.603.00","level":3,"name":"Honorarios a personas físicas residentes del extranjero","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.603.37","parent_code":"600.00.603.00","level":3,"name":"Honorarios a personas físicas residentes del extranjero partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.603.38","parent_code":"600.00.603.00","level":3,"name":"Honorarios a personas morales residentes nacionales","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.603.39","parent_code":"600.00.603.00","level":3,"name":"Honorarios a personas morales residentes nacionales partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.603.40","parent_code":"600.00.603.00","level":3,"name":"Honorarios a personas morales residentes del extranjero","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.603.41","parent_code":"600.00.603.00","level":3,"name":"Honorarios a personas morales residentes del extranjero partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.603.42","parent_code":"600.00.603.00","level":3,"name":"Honorarios aduanales personas físicas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.603.43","parent_code":"600.00.603.00","level":3,"name":"Honorarios aduanales personas morales","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.603.44","parent_code":"600.00.603.00","level":3,"name":"Honorarios al consejo de administración","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.603.45","parent_code":"600.00.603.00","level":3,"name":"Arrendamiento a personas físicas residentes nacionales","kind":6,"role":610,"type":"RENT","is_placeholder":false}
+{"code":"600.00.603.46","parent_code":"600.00.603.00","level":3,"name":"Arrendamiento a personas morales residentes nacionales","kind":6,"role":610,"type":"RENT","is_placeholder":false}
+{"code":"600.00.603.47","parent_code":"600.00.603.00","level":3,"name":"Arrendamiento a residentes del extranjero","kind":6,"role":610,"type":"RENT","is_placeholder":false}
+{"code":"600.00.603.48","parent_code":"600.00.603.00","level":3,"name":"Combustibles y lubricantes","kind":6,"role":600,"type":"FUEL","is_placeholder":false}
+{"code":"600.00.603.49","parent_code":"600.00.603.00","level":3,"name":"Viáticos y gastos de viaje","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.50","parent_code":"600.00.603.00","level":3,"name":"Teléfono, internet","kind":6,"role":610,"type":"INTERNET","is_placeholder":false}
+{"code":"600.00.603.51","parent_code":"600.00.603.00","level":3,"name":"Agua","kind":6,"role":610,"type":"UTILITIES","is_placeholder":false}
+{"code":"600.00.603.52","parent_code":"600.00.603.00","level":3,"name":"Energía eléctrica","kind":6,"role":610,"type":"UTILITIES","is_placeholder":false}
+{"code":"600.00.603.53","parent_code":"600.00.603.00","level":3,"name":"Vigilancia y seguridad","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.54","parent_code":"600.00.603.00","level":3,"name":"Limpieza","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.55","parent_code":"600.00.603.00","level":3,"name":"Papelería y artículos de oficina","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.56","parent_code":"600.00.603.00","level":3,"name":"Mantenimiento y conservación","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.57","parent_code":"600.00.603.00","level":3,"name":"Seguros y fianzas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.58","parent_code":"600.00.603.00","level":3,"name":"Otros impuestos y derechos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.59","parent_code":"600.00.603.00","level":3,"name":"Recargos fiscales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.60","parent_code":"600.00.603.00","level":3,"name":"Cuotas y suscripciones","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.61","parent_code":"600.00.603.00","level":3,"name":"Propaganda y publicidad","kind":6,"role":620,"type":"MARKETING","is_placeholder":false}
+{"code":"600.00.603.62","parent_code":"600.00.603.00","level":3,"name":"Capacitación al personal","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.63","parent_code":"600.00.603.00","level":3,"name":"Donativos y ayudas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.64","parent_code":"600.00.603.00","level":3,"name":"Asistencia técnica","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.65","parent_code":"600.00.603.00","level":3,"name":"Regalías sujetas a otros porcentajes","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.66","parent_code":"600.00.603.00","level":3,"name":"Regalías sujetas al 5%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.67","parent_code":"600.00.603.00","level":3,"name":"Regalías sujetas al 10%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.68","parent_code":"600.00.603.00","level":3,"name":"Regalías sujetas al 15%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.69","parent_code":"600.00.603.00","level":3,"name":"Regalías sujetas al 25%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.70","parent_code":"600.00.603.00","level":3,"name":"Regalías sujetas al 30%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.71","parent_code":"600.00.603.00","level":3,"name":"Regalías sin retención","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.72","parent_code":"600.00.603.00","level":3,"name":"Fletes y acarreos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.73","parent_code":"600.00.603.00","level":3,"name":"Gastos de importación","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.74","parent_code":"600.00.603.00","level":3,"name":"Patentes y marcas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.75","parent_code":"600.00.603.00","level":3,"name":"Uniformes","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.76","parent_code":"600.00.603.00","level":3,"name":"Prediales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.77","parent_code":"600.00.603.00","level":3,"name":"Gastos de administración de urbanización","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.78","parent_code":"600.00.603.00","level":3,"name":"Gastos de administración de construcción","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.79","parent_code":"600.00.603.00","level":3,"name":"Fletes del extranjero","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.80","parent_code":"600.00.603.00","level":3,"name":"Recolección de bienes del sector agropecuario y/o ganadero","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.81","parent_code":"600.00.603.00","level":3,"name":"Gastos no deducibles (sin requisitos fiscales)","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.603.82","parent_code":"600.00.603.00","level":3,"name":"Otros gastos de administración","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.00","parent_code":"600.00.000.00","level":2,"name":"Gastos de fabricación","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.01","parent_code":"600.00.604.00","level":3,"name":"Sueldos y salarios","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.02","parent_code":"600.00.604.00","level":3,"name":"Compensaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.03","parent_code":"600.00.604.00","level":3,"name":"Tiempos extras","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.04","parent_code":"600.00.604.00","level":3,"name":"Premios de asistencia","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.05","parent_code":"600.00.604.00","level":3,"name":"Premios de puntualidad","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.06","parent_code":"600.00.604.00","level":3,"name":"Vacaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.07","parent_code":"600.00.604.00","level":3,"name":"Prima vacacional","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.08","parent_code":"600.00.604.00","level":3,"name":"Prima dominical","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.09","parent_code":"600.00.604.00","level":3,"name":"Días festivos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.10","parent_code":"600.00.604.00","level":3,"name":"Gratificaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.11","parent_code":"600.00.604.00","level":3,"name":"Primas de antigüedad","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.12","parent_code":"600.00.604.00","level":3,"name":"Aguinaldo","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.13","parent_code":"600.00.604.00","level":3,"name":"Indemnizaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.14","parent_code":"600.00.604.00","level":3,"name":"Destajo","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.15","parent_code":"600.00.604.00","level":3,"name":"Despensa","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.16","parent_code":"600.00.604.00","level":3,"name":"Transporte","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.17","parent_code":"600.00.604.00","level":3,"name":"Servicio médico","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.18","parent_code":"600.00.604.00","level":3,"name":"Ayuda en gastos funerarios","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.19","parent_code":"600.00.604.00","level":3,"name":"Fondo de ahorro","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.20","parent_code":"600.00.604.00","level":3,"name":"Cuotas sindicales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.21","parent_code":"600.00.604.00","level":3,"name":"PTU","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.22","parent_code":"600.00.604.00","level":3,"name":"Estímulo al personal","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.23","parent_code":"600.00.604.00","level":3,"name":"Previsión social","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.24","parent_code":"600.00.604.00","level":3,"name":"Aportaciones para el plan de jubilación","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.25","parent_code":"600.00.604.00","level":3,"name":"Otras prestaciones al personal","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.26","parent_code":"600.00.604.00","level":3,"name":"Cuotas al IMSS","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.27","parent_code":"600.00.604.00","level":3,"name":"Aportaciones al infonavit","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.28","parent_code":"600.00.604.00","level":3,"name":"Aportaciones al SAR","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.29","parent_code":"600.00.604.00","level":3,"name":"Impuesto estatal sobre nóminas","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.30","parent_code":"600.00.604.00","level":3,"name":"Otras aportaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.31","parent_code":"600.00.604.00","level":3,"name":"Asimilados a salarios","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.604.32","parent_code":"600.00.604.00","level":3,"name":"Servicios administrativos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.33","parent_code":"600.00.604.00","level":3,"name":"Servicios administrativos partes relacionadas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.34","parent_code":"600.00.604.00","level":3,"name":"Honorarios a personas físicas residentes nacionales","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.604.35","parent_code":"600.00.604.00","level":3,"name":"Honorarios a personas físicas residentes nacionales partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.604.36","parent_code":"600.00.604.00","level":3,"name":"Honorarios a personas físicas residentes del extranjero","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.604.37","parent_code":"600.00.604.00","level":3,"name":"Honorarios a personas físicas residentes del extranjero partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.604.38","parent_code":"600.00.604.00","level":3,"name":"Honorarios a personas morales residentes nacionales","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.604.39","parent_code":"600.00.604.00","level":3,"name":"Honorarios a personas morales residentes nacionales partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.604.40","parent_code":"600.00.604.00","level":3,"name":"Honorarios a personas morales residentes del extranjero","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.604.41","parent_code":"600.00.604.00","level":3,"name":"Honorarios a personas morales residentes del extranjero partes relacionadas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.604.42","parent_code":"600.00.604.00","level":3,"name":"Honorarios aduanales personas físicas","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.604.43","parent_code":"600.00.604.00","level":3,"name":"Honorarios aduanales personas morales","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.604.44","parent_code":"600.00.604.00","level":3,"name":"Honorarios al consejo de administración","kind":6,"role":610,"type":"PROFESSIONAL","is_placeholder":false}
+{"code":"600.00.604.45","parent_code":"600.00.604.00","level":3,"name":"Arrendamiento a personas físicas residentes nacionales","kind":6,"role":610,"type":"RENT","is_placeholder":false}
+{"code":"600.00.604.46","parent_code":"600.00.604.00","level":3,"name":"Arrendamiento a personas morales residentes nacionales","kind":6,"role":610,"type":"RENT","is_placeholder":false}
+{"code":"600.00.604.47","parent_code":"600.00.604.00","level":3,"name":"Arrendamiento a residentes del extranjero","kind":6,"role":610,"type":"RENT","is_placeholder":false}
+{"code":"600.00.604.48","parent_code":"600.00.604.00","level":3,"name":"Combustibles y lubricantes","kind":6,"role":600,"type":"FUEL","is_placeholder":false}
+{"code":"600.00.604.49","parent_code":"600.00.604.00","level":3,"name":"Viáticos y gastos de viaje","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.50","parent_code":"600.00.604.00","level":3,"name":"Teléfono, internet","kind":6,"role":610,"type":"INTERNET","is_placeholder":false}
+{"code":"600.00.604.51","parent_code":"600.00.604.00","level":3,"name":"Agua","kind":6,"role":610,"type":"UTILITIES","is_placeholder":false}
+{"code":"600.00.604.52","parent_code":"600.00.604.00","level":3,"name":"Energía eléctrica","kind":6,"role":610,"type":"UTILITIES","is_placeholder":false}
+{"code":"600.00.604.53","parent_code":"600.00.604.00","level":3,"name":"Vigilancia y seguridad","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.54","parent_code":"600.00.604.00","level":3,"name":"Limpieza","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.55","parent_code":"600.00.604.00","level":3,"name":"Papelería y artículos de oficina","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.56","parent_code":"600.00.604.00","level":3,"name":"Mantenimiento y conservación","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.57","parent_code":"600.00.604.00","level":3,"name":"Seguros y fianzas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.58","parent_code":"600.00.604.00","level":3,"name":"Otros impuestos y derechos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.59","parent_code":"600.00.604.00","level":3,"name":"Recargos fiscales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.60","parent_code":"600.00.604.00","level":3,"name":"Cuotas y suscripciones","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.61","parent_code":"600.00.604.00","level":3,"name":"Propaganda y publicidad","kind":6,"role":620,"type":"MARKETING","is_placeholder":false}
+{"code":"600.00.604.62","parent_code":"600.00.604.00","level":3,"name":"Capacitación al personal","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.63","parent_code":"600.00.604.00","level":3,"name":"Donativos y ayudas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.64","parent_code":"600.00.604.00","level":3,"name":"Asistencia técnica","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.65","parent_code":"600.00.604.00","level":3,"name":"Regalías sujetas a otros porcentajes","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.66","parent_code":"600.00.604.00","level":3,"name":"Regalías sujetas al 5%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.67","parent_code":"600.00.604.00","level":3,"name":"Regalías sujetas al 10%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.68","parent_code":"600.00.604.00","level":3,"name":"Regalías sujetas al 15%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.69","parent_code":"600.00.604.00","level":3,"name":"Regalías sujetas al 25%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.70","parent_code":"600.00.604.00","level":3,"name":"Regalías sujetas al 30%","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.71","parent_code":"600.00.604.00","level":3,"name":"Regalías sin retención","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.72","parent_code":"600.00.604.00","level":3,"name":"Fletes y acarreos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.73","parent_code":"600.00.604.00","level":3,"name":"Gastos de importación","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.74","parent_code":"600.00.604.00","level":3,"name":"Patentes y marcas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.75","parent_code":"600.00.604.00","level":3,"name":"Uniformes","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.76","parent_code":"600.00.604.00","level":3,"name":"Prediales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.77","parent_code":"600.00.604.00","level":3,"name":"Gastos de fabricación de urbanización","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.78","parent_code":"600.00.604.00","level":3,"name":"Gastos de fabricación de construcción","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.79","parent_code":"600.00.604.00","level":3,"name":"Fletes del extranjero","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.80","parent_code":"600.00.604.00","level":3,"name":"Recolección de bienes del sector agropecuario y/o ganadero","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.81","parent_code":"600.00.604.00","level":3,"name":"Gastos no deducibles (sin requisitos fiscales)","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.604.82","parent_code":"600.00.604.00","level":3,"name":"Otros gastos de fabricación","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.605.00","parent_code":"600.00.000.00","level":2,"name":"Mano de obra directa","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.605.01","parent_code":"600.00.000.00","level":3,"name":"Mano de obra","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.605.02","parent_code":"600.00.000.00","level":3,"name":"Sueldos y Salarios","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.03","parent_code":"600.00.000.00","level":3,"name":"Compensaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.04","parent_code":"600.00.000.00","level":3,"name":"Tiempos extras","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.05","parent_code":"600.00.000.00","level":3,"name":"Premios de asistencia","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.06","parent_code":"600.00.000.00","level":3,"name":"Premios de puntualidad","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.07","parent_code":"600.00.000.00","level":3,"name":"Vacaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.08","parent_code":"600.00.000.00","level":3,"name":"Prima vacacional","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.09","parent_code":"600.00.000.00","level":3,"name":"Prima dominical","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.605.10","parent_code":"600.00.000.00","level":3,"name":"Días festivos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.605.11","parent_code":"600.00.000.00","level":3,"name":"Gratificaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.12","parent_code":"600.00.000.00","level":3,"name":"Primas de antigüedad","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.605.13","parent_code":"600.00.000.00","level":3,"name":"Aguinaldo","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.14","parent_code":"600.00.000.00","level":3,"name":"Indemnizaciones","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.15","parent_code":"600.00.000.00","level":3,"name":"Destajo","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.16","parent_code":"600.00.000.00","level":3,"name":"Despensa","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.17","parent_code":"600.00.000.00","level":3,"name":"Transporte","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.18","parent_code":"600.00.000.00","level":3,"name":"Servicio médico","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.19","parent_code":"600.00.000.00","level":3,"name":"Ayuda en gastos funerarios","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.605.20","parent_code":"600.00.000.00","level":3,"name":"Fondo de ahorro","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.21","parent_code":"600.00.000.00","level":3,"name":"Cuotas sindicales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.605.22","parent_code":"600.00.000.00","level":3,"name":"PTU","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.23","parent_code":"600.00.000.00","level":3,"name":"Estímulo al personal","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.24","parent_code":"600.00.000.00","level":3,"name":"Previsión social","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.25","parent_code":"600.00.000.00","level":3,"name":"Aportaciones para el plan de jubilación","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.26","parent_code":"600.00.000.00","level":3,"name":"Otras prestaciones al personal","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.27","parent_code":"600.00.000.00","level":3,"name":"Asimilados a salarios","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.28","parent_code":"600.00.000.00","level":3,"name":"Cuotas al IMSS","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.29","parent_code":"600.00.000.00","level":3,"name":"Aportaciones al infonavit","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.30","parent_code":"600.00.000.00","level":3,"name":"Aportaciones al SAR","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.605.31","parent_code":"600.00.000.00","level":3,"name":"Otros costos de mano de obra directa","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.606.00","parent_code":"600.00.000.00","level":2,"name":"Facilidades administrativas fiscales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.606.01","parent_code":"600.00.606.00","level":3,"name":"Facilidades administrativas fiscales","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.607.00","parent_code":"600.00.000.00","level":2,"name":"Participación de los trabajadores en las utilidades","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.607.01","parent_code":"600.00.607.00","level":3,"name":"Participación de los trabajadores en las utilidades","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.608.00","parent_code":"600.00.000.00","level":2,"name":"Participación en resultados de subsidiarias","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.608.01","parent_code":"600.00.608.00","level":3,"name":"Participación en resultados de subsidiarias","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.609.00","parent_code":"600.00.000.00","level":2,"name":"Participación en resultados de asociadas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.609.01","parent_code":"600.00.609.00","level":3,"name":"Participación en resultados de asociadas","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.610.00","parent_code":"600.00.000.00","level":2,"name":"Participación de los trabajadores en las utilidades diferida","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.610.01","parent_code":"600.00.610.00","level":3,"name":"Participación de los trabajadores en las utilidades diferida","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.611.00","parent_code":"600.00.000.00","level":2,"name":"Impuesto Sobre la renta","kind":6,"role":610,"type":"RENT","is_placeholder":false}
+{"code":"600.00.611.01","parent_code":"600.00.611.00","level":3,"name":"Impuesto Sobre la renta","kind":6,"role":610,"type":"RENT","is_placeholder":false}
+{"code":"600.00.611.02","parent_code":"600.00.611.00","level":3,"name":"Impuesto Sobre la renta por remanente distribuible","kind":6,"role":610,"type":"RENT","is_placeholder":false}
+{"code":"600.00.612.00","parent_code":"600.00.000.00","level":2,"name":"Gastos no deducibles para CUFIN","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.612.01","parent_code":"600.00.612.00","level":3,"name":"Gastos no deducibles para CUFIN","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.613.00","parent_code":"600.00.000.00","level":2,"name":"Depreciación contable","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.613.01","parent_code":"600.00.613.00","level":3,"name":"Depreciación de edificios","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.613.02","parent_code":"600.00.613.00","level":3,"name":"Depreciación de maquinaria y equipo","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.613.03","parent_code":"600.00.613.00","level":3,"name":"Depreciación de automóviles, autobuses, camiones de carga, tractocamiones, montacargas y remolques","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.613.04","parent_code":"600.00.613.00","level":3,"name":"Depreciación de mobiliario y equipo de oficina","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.613.05","parent_code":"600.00.613.00","level":3,"name":"Depreciación de equipo de cómputo","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.613.06","parent_code":"600.00.613.00","level":3,"name":"Depreciación de equipo de comunicación","kind":6,"role":610,"type":"INTERNET","is_placeholder":false}
+{"code":"600.00.613.07","parent_code":"600.00.613.00","level":3,"name":"Depreciación de activos biológicos, vegetales y semovientes","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.613.08","parent_code":"600.00.613.00","level":3,"name":"Depreciación de otros activos fijos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.613.09","parent_code":"600.00.613.00","level":3,"name":"Depreciación de ferrocarriles","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.613.10","parent_code":"600.00.613.00","level":3,"name":"Depreciación de embarcaciones","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.613.11","parent_code":"600.00.613.00","level":3,"name":"Depreciación de aviones","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.613.12","parent_code":"600.00.613.00","level":3,"name":"Depreciación de troqueles, moldes, matrices y herramental","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.613.13","parent_code":"600.00.613.00","level":3,"name":"Depreciación de equipo de comunicaciones telefónicas","kind":6,"role":610,"type":"INTERNET","is_placeholder":false}
+{"code":"600.00.613.14","parent_code":"600.00.613.00","level":3,"name":"Depreciación de equipo de comunicación satelital","kind":6,"role":610,"type":"INTERNET","is_placeholder":false}
+{"code":"600.00.613.15","parent_code":"600.00.613.00","level":3,"name":"Depreciación de equipo de adaptaciones para personas con capacidades diferentes","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.613.16","parent_code":"600.00.613.00","level":3,"name":"Depreciación de maquinaria y equipo de generación de energía de fuentes renovables o de sistemas de cogeneración de electricidad eficiente","kind":6,"role":610,"type":"UTILITIES","is_placeholder":false}
+{"code":"600.00.613.17","parent_code":"600.00.613.00","level":3,"name":"Depreciación de adaptaciones y mejoras","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.613.18","parent_code":"600.00.613.00","level":3,"name":"Depreciación de otra maquinaria y equipo","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.614.00","parent_code":"600.00.000.00","level":2,"name":"Amortización contable","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.614.01","parent_code":"600.00.614.00","level":3,"name":"Amortización de gastos diferidos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.614.02","parent_code":"600.00.614.00","level":3,"name":"Amortización de gastos pre operativos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.614.03","parent_code":"600.00.614.00","level":3,"name":"Amortización de regalías, asistencia técnica y otros gastos diferidos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.614.04","parent_code":"600.00.614.00","level":3,"name":"Amortización de activos intangibles","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.614.05","parent_code":"600.00.614.00","level":3,"name":"Amortización de gastos de organización","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.614.06","parent_code":"600.00.614.00","level":3,"name":"Amortización de investigación y desarrollo de mercado","kind":6,"role":610,"type":"PAYROLL","is_placeholder":false}
+{"code":"600.00.614.07","parent_code":"600.00.614.00","level":3,"name":"Amortización de marcas y patentes","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.614.08","parent_code":"600.00.614.00","level":3,"name":"Amortización de crédito mercantil","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.614.09","parent_code":"600.00.614.00","level":3,"name":"Amortización de gastos de instalación","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"600.00.614.10","parent_code":"600.00.614.00","level":3,"name":"Amortización de otros activos diferidos","kind":6,"role":699,"type":"OTHER_EXP","is_placeholder":false}
+{"code":"700.00.000.00","parent_code":"000.00.000.00","level":1,"name":"Resultado integral de financiamiento","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"700.00.701.00","parent_code":"700.00.000.00","level":2,"name":"Gastos financieros","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"700.00.701.01","parent_code":"700.00.701.00","level":3,"name":"Pérdida cambiaria","kind":6,"role":4321,"type":"FX_LOSS","is_placeholder":false}
+{"code":"700.00.701.02","parent_code":"700.00.701.00","level":3,"name":"Pérdida cambiaria nacional parte relacionada","kind":6,"role":4321,"type":"FX_LOSS","is_placeholder":false}
+{"code":"700.00.701.03","parent_code":"700.00.701.00","level":3,"name":"Pérdida cambiaria extranjero parte relacionada","kind":6,"role":4321,"type":"FX_LOSS","is_placeholder":false}
+{"code":"700.00.701.04","parent_code":"700.00.701.00","level":3,"name":"Intereses a cargo bancario nacional","kind":6,"role":4311,"type":"INTEREST_EXPENSE","is_placeholder":false}
+{"code":"700.00.701.05","parent_code":"700.00.701.00","level":3,"name":"Intereses a cargo bancario extranjero","kind":6,"role":4311,"type":"INTEREST_EXPENSE","is_placeholder":false}
+{"code":"700.00.701.06","parent_code":"700.00.701.00","level":3,"name":"Intereses a cargo de personas físicas nacional","kind":6,"role":4311,"type":"INTEREST_EXPENSE","is_placeholder":false}
+{"code":"700.00.701.07","parent_code":"700.00.701.00","level":3,"name":"Intereses a cargo de personas físicas extranjero","kind":6,"role":4311,"type":"INTEREST_EXPENSE","is_placeholder":false}
+{"code":"700.00.701.08","parent_code":"700.00.701.00","level":3,"name":"Intereses a cargo de personas morales nacional","kind":6,"role":4311,"type":"INTEREST_EXPENSE","is_placeholder":false}
+{"code":"700.00.701.09","parent_code":"700.00.701.00","level":3,"name":"Intereses a cargo de personas morales extranjero","kind":6,"role":4311,"type":"INTEREST_EXPENSE","is_placeholder":false}
+{"code":"700.00.701.10","parent_code":"700.00.701.00","level":3,"name":"Comisiones bancarias","kind":6,"role":4341,"type":"BANK_FEES_EXPENSE","is_placeholder":false}
+{"code":"700.00.701.11","parent_code":"700.00.701.00","level":3,"name":"Otros gastos financieros","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.702.00","parent_code":"700.00.000.00","level":2,"name":"Productos financieros","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"700.00.702.01","parent_code":"700.00.702.00","level":3,"name":"Utilidad cambiaria","kind":4,"role":4320,"type":"FX_GAIN","is_placeholder":false}
+{"code":"700.00.702.02","parent_code":"700.00.702.00","level":3,"name":"Utilidad cambiaria nacional parte relacionada","kind":4,"role":4320,"type":"FX_GAIN","is_placeholder":false}
+{"code":"700.00.702.03","parent_code":"700.00.702.00","level":3,"name":"Utilidad cambiaria extranjero parte relacionada","kind":4,"role":4320,"type":"FX_GAIN","is_placeholder":false}
+{"code":"700.00.702.04","parent_code":"700.00.702.00","level":3,"name":"Intereses a favor bancarios nacional","kind":4,"role":4310,"type":"INTEREST_INCOME","is_placeholder":false}
+{"code":"700.00.702.05","parent_code":"700.00.702.00","level":3,"name":"Intereses a favor bancarios extranjero","kind":4,"role":4310,"type":"INTEREST_INCOME","is_placeholder":false}
+{"code":"700.00.702.06","parent_code":"700.00.702.00","level":3,"name":"Intereses a favor de personas físicas nacional","kind":4,"role":4310,"type":"INTEREST_INCOME","is_placeholder":false}
+{"code":"700.00.702.07","parent_code":"700.00.702.00","level":3,"name":"Intereses a favor de personas físicas extranjero","kind":4,"role":4310,"type":"INTEREST_INCOME","is_placeholder":false}
+{"code":"700.00.702.08","parent_code":"700.00.702.00","level":3,"name":"Intereses a favor de personas morales nacional","kind":4,"role":4310,"type":"INTEREST_INCOME","is_placeholder":false}
+{"code":"700.00.702.09","parent_code":"700.00.702.00","level":3,"name":"Intereses a favor de personas morales extranjero","kind":4,"role":4310,"type":"INTEREST_INCOME","is_placeholder":false}
+{"code":"700.00.702.10","parent_code":"700.00.702.00","level":3,"name":"Otros productos financieros","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.703.00","parent_code":"700.00.000.00","level":2,"name":"Otros gastos","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"700.00.703.01","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de terrenos","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.02","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de edificios","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.03","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de maquinaria y equipo","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.04","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de automóviles, autobuses, camiones de carga, tractocamiones, montacargas y remolques","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.05","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de mobiliario y equipo de oficina","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.06","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de equipo de cómputo","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.07","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de equipo de comunicación","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.08","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de activos biológicos, vegetales y semovientes","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.09","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de otros activos fijos","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.10","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de ferrocarriles","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.11","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de embarcaciones","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.12","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de aviones","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.13","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de troqueles, moldes, matrices y herramental","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.14","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de equipo de comunicaciones telefónicas","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.15","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de equipo de comunicación satelital 703.16","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.16","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de equipo de adaptaciones para personas con capacidades diferentes","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.17","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de maquinaria y equipo de generación de energía de fuentes renovables o de sistemas de cogeneración de electricidad eficiente","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.18","parent_code":"700.00.703.00","level":3,"name":"Pérdida en venta y/o baja de otra maquinaria y equipo","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.19","parent_code":"700.00.703.00","level":3,"name":"Pérdida por enajenación de acciones","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.20","parent_code":"700.00.703.00","level":3,"name":"Pérdida por enajenación de partes sociales","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.703.21","parent_code":"700.00.703.00","level":3,"name":"Otros gastos","kind":6,"role":4391,"type":"OTHER_FIN_EXPENSE","is_placeholder":false}
+{"code":"700.00.704.00","parent_code":"700.00.000.00","level":2,"name":"Otros productos","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"700.00.704.01","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de terrenos","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.02","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de edificios","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.03","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de maquinaria y equipo","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.04","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de automóviles, autobuses, camiones de carga, tractocamiones, montacargas y remolques","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.05","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de mobiliario y equipo de oficina","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.06","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de equipo de cómputo","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.07","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de equipo de comunicación","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.08","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de activos biológicos, vegetales y semovientes","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.09","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de otros activos fijos","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.10","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de ferrocarriles","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.11","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de embarcaciones","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.12","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de aviones","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.13","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de troqueles, moldes, matrices y herramental","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.14","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de equipo de comunicaciones telefónicas","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.15","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de equipo de comunicación satelital","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.16","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de equipo de adaptaciones para personas con capacidades diferentes","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.17","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta de maquinaria y equipo de generación de energía de fuentes renovables o de sistemas de cogeneración de electricidad eficiente","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.18","parent_code":"700.00.704.00","level":3,"name":"Ganancia en venta y/o baja de otra maquinaria y equipo","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.19","parent_code":"700.00.704.00","level":3,"name":"Ganancia por enajenación de acciones","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.20","parent_code":"700.00.704.00","level":3,"name":"Ganancia por enajenación de partes sociales","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.21","parent_code":"700.00.704.00","level":3,"name":"Ingresos por estímulos fiscales","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.22","parent_code":"700.00.704.00","level":3,"name":"Ingresos por condonación de adeudo","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"700.00.704.23","parent_code":"700.00.704.00","level":3,"name":"Otros productos","kind":4,"role":4390,"type":"OTHER_FIN_INCOME","is_placeholder":false}
+{"code":"800.00.000.00","parent_code":"000.00.000.00","level":1,"name":"Cuentas de orden","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.801.00","parent_code":"800.00.000.00","level":2,"name":"UFIN del ejercicio","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.801.01","parent_code":"800.00.801.00","level":3,"name":"UFIN","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.801.02","parent_code":"800.00.801.00","level":3,"name":"Contra cuenta UFIN","kind":7,"role":800,"type":"MEM_CREDIT","is_placeholder":false}
+{"code":"800.00.802.00","parent_code":"800.00.000.00","level":2,"name":"CUFIN del ejercicio","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.802.01","parent_code":"800.00.802.00","level":3,"name":"CUFIN","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.802.02","parent_code":"800.00.802.00","level":3,"name":"Contra cuenta CUFIN","kind":7,"role":800,"type":"MEM_CREDIT","is_placeholder":false}
+{"code":"800.00.803.00","parent_code":"800.00.000.00","level":2,"name":"CUFIN de ejercicios anteriores","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.803.01","parent_code":"800.00.803.00","level":3,"name":"CUFIN de ejercicios anteriores","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.803.02","parent_code":"800.00.803.00","level":3,"name":"Contra cuenta CUFIN de ejercicios anteriores","kind":7,"role":800,"type":"MEM_CREDIT","is_placeholder":false}
+{"code":"800.00.804.00","parent_code":"800.00.000.00","level":2,"name":"CUFINRE del ejercicio","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.804.01","parent_code":"800.00.804.00","level":3,"name":"CUFINRE","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.804.02","parent_code":"800.00.804.00","level":3,"name":"Contra cuenta CUFINRE","kind":7,"role":800,"type":"MEM_CREDIT","is_placeholder":false}
+{"code":"800.00.805.00","parent_code":"800.00.000.00","level":2,"name":"CUFINRE de ejercicios anteriores","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.805.01","parent_code":"800.00.805.00","level":3,"name":"CUFINRE de ejercicios anteriores","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.805.02","parent_code":"800.00.805.00","level":3,"name":"Contra cuenta CUFINRE de ejercicios anteriores","kind":7,"role":800,"type":"MEM_CREDIT","is_placeholder":false}
+{"code":"800.00.806.00","parent_code":"800.00.000.00","level":2,"name":"CUCA del ejercicio","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.806.01","parent_code":"800.00.806.00","level":3,"name":"CUCA","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.806.02","parent_code":"800.00.806.00","level":3,"name":"Contra cuenta CUCA","kind":7,"role":800,"type":"MEM_CREDIT","is_placeholder":false}
+{"code":"800.00.807.00","parent_code":"800.00.000.00","level":2,"name":"CUCA de ejercicios anteriores","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.807.01","parent_code":"800.00.807.00","level":3,"name":"CUCA de ejercicios anteriores","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.807.02","parent_code":"800.00.807.00","level":3,"name":"Contra cuenta CUCA de ejercicios anteriores","kind":7,"role":800,"type":"MEM_CREDIT","is_placeholder":false}
+{"code":"800.00.808.00","parent_code":"800.00.000.00","level":2,"name":"Ajuste anual por inflación acumulable","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.808.01","parent_code":"800.00.808.00","level":3,"name":"Ajuste anual por inflación acumulable","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.808.02","parent_code":"800.00.808.00","level":3,"name":"Acumulación del ajuste anual inflacionario","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.809.00","parent_code":"800.00.000.00","level":2,"name":"Ajuste anual por inflación deducible","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.809.01","parent_code":"800.00.809.00","level":3,"name":"Ajuste anual por inflación deducible","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.809.02","parent_code":"800.00.809.00","level":3,"name":"Deducción del ajuste anual inflacionario","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.810.00","parent_code":"800.00.000.00","level":2,"name":"Deducción de inversión","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.810.01","parent_code":"800.00.810.00","level":3,"name":"Deducción de inversión","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.810.02","parent_code":"800.00.810.00","level":3,"name":"Contra cuenta deducción de inversiones","kind":7,"role":800,"type":"MEM_CREDIT","is_placeholder":false}
+{"code":"800.00.811.00","parent_code":"800.00.000.00","level":2,"name":"Utilidad o pérdida fiscal en venta y/o baja de activo fijo","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.811.01","parent_code":"800.00.811.00","level":3,"name":"Utilidad o pérdida fiscal en venta y/o baja de activo fijo","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.811.02","parent_code":"800.00.811.00","level":3,"name":"Contra cuenta utilidad o pérdida fiscal en venta y/o baja de activo fijo","kind":7,"role":800,"type":"MEM_CREDIT","is_placeholder":false}
+{"code":"800.00.812.00","parent_code":"800.00.000.00","level":2,"name":"Utilidad o pérdida fiscal en venta acciones o partes sociales","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.812.01","parent_code":"800.00.812.00","level":3,"name":"Utilidad o pérdida fiscal en venta acciones o partes sociales","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.812.02","parent_code":"800.00.812.00","level":3,"name":"Contra cuenta utilidad o pérdida fiscal en venta acciones o partes sociales","kind":7,"role":800,"type":"MEM_CREDIT","is_placeholder":false}
+{"code":"800.00.813.00","parent_code":"800.00.000.00","level":2,"name":"Pérdidas fiscales pendientes de amortizar actualizadas de ejercicios anteriores","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.813.01","parent_code":"800.00.813.00","level":3,"name":"Pérdidas fiscales pendientes de amortizar actualizadas de ejercicios anteriores","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.813.02","parent_code":"800.00.813.00","level":3,"name":"Actualización de pérdidas fiscales pendientes de amortizar de ejercicios anteriores","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.814.00","parent_code":"800.00.000.00","level":2,"name":"Mercancías recibidas en consignación","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.814.01","parent_code":"800.00.814.00","level":3,"name":"Mercancías recibidas en consignación","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.814.02","parent_code":"800.00.814.00","level":3,"name":"Consignación de mercancías recibidas","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.815.00","parent_code":"800.00.000.00","level":2,"name":"Crédito fiscal de IVA e IEPS por la importación de mercancías para empresas certificadas","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.815.01","parent_code":"800.00.815.00","level":3,"name":"Crédito fiscal de IVA e IEPS por la importación de mercancías","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.815.02","parent_code":"800.00.815.00","level":3,"name":"Importación de mercancías con aplicación de crédito fiscal de IVA e IEPS","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.816.00","parent_code":"800.00.000.00","level":2,"name":"Crédito fiscal de IVA e IEPS por la importación de activos fijos para empresas certificadas","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.816.01","parent_code":"800.00.814.00","level":3,"name":"Crédito fiscal de IVA e IEPS por la importación de activo fijo","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.816.02","parent_code":"800.00.814.00","level":3,"name":"Importación de activo fijo con aplicación de crédito fiscal de IVA e IEPS","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.817.00","parent_code":"800.00.000.00","level":2,"name":"Otras cuentas de orden","kind":0,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"800.00.817.01","parent_code":"800.00.815.00","level":3,"name":"Otras cuentas de orden","kind":7,"role":700,"type":"MEM_DEBIT","is_placeholder":false}
+{"code":"800.00.817.02","parent_code":"800.00.815.00","level":3,"name":"Contra cuenta otras cuentas de orden","kind":7,"role":800,"type":"MEM_CREDIT","is_placeholder":false}

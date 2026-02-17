@@ -1,0 +1,3052 @@
+[
+  {
+    "Code": "000-00.000.00-000.000",
+    "Parent": null,
+    "Level": 0,
+    "Name": "Raíz",
+    "Kind": 0,
+    "Role": 0,
+    "Type": null,
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-00.000.00-000.000",
+    "Parent": "000-00.000.00-000.000",
+    "Level": 1,
+    "Name": "Activos",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-01.000.00-000.000",
+    "Parent": "100-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Activo Circulante",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-01.001.00-000.000",
+    "Parent": "100-01.000.00-000.000",
+    "Level": 3,
+    "Name": "Caja",
+    "Kind": 1,
+    "Role": 100,
+    "Type": "CASH",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-01.001.01-000.000",
+    "Parent": "100-01.001.00-000.000",
+    "Level": 4,
+    "Name": "Efectivo",
+    "Kind": 1,
+    "Role": 100,
+    "Type": "CASH",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-01.002.00-000.000",
+    "Parent": "100-01.000.00-000.000",
+    "Level": 3,
+    "Name": "Certificados de depósito",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-01.002.01-000.000",
+    "Parent": "100-01.002.00-000.000",
+    "Level": 4,
+    "Name": "Certificado 1",
+    "Kind": 1,
+    "Role": 101,
+    "Type": "BANK",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-01.002.02-000.000",
+    "Parent": "100-01.002.00-000.000",
+    "Level": 4,
+    "Name": "Certificado 2",
+    "Kind": 1,
+    "Role": 101,
+    "Type": "BANK",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-01.003.00-000.000",
+    "Parent": "100-01.000.00-000.000",
+    "Level": 3,
+    "Name": "Cuentas de ahorro",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-01.003.01-000.000",
+    "Parent": "100-01.003.00-000.000",
+    "Level": 4,
+    "Name": "Cuenta de ahorro 1",
+    "Kind": 1,
+    "Role": 101,
+    "Type": "BANK",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-01.003.02-000.000",
+    "Parent": "100-01.003.00-000.000",
+    "Level": 4,
+    "Name": "Cuenta de ahorro 2",
+    "Kind": 1,
+    "Role": 101,
+    "Type": "BANK",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-01.004.00-000.000",
+    "Parent": "100-01.000.00-000.000",
+    "Level": 3,
+    "Name": "Cuentas de cheques",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-01.004.01-000.000",
+    "Parent": "100-01.004.00-000.000",
+    "Level": 4,
+    "Name": "Cuenta de cheques 1",
+    "Kind": 1,
+    "Role": 101,
+    "Type": "BANK",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-01.004.02-000.000",
+    "Parent": "100-01.004.00-000.000",
+    "Level": 4,
+    "Name": "Cuenta de cheques 2",
+    "Kind": 1,
+    "Role": 101,
+    "Type": "BANK",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-01.005.00-000.000",
+    "Parent": "100-01.000.00-000.000",
+    "Level": 3,
+    "Name": "Préstamos realizados",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-01.005.01-000.000",
+    "Parent": "100-01.005.00-000.000",
+    "Level": 4,
+    "Name": "Familia",
+    "Kind": 1,
+    "Role": 110,
+    "Type": "AR",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-01.005.02-000.000",
+    "Parent": "100-01.005.00-000.000",
+    "Level": 4,
+    "Name": "Otros",
+    "Kind": 1,
+    "Role": 110,
+    "Type": "AR",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-01.006.00-000.000",
+    "Parent": "100-01.000.00-000.000",
+    "Level": 3,
+    "Name": "Inversiones temporales",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-01.006.01-000.000",
+    "Parent": "100-01.006.00-000.000",
+    "Level": 4,
+    "Name": "Inversión temporal 1",
+    "Kind": 1,
+    "Role": 101,
+    "Type": "BANK",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.000.00-000.000",
+    "Parent": "100-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Activo No Circulante",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-02.001.00-000.000",
+    "Parent": "100-02.000.00-000.000",
+    "Level": 3,
+    "Name": "Propiedades, Planta y Equipo",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-02.001.01-000.000",
+    "Parent": "100-02.001.00-000.000",
+    "Level": 4,
+    "Name": "Terrenos",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.001.02-000.000",
+    "Parent": "100-02.001.00-000.000",
+    "Level": 4,
+    "Name": "Edificios",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.001.03-000.000",
+    "Parent": "100-02.001.00-000.000",
+    "Level": 4,
+    "Name": "Maquinaria y Equipo",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.001.04-000.000",
+    "Parent": "100-02.001.00-000.000",
+    "Level": 4,
+    "Name": "Mobiliario y Equipo de Oficina",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.001.05-000.000",
+    "Parent": "100-02.001.00-000.000",
+    "Level": 4,
+    "Name": "Vehículos",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.002.00-000.000",
+    "Parent": "100-02.000.00-000.000",
+    "Level": 3,
+    "Name": "Depreciación Acumulada",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-02.002.01-000.000",
+    "Parent": "100-02.002.00-000.000",
+    "Level": 4,
+    "Name": "Dep. Edificios",
+    "Kind": 1,
+    "Role": 131,
+    "Type": "ACCUM_DEPR",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.002.02-000.000",
+    "Parent": "100-02.002.00-000.000",
+    "Level": 4,
+    "Name": "Dep. Maquinaria",
+    "Kind": 1,
+    "Role": 131,
+    "Type": "ACCUM_DEPR",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.002.03-000.000",
+    "Parent": "100-02.002.00-000.000",
+    "Level": 4,
+    "Name": "Dep. Vehículos",
+    "Kind": 1,
+    "Role": 131,
+    "Type": "ACCUM_DEPR",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.003.00-000.000",
+    "Parent": "100-02.000.00-000.000",
+    "Level": 3,
+    "Name": "Inversiones a Largo Plazo",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-02.003.01-000.000",
+    "Parent": "100-02.003.00-000.000",
+    "Level": 4,
+    "Name": "Ahorro para el retiro",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-02.003.01-001.000",
+    "Parent": "100-02.003.01-000.000",
+    "Level": 5,
+    "Name": "Acciones",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.003.01-002.000",
+    "Parent": "100-02.003.01-000.000",
+    "Level": 5,
+    "Name": "Ahorros",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.003.01-003.000",
+    "Parent": "100-02.003.01-000.000",
+    "Level": 5,
+    "Name": "Bonos",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.003.01-004.000",
+    "Parent": "100-02.003.01-000.000",
+    "Level": 5,
+    "Name": "Fondos de Inversión",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.003.01-005.000",
+    "Parent": "100-02.003.01-000.000",
+    "Level": 5,
+    "Name": "Índice de Mercado",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.003.02-000.000",
+    "Parent": "100-02.003.00-000.000",
+    "Level": 4,
+    "Name": "Cuentas de Corretaje",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-02.003.02-001.000",
+    "Parent": "100-02.003.02-000.000",
+    "Level": 5,
+    "Name": "Acciones",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.003.02-002.000",
+    "Parent": "100-02.003.02-000.000",
+    "Level": 5,
+    "Name": "Bonos",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.003.02-003.000",
+    "Parent": "100-02.003.02-000.000",
+    "Level": 5,
+    "Name": "Fondos de Inversión",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.003.02-004.000",
+    "Parent": "100-02.003.02-000.000",
+    "Level": 5,
+    "Name": "Índice de Mercado",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.004.00-000.000",
+    "Parent": "100-02.000.00-000.000",
+    "Level": 3,
+    "Name": "Activos Intangibles",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-02.004.01-000.000",
+    "Parent": "100-02.004.00-000.000",
+    "Level": 4,
+    "Name": "Marcas",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.004.02-000.000",
+    "Parent": "100-02.004.00-000.000",
+    "Level": 4,
+    "Name": "Patentes",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.004.03-000.000",
+    "Parent": "100-02.004.00-000.000",
+    "Level": 4,
+    "Name": "Software",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-02.004.04-000.000",
+    "Parent": "100-02.004.00-000.000",
+    "Level": 4,
+    "Name": "Licencias",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-03.000.00-000.000",
+    "Parent": "100-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Otros Activos",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-03.001.00-000.000",
+    "Parent": "100-03.000.00-000.000",
+    "Level": 3,
+    "Name": "Depósitos en Garantía",
+    "Kind": 1,
+    "Role": 130,
+    "Type": "FIXED_ASSET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-03.002.00-000.000",
+    "Parent": "100-03.000.00-000.000",
+    "Level": 3,
+    "Name": "Préstamos realizados a largo plazo",
+    "Kind": 1,
+    "Role": 199,
+    "Type": "OTHER_ASSET",
+    "Placeholder": 1
+  },
+  {
+    "Code": "100-03.002.01-000.000",
+    "Parent": "100-03.002.00-000.000",
+    "Level": 4,
+    "Name": "Familia",
+    "Kind": 1,
+    "Role": 110,
+    "Type": "AR",
+    "Placeholder": 0
+  },
+  {
+    "Code": "100-03.002.02-000.000",
+    "Parent": "100-03.002.00-000.000",
+    "Level": 4,
+    "Name": "Otros",
+    "Kind": 1,
+    "Role": 110,
+    "Type": "AR",
+    "Placeholder": 0
+  },
+  {
+    "Code": "200-00.000.00-000.000",
+    "Parent": "000-00.000.00-000.000",
+    "Level": 1,
+    "Name": "Pasivos",
+    "Kind": 2,
+    "Role": 299,
+    "Type": "OTHER_LIAB",
+    "Placeholder": 1
+  },
+  {
+    "Code": "200-01.000.00-000.000",
+    "Parent": "200-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Pasivo Circulante",
+    "Kind": 2,
+    "Role": 299,
+    "Type": "OTHER_LIAB",
+    "Placeholder": 1
+  },
+  {
+    "Code": "200-01.001.00-000.000",
+    "Parent": "200-01.000.00-000.000",
+    "Level": 3,
+    "Name": "Préstamos no bancarios",
+    "Kind": 2,
+    "Role": 220,
+    "Type": "LOAN",
+    "Placeholder": 0
+  },
+  {
+    "Code": "200-01.002.00-000.000",
+    "Parent": "200-01.000.00-000.000",
+    "Level": 3,
+    "Name": "Créditos Bancarios a Corto Plazo",
+    "Kind": 2,
+    "Role": 220,
+    "Type": "LOAN",
+    "Placeholder": 0
+  },
+  {
+    "Code": "200-01.003.00-000.000",
+    "Parent": "200-01.000.00-000.000",
+    "Level": 3,
+    "Name": "Tarjetas de Crédito",
+    "Kind": 2,
+    "Role": 220,
+    "Type": "CREDIT_CARD",
+    "Placeholder": 0
+  },
+  {
+    "Code": "200-02.000.00-000.000",
+    "Parent": "200-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Pasivo No Circulante",
+    "Kind": 2,
+    "Role": 299,
+    "Type": "OTHER_LIAB",
+    "Placeholder": 1
+  },
+  {
+    "Code": "200-02.001.00-000.000",
+    "Parent": "200-02.000.00-000.000",
+    "Level": 3,
+    "Name": "Préstamos Bancarios a Largo Plazo",
+    "Kind": 2,
+    "Role": 220,
+    "Type": "LOAN",
+    "Placeholder": 0
+  },
+  {
+    "Code": "200-02.002.00-000.000",
+    "Parent": "200-02.000.00-000.000",
+    "Level": 3,
+    "Name": "Arrendamientos Financieros",
+    "Kind": 2,
+    "Role": 299,
+    "Type": "OTHER_LIAB",
+    "Placeholder": 0
+  },
+  {
+    "Code": "200-02.003.00-000.000",
+    "Parent": "200-02.000.00-000.000",
+    "Level": 3,
+    "Name": "Hipotecas",
+    "Kind": 2,
+    "Role": 220,
+    "Type": "LOAN",
+    "Placeholder": 0
+  },
+  {
+    "Code": "200-02.004.00-000.000",
+    "Parent": "200-02.000.00-000.000",
+    "Level": 3,
+    "Name": "Obligaciones Fiscales a Largo Plazo",
+    "Kind": 2,
+    "Role": 299,
+    "Type": "OTHER_LIAB",
+    "Placeholder": 0
+  },
+  {
+    "Code": "300-00.000.00-000.000",
+    "Parent": "000-00.000.00-000.000",
+    "Level": 1,
+    "Name": "Capital",
+    "Kind": 3,
+    "Role": 300,
+    "Type": "CAPITAL",
+    "Placeholder": 1
+  },
+  {
+    "Code": "300-01.000.00-000.000",
+    "Parent": "300-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Balance inicial",
+    "Kind": 3,
+    "Role": 300,
+    "Type": "CAPITAL",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-00.000.00-000.000",
+    "Parent": "000-00.000.00-000.000",
+    "Level": 1,
+    "Name": "Ingresos",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 1
+  },
+  {
+    "Code": "400-01.000.00-000.000",
+    "Parent": "400-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Ingresos por Sueldos y Salarios",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 1
+  },
+  {
+    "Code": "400-01.001.00-000.000",
+    "Parent": "400-01.000.00-000.000",
+    "Level": 3,
+    "Name": "Sueldo",
+    "Kind": 4,
+    "Role": 420,
+    "Type": "WORK_REV",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-02.000.00-000.000",
+    "Parent": "400-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Ingresos por Bonos Laborales",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 1
+  },
+  {
+    "Code": "400-02.001.00-000.000",
+    "Parent": "400-02.000.00-000.000",
+    "Level": 3,
+    "Name": "Aguinaldo",
+    "Kind": 4,
+    "Role": 420,
+    "Type": "WORK_REV",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-02.002.00-000.000",
+    "Parent": "400-02.000.00-000.000",
+    "Level": 3,
+    "Name": "Prima Vacacional",
+    "Kind": 4,
+    "Role": 420,
+    "Type": "WORK_REV",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-03.000.00-000.000",
+    "Parent": "400-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Ingresos por Pensiones",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 1
+  },
+  {
+    "Code": "400-03.001.00-000.000",
+    "Parent": "400-03.000.00-000.000",
+    "Level": 3,
+    "Name": "Pensión",
+    "Kind": 4,
+    "Role": 420,
+    "Type": "WORK_REV",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-04.000.00-000.000",
+    "Parent": "400-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Ingresos Financieros",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 1
+  },
+  {
+    "Code": "400-04.001.00-000.000",
+    "Parent": "400-04.000.00-000.000",
+    "Level": 3,
+    "Name": "Intereses",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 1
+  },
+  {
+    "Code": "400-04.001.01-000.000",
+    "Parent": "400-04.001.00-000.000",
+    "Level": 4,
+    "Name": "Intereses por Ahorros",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-04.001.02-000.000",
+    "Parent": "400-04.001.00-000.000",
+    "Level": 4,
+    "Name": "Intereses por Bonos",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-04.001.03-000.000",
+    "Parent": "400-04.001.00-000.000",
+    "Level": 4,
+    "Name": "Intereses por Certificados",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-04.001.04-000.000",
+    "Parent": "400-04.001.00-000.000",
+    "Level": 4,
+    "Name": "Intereses por Cheques",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-04.001.05-000.000",
+    "Parent": "400-04.001.00-000.000",
+    "Level": 4,
+    "Name": "Intereses por Mercado de Monedas",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-04.001.06-000.000",
+    "Parent": "400-04.001.00-000.000",
+    "Level": 4,
+    "Name": "Otros Intereses",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-04.001.07-000.000",
+    "Parent": "400-04.000.00-000.000",
+    "Level": 3,
+    "Name": "Rendimiento de inversiones",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 1
+  },
+  {
+    "Code": "400-05.000.00-000.000",
+    "Parent": "400-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Ingresos por Honorarios",
+    "Kind": 4,
+    "Role": 410,
+    "Type": "SERVICE_REV",
+    "Placeholder": 1
+  },
+  {
+    "Code": "400-06.000.00-000.000",
+    "Parent": "400-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Ingresos por Rentas",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 1
+  },
+  {
+    "Code": "400-06.001.00-000.000",
+    "Parent": "400-06.000.00-000.000",
+    "Level": 3,
+    "Name": "Inmueble 1",
+    "Kind": 4,
+    "Role": 430,
+    "Type": "RENTAL_REV",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-07.000.00-000.000",
+    "Parent": "400-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Otros Ingresos",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 1
+  },
+  {
+    "Code": "400-07.001.00-000.000",
+    "Parent": "400-07.000.00-000.000",
+    "Level": 3,
+    "Name": "Anticipos Laborales",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-07.002.00-000.000",
+    "Parent": "400-07.000.00-000.000",
+    "Level": 3,
+    "Name": "Aportaciones Patronales",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-07.003.00-000.000",
+    "Parent": "400-07.000.00-000.000",
+    "Level": 3,
+    "Name": "Apoyo Gubernamental",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-07.004.00-000.000",
+    "Parent": "400-07.000.00-000.000",
+    "Level": 3,
+    "Name": "Apoyos Alimenticios",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-07.005.00-000.000",
+    "Parent": "400-07.000.00-000.000",
+    "Level": 3,
+    "Name": "Ingresos por devolución de impuestos",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-07.006.00-000.000",
+    "Parent": "400-07.000.00-000.000",
+    "Level": 3,
+    "Name": "Ingresos por devolución de compras",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-07.007.00-000.000",
+    "Parent": "400-07.000.00-000.000",
+    "Level": 3,
+    "Name": "Premios por Sorteos y Loterías",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-07.008.00-000.000",
+    "Parent": "400-07.000.00-000.000",
+    "Level": 3,
+    "Name": "Préstamos",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 0
+  },
+  {
+    "Code": "400-07.009.00-000.000",
+    "Parent": "400-07.000.00-000.000",
+    "Level": 3,
+    "Name": "Puntos redimidos",
+    "Kind": 4,
+    "Role": 499,
+    "Type": "OTHER_INC",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-00.000.00-000.000",
+    "Parent": "000-00.000.00-000.000",
+    "Level": 1,
+    "Name": "Egresos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-01.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Ajustes",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-02.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Alcohol y Tabaco",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-02.001.00-000.000",
+    "Parent": "500-02.000.00-000.000",
+    "Level": 3,
+    "Name": "Destilados",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-02.002.00-000.000",
+    "Parent": "500-02.000.00-000.000",
+    "Level": 3,
+    "Name": "Fermentados",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-02.003.00-000.000",
+    "Parent": "500-02.000.00-000.000",
+    "Level": 3,
+    "Name": "Otras bebidas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-02.004.00-000.000",
+    "Parent": "500-02.000.00-000.000",
+    "Level": 3,
+    "Name": "Tabaco",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-03.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Alimentos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-03.001.00-000.000",
+    "Parent": "500-03.000.00-000.000",
+    "Level": 3,
+    "Name": "Comida para llevar",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-03.002.00-000.000",
+    "Parent": "500-03.000.00-000.000",
+    "Level": 3,
+    "Name": "Restaurantes y cocinas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-03.003.00-000.000",
+    "Parent": "500-03.000.00-000.000",
+    "Level": 3,
+    "Name": "Comestibles",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-03.003.01-000.000",
+    "Parent": "500-03.003.00-000.000",
+    "Level": 4,
+    "Name": "Bebidas no alcohólicas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-03.003.02-000.000",
+    "Parent": "500-03.003.00-000.000",
+    "Level": 4,
+    "Name": "Carnes",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-03.003.03-000.000",
+    "Parent": "500-03.003.00-000.000",
+    "Level": 4,
+    "Name": "Congelados",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-03.003.04-000.000",
+    "Parent": "500-03.003.00-000.000",
+    "Level": 4,
+    "Name": "Despensa",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-03.003.05-000.000",
+    "Parent": "500-03.003.00-000.000",
+    "Level": 4,
+    "Name": "Huevos y Lácteos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-03.003.06-000.000",
+    "Parent": "500-03.003.00-000.000",
+    "Level": 4,
+    "Name": "Panadería y Tortillería",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-03.003.07-000.000",
+    "Parent": "500-03.003.00-000.000",
+    "Level": 4,
+    "Name": "Snacks",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-04.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Automóvil",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-04.001.00-000.000",
+    "Parent": "500-04.000.00-000.000",
+    "Level": 3,
+    "Name": "Accesorios",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-04.002.00-000.000",
+    "Parent": "500-04.000.00-000.000",
+    "Level": 3,
+    "Name": "Combustible y Aditivos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-04.002.01-000.000",
+    "Parent": "500-04.002.00-000.000",
+    "Level": 4,
+    "Name": "Combustible",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "FUEL",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-04.002.02-000.000",
+    "Parent": "500-04.002.00-000.000",
+    "Level": 4,
+    "Name": "Aditivos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-04.003.00-000.000",
+    "Parent": "500-04.000.00-000.000",
+    "Level": 3,
+    "Name": "Cuotas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-04.004.00-000.000",
+    "Parent": "500-04.000.00-000.000",
+    "Level": 3,
+    "Name": "Estacionamientos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-04.005.00-000.000",
+    "Parent": "500-04.000.00-000.000",
+    "Level": 3,
+    "Name": "Reparaciones y Mantenimiento",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-04.005.01-000.000",
+    "Parent": "500-04.005.00-000.000",
+    "Level": 4,
+    "Name": "Refacciones",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-04.005.02-000.000",
+    "Parent": "500-04.005.00-000.000",
+    "Level": 4,
+    "Name": "Mantenimiento",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-04.005.03-000.000",
+    "Parent": "500-04.005.00-000.000",
+    "Level": 4,
+    "Name": "Reparaciones",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-04.006.00-000.000",
+    "Parent": "500-04.000.00-000.000",
+    "Level": 3,
+    "Name": "Pago de automóvil",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-04.006.00-000.000",
+    "Parent": "500-04.000.00-000.000",
+    "Level": 3,
+    "Name": "Servicios de Limpieza",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-05.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Cuidado Personal",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-05.001.00-000.000",
+    "Parent": "500-05.000.00-000.000",
+    "Level": 3,
+    "Name": "Cortes de cabello",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-05.002.00-000.000",
+    "Parent": "500-05.000.00-000.000",
+    "Level": 3,
+    "Name": "Lociones y perfumes",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-05.003.00-000.000",
+    "Parent": "500-05.000.00-000.000",
+    "Level": 3,
+    "Name": "Manicure y pedicure",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-05.004.00-000.000",
+    "Parent": "500-05.000.00-000.000",
+    "Level": 3,
+    "Name": "Productos de higiene personal",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-05.005.00-000.000",
+    "Parent": "500-05.000.00-000.000",
+    "Level": 3,
+    "Name": "Tratamientos de belleza",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Cuidado de la Salud",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-06.001.00-000.000",
+    "Parent": "500-06.000.00-000.000",
+    "Level": 3,
+    "Name": "Salud",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-06.001.01-000.000",
+    "Parent": "500-06.001.00-000.000",
+    "Level": 4,
+    "Name": "Accesorios",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.001.02-000.000",
+    "Parent": "500-06.001.00-000.000",
+    "Level": 4,
+    "Name": "Dispositivos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.001.03-000.000",
+    "Parent": "500-06.001.00-000.000",
+    "Level": 4,
+    "Name": "Gastos de Enfermería",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.001.04-000.000",
+    "Parent": "500-06.001.00-000.000",
+    "Level": 4,
+    "Name": "Gastos de Hospital",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.001.05-000.000",
+    "Parent": "500-06.001.00-000.000",
+    "Level": 4,
+    "Name": "Laboratorios",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.001.06-000.000",
+    "Parent": "500-06.001.00-000.000",
+    "Level": 4,
+    "Name": "Medicinas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.001.07-000.000",
+    "Parent": "500-06.001.00-000.000",
+    "Level": 4,
+    "Name": "Honorarios médicos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.001.08-000.000",
+    "Parent": "500-06.001.00-000.000",
+    "Level": 4,
+    "Name": "Salud dental",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.001.09-000.000",
+    "Parent": "500-06.001.00-000.000",
+    "Level": 4,
+    "Name": "Salud ocular",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.001.10-000.000",
+    "Parent": "500-06.001.00-000.000",
+    "Level": 4,
+    "Name": "Salud sexual",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.001.11-000.000",
+    "Parent": "500-06.001.00-000.000",
+    "Level": 4,
+    "Name": "Salud mental",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.001.12-000.000",
+    "Parent": "500-06.001.00-000.000",
+    "Level": 4,
+    "Name": "Suministros",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.001.13-000.000",
+    "Parent": "500-06.001.00-000.000",
+    "Level": 4,
+    "Name": "Vitaminas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.002.00-000.000",
+    "Parent": "500-06.000.00-000.000",
+    "Level": 3,
+    "Name": "Ejercicio y deportes",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-06.002.01-000.000",
+    "Parent": "500-06.002.00-000.000",
+    "Level": 4,
+    "Name": "Accesorios deportivos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.002.02-000.000",
+    "Parent": "500-06.002.00-000.000",
+    "Level": 4,
+    "Name": "Equipo de ejercicio",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.002.03-000.000",
+    "Parent": "500-06.002.00-000.000",
+    "Level": 4,
+    "Name": "Inscripción a eventos deportivos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-06.002.04-000.000",
+    "Parent": "500-06.002.00-000.000",
+    "Level": 4,
+    "Name": "Gimansios",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-07.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Donativos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-07.001.00-000.000",
+    "Parent": "500-07.000.00-000.000",
+    "Level": 3,
+    "Name": "Donativo sin recibo",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-07.002.00-000.000",
+    "Parent": "500-07.000.00-000.000",
+    "Level": 3,
+    "Name": "Donativo con recibo",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-07.003.00-000.000",
+    "Parent": "500-07.000.00-000.000",
+    "Level": 3,
+    "Name": "Propinas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-08.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Educación",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-08.001.00-000.000",
+    "Parent": "500-08.000.00-000.000",
+    "Level": 3,
+    "Name": "Colegiatura",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-08.002.00-000.000",
+    "Parent": "500-08.000.00-000.000",
+    "Level": 3,
+    "Name": "Cuotas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-08.003.00-000.000",
+    "Parent": "500-08.000.00-000.000",
+    "Level": 3,
+    "Name": "Libros",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-08.004.00-000.000",
+    "Parent": "500-08.000.00-000.000",
+    "Level": 3,
+    "Name": "MOOCs",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-08.005.00-000.000",
+    "Parent": "500-08.000.00-000.000",
+    "Level": 3,
+    "Name": "Recursos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-09.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Entretenimiento",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-09.001.00-000.000",
+    "Parent": "500-09.000.00-000.000",
+    "Level": 3,
+    "Name": "Actividades Recreativas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-09.001.01-000.000",
+    "Parent": "500-09.001.00-000.000",
+    "Level": 4,
+    "Name": "Conciertos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-09.001.02-000.000",
+    "Parent": "500-09.001.00-000.000",
+    "Level": 4,
+    "Name": "Eventos Culturales",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-09.001.03-000.000",
+    "Parent": "500-09.001.00-000.000",
+    "Level": 4,
+    "Name": "Eventos Deportivos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-09.002.00-000.000",
+    "Parent": "500-09.000.00-000.000",
+    "Level": 3,
+    "Name": "Hobbies",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-09.003.00-000.000",
+    "Parent": "500-09.000.00-000.000",
+    "Level": 3,
+    "Name": "Libros y Revistas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-09.003.01-000.000",
+    "Parent": "500-09.003.00-000.000",
+    "Level": 4,
+    "Name": "Digitales",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-09.003.02-000.000",
+    "Parent": "500-09.003.00-000.000",
+    "Level": 4,
+    "Name": "Físicos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-09.004.00-000.000",
+    "Parent": "500-09.000.00-000.000",
+    "Level": 3,
+    "Name": "Películas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-09.004.01-000.000",
+    "Parent": "500-09.004.00-000.000",
+    "Level": 4,
+    "Name": "Cine",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-09.004.02-000.000",
+    "Parent": "500-09.004.00-000.000",
+    "Level": 4,
+    "Name": "Digitales",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Electrónicos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-10.001.00-000.000",
+    "Parent": "500-10.000.00-000.000",
+    "Level": 3,
+    "Name": "Equipo de cómputo",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-10.001.00-000.000",
+    "Parent": "500-10.001.00-000.000",
+    "Level": 4,
+    "Name": "Computadoras de escritorio",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.001.01-000.000",
+    "Parent": "500-10.001.00-000.000",
+    "Level": 4,
+    "Name": "Computadoras portátiles",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.001.02-000.000",
+    "Parent": "500-10.001.00-000.000",
+    "Level": 4,
+    "Name": "Servidores",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.002.00-000.000",
+    "Parent": "500-10.000.00-000.000",
+    "Level": 3,
+    "Name": "Equipo de impresión y digitalización",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-10.002.01-000.000",
+    "Parent": "500-10.002.00-000.000",
+    "Level": 4,
+    "Name": "Impresoras",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.002.02-000.000",
+    "Parent": "500-10.002.00-000.000",
+    "Level": 4,
+    "Name": "Plotters",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.002.03-000.000",
+    "Parent": "500-10.002.00-000.000",
+    "Level": 4,
+    "Name": "Scanners",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.002.04-000.000",
+    "Parent": "500-10.002.00-000.000",
+    "Level": 4,
+    "Name": "Multifuncionales",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.003.00-000.000",
+    "Parent": "500-10.000.00-000.000",
+    "Level": 3,
+    "Name": "Equipo de video",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-10.003.01-000.000",
+    "Parent": "500-10.003.00-000.000",
+    "Level": 4,
+    "Name": "Televisores",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.003.02-000.000",
+    "Parent": "500-10.003.00-000.000",
+    "Level": 4,
+    "Name": "Pantallas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.003.03-000.000",
+    "Parent": "500-10.003.00-000.000",
+    "Level": 4,
+    "Name": "Videocámaras",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.004.00-000.000",
+    "Parent": "500-10.000.00-000.000",
+    "Level": 3,
+    "Name": "Equipo de audio",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-10.004.01-000.000",
+    "Parent": "500-10.004.00-000.000",
+    "Level": 4,
+    "Name": "Bocinas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.004.02-000.000",
+    "Parent": "500-10.004.00-000.000",
+    "Level": 4,
+    "Name": "Micrófonos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.004.03-000.000",
+    "Parent": "500-10.004.00-000.000",
+    "Level": 4,
+    "Name": "Multicomponentes",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.005.00-000.000",
+    "Parent": "500-10.000.00-000.000",
+    "Level": 3,
+    "Name": "Equipo de IoT",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-10.005.01-000.000",
+    "Parent": "500-10.005.00-000.000",
+    "Level": 4,
+    "Name": "Hubs de hogar inteligente",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.005.02-000.000",
+    "Parent": "500-10.005.00-000.000",
+    "Level": 4,
+    "Name": "Procesadores",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.005.03-000.000",
+    "Parent": "500-10.005.00-000.000",
+    "Level": 4,
+    "Name": "Sensores",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.005.04-000.000",
+    "Parent": "500-10.005.00-000.000",
+    "Level": 4,
+    "Name": "Actuadores",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.006.00-000.000",
+    "Parent": "500-10.000.00-000.000",
+    "Level": 3,
+    "Name": "Equipo de comunicaciones",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-10.006.01-000.000",
+    "Parent": "500-10.006.00-000.000",
+    "Level": 4,
+    "Name": "Teléfonos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.006.02-000.000",
+    "Parent": "500-10.006.00-000.000",
+    "Level": 4,
+    "Name": "Teléfonos celulares",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.006.03-000.000",
+    "Parent": "500-10.006.00-000.000",
+    "Level": 4,
+    "Name": "Radio-comunicadores",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.007.00-000.000",
+    "Parent": "500-10.000.00-000.000",
+    "Level": 3,
+    "Name": "Equipo de conectividad",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.008.00-000.000",
+    "Parent": "500-10.000.00-000.000",
+    "Level": 3,
+    "Name": "Accesorios",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.009.00-000.000",
+    "Parent": "500-10.000.00-000.000",
+    "Level": 3,
+    "Name": "Reparaciones",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.010.00-000.000",
+    "Parent": "500-10.000.00-000.000",
+    "Level": 3,
+    "Name": "Suministros",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.011.00-000.000",
+    "Parent": "500-10.000.00-000.000",
+    "Level": 3,
+    "Name": "Tabletas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-10.012.00-000.000",
+    "Parent": "500-10.000.00-000.000",
+    "Level": 3,
+    "Name": "Wearables",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Vivienda y Gastos del Hogar",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.001.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Renta",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "RENT",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.002.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Consumibles",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.003.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Iluminación",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.004.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Electrodomésticos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.005.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Artículos de limpieza",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.006.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Herramientas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.007.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Lavandería/Tintorería",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.008.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Mantenimiento",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.009.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Mejoras a la Casa",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.010.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Mobiliario",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.011.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Reparaciones del hogar",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.012.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Línea blanca",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.013.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Seguridad y vigilancia",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.014.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Servicios de jardinería",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.015.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Servicios de limpieza",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-11.016.00-000.000",
+    "Parent": "500-11.000.00-000.000",
+    "Level": 3,
+    "Name": "Suministros de cocina",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-12.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Gastos Financieros",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-12.001.00-000.000",
+    "Parent": "500-12.000.00-000.000",
+    "Level": 3,
+    "Name": "Pérdidas en Inversiones",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-12.002.00-000.000",
+    "Parent": "500-12.000.00-000.000",
+    "Level": 3,
+    "Name": "Comisiones Bancarias",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-12.003.00-000.000",
+    "Parent": "500-12.000.00-000.000",
+    "Level": 3,
+    "Name": "Intereses Pagados",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-13.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Gastos Laborales",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-13.001.00-000.000",
+    "Parent": "500-13.000.00-000.000",
+    "Level": 3,
+    "Name": "Gasto reembolsable",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-13.002.00-000.000",
+    "Parent": "500-13.000.00-000.000",
+    "Level": 3,
+    "Name": "Gasto no reembolsable",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-13.003.00-000.000",
+    "Parent": "500-13.000.00-000.000",
+    "Level": 3,
+    "Name": "Devolución de anticipo",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-14.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Impuestos y Contribuciones",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-14.001.00-000.000",
+    "Parent": "500-14.000.00-000.000",
+    "Level": 3,
+    "Name": "Impuestos Federales",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-14.001.01-000.000",
+    "Parent": "500-14.001.00-000.000",
+    "Level": 4,
+    "Name": "Impuesto sobre la renta (ISR)",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-14.001.02-000.000",
+    "Parent": "500-14.001.00-000.000",
+    "Level": 4,
+    "Name": "Impuesto al valor agregado (IVA)",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-14.002.00-000.000",
+    "Parent": "500-14.000.00-000.000",
+    "Level": 3,
+    "Name": "Impuestos Estatales",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-14.002.01-000.000",
+    "Parent": "500-14.002.00-000.000",
+    "Level": 4,
+    "Name": "Derechos Vehiculares",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-14.002.02-000.000",
+    "Parent": "500-14.002.00-000.000",
+    "Level": 4,
+    "Name": "Emplacamiento",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-14.003.00-000.000",
+    "Parent": "500-14.000.00-000.000",
+    "Level": 3,
+    "Name": "Impuestos Locales",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-14.003.01-000.000",
+    "Parent": "500-14.003.00-000.000",
+    "Level": 4,
+    "Name": "Predial",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-14.004.00-000.000",
+    "Parent": "500-14.000.00-000.000",
+    "Level": 3,
+    "Name": "Medicare",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-14.005.00-000.000",
+    "Parent": "500-14.000.00-000.000",
+    "Level": 3,
+    "Name": "Otros Impuestos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-14.006.00-000.000",
+    "Parent": "500-14.000.00-000.000",
+    "Level": 3,
+    "Name": "Seguridad Social",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-15.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Mascotas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-15.001.00-000.000",
+    "Parent": "500-15.000.00-000.000",
+    "Level": 3,
+    "Name": "Adquisición de mascotas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-15.002.00-000.000",
+    "Parent": "500-15.000.00-000.000",
+    "Level": 3,
+    "Name": "Cuidado de mascotas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-15.002.01-000.000",
+    "Parent": "500-15.002.00-000.000",
+    "Level": 4,
+    "Name": "Alimento para mascotas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-15.002.02-000.000",
+    "Parent": "500-15.002.00-000.000",
+    "Level": 4,
+    "Name": "Medicinas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-15.002.03-000.000",
+    "Parent": "500-15.002.00-000.000",
+    "Level": 4,
+    "Name": "Suministros",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-15.002.04-000.000",
+    "Parent": "500-15.002.00-000.000",
+    "Level": 4,
+    "Name": "Veterinario",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-15.002.05-000.000",
+    "Parent": "500-15.002.00-000.000",
+    "Level": 4,
+    "Name": "Baño y aseo de mascotas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-16.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Misceláneos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-16.001.00-000.000",
+    "Parent": "500-16.000.00-000.000",
+    "Level": 3,
+    "Name": "Apuestas, Sorteos y Juegos de Azar",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-16.002.00-000.000",
+    "Parent": "500-16.000.00-000.000",
+    "Level": 3,
+    "Name": "Artículos diversos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-16.003.00-000.000",
+    "Parent": "500-16.000.00-000.000",
+    "Level": 3,
+    "Name": "Decoraciones",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-16.004.00-000.000",
+    "Parent": "500-16.000.00-000.000",
+    "Level": 3,
+    "Name": "Regalos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-16.005.00-000.000",
+    "Parent": "500-16.000.00-000.000",
+    "Level": 3,
+    "Name": "Suministros de oficina",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-17.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Préstamos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-17.001.00-000.000",
+    "Parent": "500-17.000.00-000.000",
+    "Level": 3,
+    "Name": "Interés del préstamo",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-17.002.00-000.000",
+    "Parent": "500-17.000.00-000.000",
+    "Level": 3,
+    "Name": "Interés del préstamo automotriz",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-17.003.00-000.000",
+    "Parent": "500-17.000.00-000.000",
+    "Level": 3,
+    "Name": "Interés del préstamo educativo",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-17.004.00-000.000",
+    "Parent": "500-17.000.00-000.000",
+    "Level": 3,
+    "Name": "Interés hipotecario",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-18.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Retiro de Efectivo",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-19.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Ropa y Calzado",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-19.001.00-000.000",
+    "Parent": "500-19.000.00-000.000",
+    "Level": 3,
+    "Name": "Accesorios",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-19.002.00-000.000",
+    "Parent": "500-19.000.00-000.000",
+    "Level": 3,
+    "Name": "Calzado",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-19.003.00-000.000",
+    "Parent": "500-19.000.00-000.000",
+    "Level": 3,
+    "Name": "Ropa",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-20.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Servicios",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-20.001.00-000.000",
+    "Parent": "500-20.000.00-000.000",
+    "Level": 3,
+    "Name": "Servicios Básicos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-20.001.01-000.000",
+    "Parent": "500-20.001.00-000.000",
+    "Level": 4,
+    "Name": "Agua y alcantarllado",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "UTILITIES",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-20.001.02-000.000",
+    "Parent": "500-20.001.00-000.000",
+    "Level": 4,
+    "Name": "Electricidad",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "UTILITIES",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-20.001.03-000.000",
+    "Parent": "500-20.001.00-000.000",
+    "Level": 4,
+    "Name": "Gas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "UTILITIES",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-20.001.04-000.000",
+    "Parent": "500-20.001.00-000.000",
+    "Level": 4,
+    "Name": "Manejo de desechos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "UTILITIES",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-20.002.00-000.000",
+    "Parent": "500-20.000.00-000.000",
+    "Level": 3,
+    "Name": "Otros Servicios",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-20.002.01-000.000",
+    "Parent": "500-20.002.00-000.000",
+    "Level": 4,
+    "Name": "Servicios en línea",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-20.002.02-000.000",
+    "Parent": "500-20.002.00-000.000",
+    "Level": 4,
+    "Name": "Servicios funerarios",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-20.002.03-000.000",
+    "Parent": "500-20.002.00-000.000",
+    "Level": 4,
+    "Name": "Telefonía e Internet",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "INTERNET",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-20.002.04-000.000",
+    "Parent": "500-20.002.00-000.000",
+    "Level": 4,
+    "Name": "Telefonía celular",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-20.002.04-001.000",
+    "Parent": "500-20.002.04-000.000",
+    "Level": 5,
+    "Name": "Plan celular",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-20.002.04-002.000",
+    "Parent": "500-20.002.04-000.000",
+    "Level": 5,
+    "Name": "Recarga",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-20.002.05-000.000",
+    "Parent": "500-20.002.00-000.000",
+    "Level": 4,
+    "Name": "TV por Cable/Satélite",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-21.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Seguros",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-21.001.00-000.000",
+    "Parent": "500-21.000.00-000.000",
+    "Level": 3,
+    "Name": "Seguro de aparatos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-21.002.00-000.000",
+    "Parent": "500-21.000.00-000.000",
+    "Level": 3,
+    "Name": "Seguro de automóvil",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-21.003.00-000.000",
+    "Parent": "500-21.000.00-000.000",
+    "Level": 3,
+    "Name": "Seguro del hogar",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-21.004.00-000.000",
+    "Parent": "500-21.000.00-000.000",
+    "Level": 3,
+    "Name": "Seguro de salud",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-21.005.00-000.000",
+    "Parent": "500-21.000.00-000.000",
+    "Level": 3,
+    "Name": "Seguro de tarjetas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-21.006.00-000.000",
+    "Parent": "500-21.000.00-000.000",
+    "Level": 3,
+    "Name": "Seguro de vida",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-21.007.00-000.000",
+    "Parent": "500-21.000.00-000.000",
+    "Level": 3,
+    "Name": "Seguro de asistencia",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-22.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Servicios de Transporte",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-22.001.00-000.000",
+    "Parent": "500-22.000.00-000.000",
+    "Level": 3,
+    "Name": "Taxis",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-22.002.00-000.000",
+    "Parent": "500-22.000.00-000.000",
+    "Level": 3,
+    "Name": "Transporte público",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-23.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Suscripciones y Membresías",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-23.001.00-000.000",
+    "Parent": "500-23.000.00-000.000",
+    "Level": 3,
+    "Name": "Club de Salud",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-23.002.00-000.000",
+    "Parent": "500-23.000.00-000.000",
+    "Level": 3,
+    "Name": "Membresías",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-23.003.00-000.000",
+    "Parent": "500-23.000.00-000.000",
+    "Level": 3,
+    "Name": "Períodicos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-23.004.00-000.000",
+    "Parent": "500-23.000.00-000.000",
+    "Level": 3,
+    "Name": "Servicios de Streaming",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-23.005.00-000.000",
+    "Parent": "500-23.000.00-000.000",
+    "Level": 3,
+    "Name": "Software",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-24.000.00-000.000",
+    "Parent": "500-00.000.00-000.000",
+    "Level": 2,
+    "Name": "Viajes y Vacaciones",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 1
+  },
+  {
+    "Code": "500-24.001.00-000.000",
+    "Parent": "500-24.000.00-000.000",
+    "Level": 3,
+    "Name": "Boletos",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-24.002.00-000.000",
+    "Parent": "500-24.000.00-000.000",
+    "Level": 3,
+    "Name": "Hospedaje",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-24.003.00-000.000",
+    "Parent": "500-24.000.00-000.000",
+    "Level": 3,
+    "Name": "Maletas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-24.004.00-000.000",
+    "Parent": "500-24.000.00-000.000",
+    "Level": 3,
+    "Name": "Pasaporte",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-24.005.00-000.000",
+    "Parent": "500-24.000.00-000.000",
+    "Level": 3,
+    "Name": "Peaje",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  },
+  {
+    "Code": "500-24.006.00-000.000",
+    "Parent": "500-24.000.00-000.000",
+    "Level": 3,
+    "Name": "Tarifas",
+    "Kind": 6,
+    "Role": 699,
+    "Type": "OTHER_EXP",
+    "Placeholder": 0
+  }
+]

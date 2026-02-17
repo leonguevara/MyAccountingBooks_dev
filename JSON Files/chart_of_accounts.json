@@ -1,0 +1,2783 @@
+[
+  {
+    "code": "000-000000000-000000",
+    "parentCode": null,
+    "name": "Raíz",
+    "level": 0,
+    "kind": 0,
+    "role": 0,
+    "isPlaceholder": true
+  },
+  {
+    "code": "100-000000000-000000",
+    "parentCode": "000-000000000-000000",
+    "name": "Activos",
+    "level": 1,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "101-000000000-000000",
+    "parentCode": "100-000000000-000000",
+    "name": "Activo Circulante",
+    "level": 2,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "101-001000000-000000",
+    "parentCode": "101-000000000-000000",
+    "name": "Caja",
+    "level": 3,
+    "kind": 1,
+    "role": 3,
+    "isPlaceholder": true
+  },
+  {
+    "code": "101-002000000-000000",
+    "parentCode": "101-000000000-000000",
+    "name": "Certificados de depósito",
+    "level": 3,
+    "kind": 1,
+    "role": 2,
+    "isPlaceholder": true
+  },
+  {
+    "code": "101-003000000-000000",
+    "parentCode": "101-000000000-000000",
+    "name": "Cuentas de ahorro",
+    "level": 3,
+    "kind": 1,
+    "role": 2,
+    "isPlaceholder": true
+  },
+  {
+    "code": "101-004000000-000000",
+    "parentCode": "101-000000000-000000",
+    "name": "Cuentas de cheques",
+    "level": 3,
+    "kind": 1,
+    "role": 2,
+    "isPlaceholder": true
+  },
+  {
+    "code": "101-005000000-000000",
+    "parentCode": "101-000000000-000000",
+    "name": "Cuentas por cobrar",
+    "level": 3,
+    "kind": 1,
+    "role": 4,
+    "isPlaceholder": true
+  },
+  {
+    "code": "101-005001000-000000",
+    "parentCode": "101-005000000-000000",
+    "name": "Clientes",
+    "level": 4,
+    "kind": 1,
+    "role": 4,
+    "isPlaceholder": true
+  },
+  {
+    "code": "101-005002000-000000",
+    "parentCode": "101-005000000-000000",
+    "name": "Deudores diversos",
+    "level": 4,
+    "kind": 1,
+    "role": 4,
+    "isPlaceholder": true
+  },
+  {
+    "code": "101-006000000-000000",
+    "parentCode": "101-000000000-000000",
+    "name": "Inventarios",
+    "level": 3,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "101-006001000-000000",
+    "parentCode": "101-006000000-000000",
+    "name": "Mercancías",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "101-006002000-000000",
+    "parentCode": "101-006000000-000000",
+    "name": "Materia prima",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "101-007000000-000000",
+    "parentCode": "101-000000000-000000",
+    "name": "Anticipos a proveedores",
+    "level": 3,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "101-008000000-000000",
+    "parentCode": "101-000000000-000000",
+    "name": "Inversiones temporales",
+    "level": 3,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-000000000-000000",
+    "parentCode": "100-000000000-000000",
+    "name": "Activo No Circulante",
+    "level": 2,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-001000000-000000",
+    "parentCode": "102-000000000-000000",
+    "name": "Propiedades, Planta y Equipo",
+    "level": 3,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-001001000-000000",
+    "parentCode": "102-001000000-000000",
+    "name": "Terrenos",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-001002000-000000",
+    "parentCode": "102-001000000-000000",
+    "name": "Edificios",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-001003000-000000",
+    "parentCode": "102-001000000-000000",
+    "name": "Maquinaria y Equipo",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-001004000-000000",
+    "parentCode": "102-001000000-000000",
+    "name": "Mobiliario y Equipo de Oficina",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-001005000-000000",
+    "parentCode": "102-001000000-000000",
+    "name": "Vehículos",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-002000000-000000",
+    "parentCode": "102-000000000-000000",
+    "name": "Depreciación Acumulada",
+    "level": 3,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-002001000-000000",
+    "parentCode": "102-002000000-000000",
+    "name": "Dep. Edificios",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-002002000-000000",
+    "parentCode": "102-002000000-000000",
+    "name": "Dep. Maquinaria",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-002003000-000000",
+    "parentCode": "102-002000000-000000",
+    "name": "Dep. Vehículos",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-003000000-000000",
+    "parentCode": "102-000000000-000000",
+    "name": "Inversiones a Largo Plazo",
+    "level": 3,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-003001000-000000",
+    "parentCode": "102-003000000-000000",
+    "name": "Ahorro para el retiro",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-003001001-000000",
+    "parentCode": "102-003001000-000000",
+    "name": "Acciones",
+    "level": 5,
+    "kind": 1,
+    "role": 6,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-003001002-000000",
+    "parentCode": "102-003001000-000000",
+    "name": "Ahorros",
+    "level": 5,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-003001003-000000",
+    "parentCode": "102-003001000-000000",
+    "name": "Bonos",
+    "level": 5,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-003001004-000000",
+    "parentCode": "102-003001000-000000",
+    "name": "Fondos de Inversión",
+    "level": 5,
+    "kind": 1,
+    "role": 5,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-003001005-000000",
+    "parentCode": "102-003001000-000000",
+    "name": "Índice de Mercado",
+    "level": 5,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-003002000-000000",
+    "parentCode": "102-003000000-000000",
+    "name": "Cuentas de Corretaje",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-003002001-000000",
+    "parentCode": "102-003002000-000000",
+    "name": "Acciones",
+    "level": 5,
+    "kind": 1,
+    "role": 6,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-003002002-000000",
+    "parentCode": "102-003002000-000000",
+    "name": "Bonos",
+    "level": 5,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-003002003-000000",
+    "parentCode": "102-003002000-000000",
+    "name": "Fondos de Inversión",
+    "level": 5,
+    "kind": 1,
+    "role": 5,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-003002004-000000",
+    "parentCode": "102-003002000-000000",
+    "name": "Índice de Mercado",
+    "level": 5,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-004000000-000000",
+    "parentCode": "102-000000000-000000",
+    "name": "Activos Intangibles",
+    "level": 3,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-004001000-000000",
+    "parentCode": "102-004000000-000000",
+    "name": "Marcas",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-004002000-000000",
+    "parentCode": "102-004000000-000000",
+    "name": "Patentes",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-004003000-000000",
+    "parentCode": "102-004000000-000000",
+    "name": "Software",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "102-004004000-000000",
+    "parentCode": "102-004000000-000000",
+    "name": "Licencias",
+    "level": 4,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "103-000000000-000000",
+    "parentCode": "100-000000000-000000",
+    "name": "Otros Activos",
+    "level": 2,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "103-001000000-000000",
+    "parentCode": "103-000000000-000000",
+    "name": "Depósitos en Garantía",
+    "level": 3,
+    "kind": 1,
+    "role": 2,
+    "isPlaceholder": true
+  },
+  {
+    "code": "103-002000000-000000",
+    "parentCode": "103-000000000-000000",
+    "name": "Cuentas a Cobrar a Largo Plazo",
+    "level": 3,
+    "kind": 1,
+    "role": 1,
+    "isPlaceholder": true
+  },
+  {
+    "code": "200-000000000-000000",
+    "parentCode": "000-000000000-000000",
+    "name": "Pasivos",
+    "level": 1,
+    "kind": 2,
+    "role": 7,
+    "isPlaceholder": true
+  },
+  {
+    "code": "201-000000000-000000",
+    "parentCode": "200-000000000-000000",
+    "name": "Pasivo Circulante",
+    "level": 2,
+    "kind": 2,
+    "role": 7,
+    "isPlaceholder": true
+  },
+  {
+    "code": "201-001000000-000000",
+    "parentCode": "201-000000000-000000",
+    "name": "Proveedores (Cuentas por Pagar)",
+    "level": 3,
+    "kind": 2,
+    "role": 9,
+    "isPlaceholder": true
+  },
+  {
+    "code": "201-002000000-000000",
+    "parentCode": "201-000000000-000000",
+    "name": "Impuestos por Pagar",
+    "level": 3,
+    "kind": 2,
+    "role": 7,
+    "isPlaceholder": true
+  },
+  {
+    "code": "201-002001000-000000",
+    "parentCode": "201-002000000-000000",
+    "name": "IVA por Pagar",
+    "level": 4,
+    "kind": 2,
+    "role": 7,
+    "isPlaceholder": false
+  },
+  {
+    "code": "201-002002000-000000",
+    "parentCode": "201-002000000-000000",
+    "name": "ISR por Pagar",
+    "level": 4,
+    "kind": 2,
+    "role": 7,
+    "isPlaceholder": false
+  },
+  {
+    "code": "201-002003000-000000",
+    "parentCode": "201-002000000-000000",
+    "name": "Otros Impuestos",
+    "level": 4,
+    "kind": 2,
+    "role": 7,
+    "isPlaceholder": false
+  },
+  {
+    "code": "201-003000000-000000",
+    "parentCode": "201-000000000-000000",
+    "name": "Sueldos y Salarios por Pagar",
+    "level": 3,
+    "kind": 2,
+    "role": 7,
+    "isPlaceholder": true
+  },
+  {
+    "code": "201-004000000-000000",
+    "parentCode": "201-000000000-000000",
+    "name": "Anticipos de Clientes",
+    "level": 3,
+    "kind": 2,
+    "role": 7,
+    "isPlaceholder": true
+  },
+  {
+    "code": "201-005000000-000000",
+    "parentCode": "201-000000000-000000",
+    "name": "Créditos Bancarios a Corto Plazo",
+    "level": 3,
+    "kind": 2,
+    "role": 7,
+    "isPlaceholder": true
+  },
+  {
+    "code": "201-006000000-000000",
+    "parentCode": "201-000000000-000000",
+    "name": "Tarjetas de Crédito",
+    "level": 3,
+    "kind": 2,
+    "role": 8,
+    "isPlaceholder": true
+  },
+  {
+    "code": "202-000000000-000000",
+    "parentCode": "200-000000000-000000",
+    "name": "Pasivo No Circulante",
+    "level": 2,
+    "kind": 2,
+    "role": 7,
+    "isPlaceholder": true
+  },
+  {
+    "code": "202-001000000-000000",
+    "parentCode": "202-000000000-000000",
+    "name": "Préstamos Bancarios a Largo Plazo",
+    "level": 3,
+    "kind": 2,
+    "role": 7,
+    "isPlaceholder": true
+  },
+  {
+    "code": "202-002000000-000000",
+    "parentCode": "202-000000000-000000",
+    "name": "Arrendamientos Financieros",
+    "level": 3,
+    "kind": 2,
+    "role": 7,
+    "isPlaceholder": true
+  },
+  {
+    "code": "202-003000000-000000",
+    "parentCode": "202-000000000-000000",
+    "name": "Hipotecas",
+    "level": 3,
+    "kind": 2,
+    "role": 7,
+    "isPlaceholder": true
+  },
+  {
+    "code": "202-004000000-000000",
+    "parentCode": "202-000000000-000000",
+    "name": "Obligaciones Fiscales a Largo Plazo",
+    "level": 3,
+    "kind": 2,
+    "role": 7,
+    "isPlaceholder": true
+  },
+  {
+    "code": "300-000000000-000000",
+    "parentCode": "000-000000000-000000",
+    "name": "Capital",
+    "level": 1,
+    "kind": 3,
+    "role": 10,
+    "isPlaceholder": true
+  },
+  {
+    "code": "301-000000000-000000",
+    "parentCode": "300-000000000-000000",
+    "name": "Balance inicial",
+    "level": 2,
+    "kind": 3,
+    "role": 10,
+    "isPlaceholder": false
+  },
+  {
+    "code": "302-000000000-000000",
+    "parentCode": "300-000000000-000000",
+    "name": "Capital Social / Aportaciones de Socios",
+    "level": 2,
+    "kind": 3,
+    "role": 10,
+    "isPlaceholder": false
+  },
+  {
+    "code": "303-000000000-000000",
+    "parentCode": "300-000000000-000000",
+    "name": "Resultados Acumulados / Utilidades Retenidas",
+    "level": 2,
+    "kind": 3,
+    "role": 10,
+    "isPlaceholder": false
+  },
+  {
+    "code": "304-000000000-000000",
+    "parentCode": "300-000000000-000000",
+    "name": "Resultado del Ejercicio",
+    "level": 2,
+    "kind": 3,
+    "role": 10,
+    "isPlaceholder": false
+  },
+  {
+    "code": "305-000000000-000000",
+    "parentCode": "300-000000000-000000",
+    "name": "Reservas",
+    "level": 2,
+    "kind": 3,
+    "role": 10,
+    "isPlaceholder": false
+  },
+  {
+    "code": "305-001000000-000000",
+    "parentCode": "305-000000000-000000",
+    "name": "Reserva Legal",
+    "level": 2,
+    "kind": 3,
+    "role": 10,
+    "isPlaceholder": false
+  },
+  {
+    "code": "305-002000000-000000",
+    "parentCode": "305-000000000-000000",
+    "name": "Reserva Estatutaria",
+    "level": 2,
+    "kind": 3,
+    "role": 10,
+    "isPlaceholder": false
+  },
+  {
+    "code": "305-003000000-000000",
+    "parentCode": "305-000000000-000000",
+    "name": "Reserva Voluntaria",
+    "level": 2,
+    "kind": 3,
+    "role": 10,
+    "isPlaceholder": false
+  },
+  {
+    "code": "306-000000000-000000",
+    "parentCode": "300-000000000-000000",
+    "name": "Aportaciones Adicionales de los Propietarios",
+    "level": 2,
+    "kind": 3,
+    "role": 10,
+    "isPlaceholder": false
+  },
+  {
+    "code": "400-000000000-000000",
+    "parentCode": "000-000000000-000000",
+    "name": "Ingresos",
+    "level": 1,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": true
+  },
+  {
+    "code": "401-000000000-000000",
+    "parentCode": "400-000000000-000000",
+    "name": "Ingresos por Sueldos y Salarios",
+    "level": 2,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": true
+  },
+  {
+    "code": "402-000000000-000000",
+    "parentCode": "400-000000000-000000",
+    "name": "Ingresos por Bonos Laborales",
+    "level": 2,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": true
+  },
+  {
+    "code": "402-001000000-000000",
+    "parentCode": "402-000000000-000000",
+    "name": "Aguinaldo",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "402-002000000-000000",
+    "parentCode": "402-000000000-000000",
+    "name": "Prima Vacacional",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "403-000000000-000000",
+    "parentCode": "400-000000000-000000",
+    "name": "Ingresos por Pensiones",
+    "level": 2,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": true
+  },
+  {
+    "code": "404-000000000-000000",
+    "parentCode": "400-000000000-000000",
+    "name": "Ingresos por Ventas",
+    "level": 2,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": true
+  },
+  {
+    "code": "404-001000000-000000",
+    "parentCode": "404-000000000-000000",
+    "name": "Bienes",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "404-002000000-000000",
+    "parentCode": "404-000000000-000000",
+    "name": "Productos",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "404-003000000-000000",
+    "parentCode": "404-000000000-000000",
+    "name": "Servicios",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "405-000000000-000000",
+    "parentCode": "400-000000000-000000",
+    "name": "Ingresos Financieros",
+    "level": 2,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": true
+  },
+  {
+    "code": "405-001000000-000000",
+    "parentCode": "405-000000000-000000",
+    "name": "Intereses",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": true
+  },
+  {
+    "code": "405-001001000-000000",
+    "parentCode": "405-001000000-000000",
+    "name": "Intereses por Ahorros",
+    "level": 4,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "405-001002000-000000",
+    "parentCode": "405-001000000-000000",
+    "name": "Intereses por Bonos",
+    "level": 4,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "405-001003000-000000",
+    "parentCode": "405-001000000-000000",
+    "name": "Intereses por Certificados",
+    "level": 4,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "405-001004000-000000",
+    "parentCode": "405-001000000-000000",
+    "name": "Intereses por Cheques",
+    "level": 4,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "405-001005000-000000",
+    "parentCode": "405-001000000-000000",
+    "name": "Intereses por Mercado de Monedas",
+    "level": 4,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "405-001006000-000000",
+    "parentCode": "405-001000000-000000",
+    "name": "Otros Intereses",
+    "level": 4,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "405-002000000-000000",
+    "parentCode": "405-000000000-000000",
+    "name": "Rendimiento de inversiones",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": true
+  },
+  {
+    "code": "406-000000000-000000",
+    "parentCode": "400-000000000-000000",
+    "name": "Ingresos por Honorarios",
+    "level": 2,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": true
+  },
+  {
+    "code": "407-000000000-000000",
+    "parentCode": "400-000000000-000000",
+    "name": "Ingresos por Rentas",
+    "level": 2,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": true
+  },
+  {
+    "code": "408-000000000-000000",
+    "parentCode": "400-000000000-000000",
+    "name": "Otros Ingresos",
+    "level": 2,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": true
+  },
+  {
+    "code": "408-001000000-000000",
+    "parentCode": "408-000000000-000000",
+    "name": "Anticipos Laborales",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "408-002000000-000000",
+    "parentCode": "408-000000000-000000",
+    "name": "Aportaciones Patronales",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "408-003000000-000000",
+    "parentCode": "408-000000000-000000",
+    "name": "Apoyo Gubernamental",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "408-004000000-000000",
+    "parentCode": "408-000000000-000000",
+    "name": "Apoyos Alimenticios",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "408-005000000-000000",
+    "parentCode": "408-000000000-000000",
+    "name": "Ingresos por devolución de impuestos",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "408-006000000-000000",
+    "parentCode": "408-000000000-000000",
+    "name": "Ingresos por devolución de compras",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "408-007000000-000000",
+    "parentCode": "408-000000000-000000",
+    "name": "Premios por Sorteos y Loterías",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "408-008000000-000000",
+    "parentCode": "408-000000000-000000",
+    "name": "Préstamos",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "408-009000000-000000",
+    "parentCode": "408-000000000-000000",
+    "name": "Puntos redimidos",
+    "level": 3,
+    "kind": 4,
+    "role": 11,
+    "isPlaceholder": false
+  },
+  {
+    "code": "500-000000000-000000",
+    "parentCode": "000-000000000-000000",
+    "name": "Egresos",
+    "level": 1,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "501-000000000-000000",
+    "parentCode": "500-000000000-000000",
+    "name": "Costos",
+    "level": 2,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "501-001000000-000000",
+    "parentCode": "501-000000000-000000",
+    "name": "Costos de Venta",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "501-002000000-000000",
+    "parentCode": "501-000000000-000000",
+    "name": "Sueldos y Salarios",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "501-003000000-000000",
+    "parentCode": "501-000000000-000000",
+    "name": "Servicios básicos",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "501-003001000-000000",
+    "parentCode": "501-003000000-000000",
+    "name": "Electricidad",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "501-003002000-000000",
+    "parentCode": "501-003000000-000000",
+    "name": "Agua",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "501-003003000-000000",
+    "parentCode": "501-003000000-000000",
+    "name": "Internet / Teléfono",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "501-003004000-000000",
+    "parentCode": "501-003000000-000000",
+    "name": "Otros Servicios",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "501-004000000-000000",
+    "parentCode": "501-000000000-000000",
+    "name": "Renta",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "501-005000000-000000",
+    "parentCode": "501-000000000-000000",
+    "name": "Publicidad y Marketing",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "501-006000000-000000",
+    "parentCode": "501-000000000-000000",
+    "name": "Honorarios Profesionales",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "501-007000000-000000",
+    "parentCode": "501-000000000-000000",
+    "name": "Impuestos y Contribuciones",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "501-008000000-000000",
+    "parentCode": "501-000000000-000000",
+    "name": "Depreciación y Amortización",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "501-009000000-000000",
+    "parentCode": "501-000000000-000000",
+    "name": "Gastos Financieros",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "501-009001000-000000",
+    "parentCode": "501-009000000-000000",
+    "name": "Intereses Pagados",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "501-009002000-000000",
+    "parentCode": "501-009000000-000000",
+    "name": "Comisiones Bancarias",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "501-010000000-000000",
+    "parentCode": "501-000000000-000000",
+    "name": "Ajustes",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-000000000-000000",
+    "parentCode": "500-000000000-000000",
+    "name": "Gastos Personales",
+    "level": 2,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-001000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Ajustes",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-002000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Alcohol y Tabaco",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-002001000-000000",
+    "parentCode": "502-002000000-000000",
+    "name": "Destilados",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-002002000-000000",
+    "parentCode": "502-002000000-000000",
+    "name": "Fermentados",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-002003000-000000",
+    "parentCode": "502-002000000-000000",
+    "name": "Otras bebidas",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-002004000-000000",
+    "parentCode": "502-002000000-000000",
+    "name": "Tabaco",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-003000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Alimentos",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-003001000-000000",
+    "parentCode": "502-003000000-000000",
+    "name": "Comida para llevar",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-003002000-000000",
+    "parentCode": "502-003000000-000000",
+    "name": "Restaurantes y cocinas",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-003003000-000000",
+    "parentCode": "502-003000000-000000",
+    "name": "Comestibles",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-003003001-000000",
+    "parentCode": "502-003003000-000000",
+    "name": "Bebidas no alcohólicas",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-003003002-000000",
+    "parentCode": "502-003003000-000000",
+    "name": "Carnes",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-003003003-000000",
+    "parentCode": "502-003003000-000000",
+    "name": "Congelados",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-003003004-000000",
+    "parentCode": "502-003003000-000000",
+    "name": "Despensa",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-003003005-000000",
+    "parentCode": "502-003003000-000000",
+    "name": "Huevos y Lácteos",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-003003006-000000",
+    "parentCode": "502-003003000-000000",
+    "name": "Panadería y Tortillería",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-003003007-000000",
+    "parentCode": "502-003003000-000000",
+    "name": "Snacks",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-004000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Automóvil",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-004001000-000000",
+    "parentCode": "502-004000000-000000",
+    "name": "Accesorios",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-004002000-000000",
+    "parentCode": "502-004000000-000000",
+    "name": "Combustible y Aditivos",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-004002001-000000",
+    "parentCode": "502-004002000-000000",
+    "name": "Combustible",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-004002002-000000",
+    "parentCode": "502-004002000-000000",
+    "name": "Aditivos",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-004003000-000000",
+    "parentCode": "502-004000000-000000",
+    "name": "Cuotas",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-004004000-000000",
+    "parentCode": "502-004000000-000000",
+    "name": "Estacionamientos",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-004005000-000000",
+    "parentCode": "502-004000000-000000",
+    "name": "Reparaciones y Mantenimiento",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-004005001-000000",
+    "parentCode": "502-004005000-000000",
+    "name": "Refacciones",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-004005002-000000",
+    "parentCode": "502-004005000-000000",
+    "name": "Mantenimiento",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-004005003-000000",
+    "parentCode": "502-004005000-000000",
+    "name": "Reparaciones",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-004006000-000000",
+    "parentCode": "502-004000000-000000",
+    "name": "Pago de automóvil",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-004007000-000000",
+    "parentCode": "502-004000000-000000",
+    "name": "Servicios de Limpieza",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-005000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Cuidado Personal",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-005001000-000000",
+    "parentCode": "502-005000000-000000",
+    "name": "Cortes de cabello",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-005002000-000000",
+    "parentCode": "502-005000000-000000",
+    "name": "Lociones y perfumes",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-005003000-000000",
+    "parentCode": "502-005000000-000000",
+    "name": "Manicure y pedicure",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-005004000-000000",
+    "parentCode": "502-005000000-000000",
+    "name": "Productos de higiene personal",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-005005000-000000",
+    "parentCode": "502-005000000-000000",
+    "name": "Tratamientos de belleza",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Cuidado de la Salud",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-006001000-000000",
+    "parentCode": "502-006000000-000000",
+    "name": "Salud",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-006001001-000000",
+    "parentCode": "502-006001000-000000",
+    "name": "Accesorios",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006001002-000000",
+    "parentCode": "502-006001000-000000",
+    "name": "Dispositivos",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006001003-000000",
+    "parentCode": "502-006001000-000000",
+    "name": "Gastos de Enfermería",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006001004-000000",
+    "parentCode": "502-006001000-000000",
+    "name": "Gastos de Hospital",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006001005-000000",
+    "parentCode": "502-006001000-000000",
+    "name": "Laboratorios",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006001006-000000",
+    "parentCode": "502-006001000-000000",
+    "name": "Medicinas",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006001007-000000",
+    "parentCode": "502-006001000-000000",
+    "name": "Honorarios médicos",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006001008-000000",
+    "parentCode": "502-006001000-000000",
+    "name": "Salud dental",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006001009-000000",
+    "parentCode": "502-006001000-000000",
+    "name": "Salud ocular",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006001010-000000",
+    "parentCode": "502-006001000-000000",
+    "name": "Salud sexual",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006001011-000000",
+    "parentCode": "502-006001000-000000",
+    "name": "Salud mental",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006001012-000000",
+    "parentCode": "502-006001000-000000",
+    "name": "Suministros",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006001013-000000",
+    "parentCode": "502-006001000-000000",
+    "name": "Vitaminas",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006002000-000000",
+    "parentCode": "502-006000000-000000",
+    "name": "Ejercicio y deportes",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-006002001-000000",
+    "parentCode": "502-006002000-000000",
+    "name": "Accesorios deportivos",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006002002-000000",
+    "parentCode": "502-006002000-000000",
+    "name": "Equipo de ejercicio",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006002003-000000",
+    "parentCode": "502-006002000-000000",
+    "name": "Inscripción a eventos deportivos",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-006002004-000000",
+    "parentCode": "502-006002000-000000",
+    "name": "Gimansios",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-007000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Donativos",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-007001000-000000",
+    "parentCode": "502-007000000-000000",
+    "name": "Donativo sin recibo",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-007002000-000000",
+    "parentCode": "502-007000000-000000",
+    "name": "Donativo con recibo",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-007003000-000000",
+    "parentCode": "502-007000000-000000",
+    "name": "Propinas",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-008000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Educación",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-008001000-000000",
+    "parentCode": "502-008000000-000000",
+    "name": "Colegiatura",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-008002000-000000",
+    "parentCode": "502-008000000-000000",
+    "name": "Cuotas",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-008003000-000000",
+    "parentCode": "502-008000000-000000",
+    "name": "Libros",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-008004000-000000",
+    "parentCode": "502-008000000-000000",
+    "name": "MOOCs",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-008005000-000000",
+    "parentCode": "502-008000000-000000",
+    "name": "Recursos",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-009000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Entretenimiento",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-009001000-000000",
+    "parentCode": "502-009000000-000000",
+    "name": "Actividades Recreativas",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-009001001-000000",
+    "parentCode": "502-009001000-000000",
+    "name": "Conciertos",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-009001002-000000",
+    "parentCode": "502-009001000-000000",
+    "name": "Eventos Culturales",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-009001003-000000",
+    "parentCode": "502-009001000-000000",
+    "name": "Eventos Deportivos",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-009002000-000000",
+    "parentCode": "502-009000000-000000",
+    "name": "Hobbies",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-009003000-000000",
+    "parentCode": "502-009000000-000000",
+    "name": "Libros y Revistas",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-009003001-000000",
+    "parentCode": "502-009003000-000000",
+    "name": "Digitales",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-009003002-000000",
+    "parentCode": "502-009003000-000000",
+    "name": "Físicos",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-009004000-000000",
+    "parentCode": "502-009000000-000000",
+    "name": "Películas",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-009004001-000000",
+    "parentCode": "502-009004000-000000",
+    "name": "Cine",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-009004002-000000",
+    "parentCode": "502-009004000-000000",
+    "name": "Digitales",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-010000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Electrónicos",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-010001000-000000",
+    "parentCode": "502-010000000-000000",
+    "name": "Equipo de cómputo",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-010002000-000000",
+    "parentCode": "502-010000000-000000",
+    "name": "Equipo de video",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-010003000-000000",
+    "parentCode": "502-010000000-000000",
+    "name": "Equipo de audio",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-010004000-000000",
+    "parentCode": "502-010000000-000000",
+    "name": "Equipo de comunicaciones",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-010005000-000000",
+    "parentCode": "502-010000000-000000",
+    "name": "Equipo de conectividad",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-010006000-000000",
+    "parentCode": "502-010000000-000000",
+    "name": "Accesorios",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-010007000-000000",
+    "parentCode": "502-010000000-000000",
+    "name": "Reparaciones",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-010008000-000000",
+    "parentCode": "502-010000000-000000",
+    "name": "Suministros",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-010009000-000000",
+    "parentCode": "502-010000000-000000",
+    "name": "Tabletas",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-010010000-000000",
+    "parentCode": "502-010000000-000000",
+    "name": "Wearables",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-011000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Gastos del Hogar",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-011001000-000000",
+    "parentCode": "502-011000000-000000",
+    "name": "Consumibles",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-011002000-000000",
+    "parentCode": "502-011000000-000000",
+    "name": "Iluminación",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-011003000-000000",
+    "parentCode": "502-011000000-000000",
+    "name": "Electrodomésticos",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-011004000-000000",
+    "parentCode": "502-011000000-000000",
+    "name": "Artículos de limpieza",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-011005000-000000",
+    "parentCode": "502-011000000-000000",
+    "name": "Herramientas",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-011006000-000000",
+    "parentCode": "502-011000000-000000",
+    "name": "Lavandería/Tintorería",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-011007000-000000",
+    "parentCode": "502-011000000-000000",
+    "name": "Mantenimiento",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-011008000-000000",
+    "parentCode": "502-011000000-000000",
+    "name": "Mejoras a la Casa",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-011009000-000000",
+    "parentCode": "502-011000000-000000",
+    "name": "Mobiliario",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-011010000-000000",
+    "parentCode": "502-011000000-000000",
+    "name": "Reparaciones del hogar",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-011011000-000000",
+    "parentCode": "502-011000000-000000",
+    "name": "Línea blanca",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-011012000-000000",
+    "parentCode": "502-011000000-000000",
+    "name": "y vigilancia",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-011013000-000000",
+    "parentCode": "502-011000000-000000",
+    "name": "Servicios de jardinería",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-011014000-000000",
+    "parentCode": "502-011000000-000000",
+    "name": "Servicios de limpieza",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-011015000-000000",
+    "parentCode": "502-011000000-000000",
+    "name": "Suministros de cocina",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-012000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Gastos Financieros",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-012001000-000000",
+    "parentCode": "502-012000000-000000",
+    "name": "Pérdidas en Inversiones",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-012002000-000000",
+    "parentCode": "502-012000000-000000",
+    "name": "Comisiones Bancarias",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-012003000-000000",
+    "parentCode": "502-012000000-000000",
+    "name": "Intereses Pagados",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-014000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Gastos Laborales",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-014001000-000000",
+    "parentCode": "502-014000000-000000",
+    "name": "Gasto reembolsable",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-014002000-000000",
+    "parentCode": "502-014000000-000000",
+    "name": "Gasto no reembolsable",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-014003000-000000",
+    "parentCode": "502-014000000-000000",
+    "name": "Devolución de anticipo",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-015000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Impuestos y Contribuciones",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-015001000-000000",
+    "parentCode": "502-015000000-000000",
+    "name": "Impuestos Federales",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-015001001-000000",
+    "parentCode": "502-015001000-000000",
+    "name": "Impuesto sobre la renta (ISR)",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-015001002-000000",
+    "parentCode": "502-015001000-000000",
+    "name": "Impuesto al valor agregado (IVA)",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-015002000-000000",
+    "parentCode": "502-015000000-000000",
+    "name": "Impuestos Estatales",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-015002001-000000",
+    "parentCode": "502-015002000-000000",
+    "name": "Derechos Vehiculares",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-015002002-000000",
+    "parentCode": "502-015002000-000000",
+    "name": "Emplacamiento",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-015003000-000000",
+    "parentCode": "502-015000000-000000",
+    "name": "Impuestos Locales",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-015003001-000000",
+    "parentCode": "502-015003000-000000",
+    "name": "Predial",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-015004000-000000",
+    "parentCode": "502-015000000-000000",
+    "name": "Medicare",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-015005000-000000",
+    "parentCode": "502-015000000-000000",
+    "name": "Otros Impuestos",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-015006000-000000",
+    "parentCode": "502-015000000-000000",
+    "name": "Seguridad Social",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-016000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Mascotas",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-016001000-000000",
+    "parentCode": "502-016000000-000000",
+    "name": "Adquisición de mascotas",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-016002000-000000",
+    "parentCode": "502-016000000-000000",
+    "name": "Cuidado de mascotas",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-016002001-000000",
+    "parentCode": "502-016002000-000000",
+    "name": "Alimento para mascotas",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-016002002-000000",
+    "parentCode": "502-016002000-000000",
+    "name": "Medicinas",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-016002003-000000",
+    "parentCode": "502-016002000-000000",
+    "name": "Suministros",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-016002004-000000",
+    "parentCode": "502-016002000-000000",
+    "name": "Veterinario",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-016002005-000000",
+    "parentCode": "502-016002000-000000",
+    "name": "Baño y aseo de mascotas",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-017000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Misceláneos",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-017001000-000000",
+    "parentCode": "502-017000000-000000",
+    "name": "Apuestas, Sorteos y Juegos de Azar",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-017002000-000000",
+    "parentCode": "502-017000000-000000",
+    "name": "Artículos diversos",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-017003000-000000",
+    "parentCode": "502-017000000-000000",
+    "name": "Decoraciones",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-017004000-000000",
+    "parentCode": "502-017000000-000000",
+    "name": "Regalos",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-017005000-000000",
+    "parentCode": "502-017000000-000000",
+    "name": "Suministros de oficina",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-018000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Préstamos",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-018001000-000000",
+    "parentCode": "502-018000000-000000",
+    "name": "Interés del préstamo",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-018002000-000000",
+    "parentCode": "502-018000000-000000",
+    "name": "Interés del préstamo automotriz",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-018003000-000000",
+    "parentCode": "502-018000000-000000",
+    "name": "Interés del préstamo educativo",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-018004000-000000",
+    "parentCode": "502-018000000-000000",
+    "name": "Interés hipotecario",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-019000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Retiro de Efectivo",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-020000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Ropa y Calzado",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-020001000-000000",
+    "parentCode": "502-020000000-000000",
+    "name": "Accesorios",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-020002000-000000",
+    "parentCode": "502-020000000-000000",
+    "name": "Calzado",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-020003000-000000",
+    "parentCode": "502-020000000-000000",
+    "name": "Ropa",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-021000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Servicios",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-021001000-000000",
+    "parentCode": "502-021000000-000000",
+    "name": "Servicios Básicos",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-021001001-000000",
+    "parentCode": "502-021001000-000000",
+    "name": "Agua y alcantarllado",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-021001002-000000",
+    "parentCode": "502-021001000-000000",
+    "name": "Electricidad",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-021001003-000000",
+    "parentCode": "502-021001000-000000",
+    "name": "Gas",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-021001004-000000",
+    "parentCode": "502-021001000-000000",
+    "name": "Manejo de desechos",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-021002000-000000",
+    "parentCode": "502-021000000-000000",
+    "name": "Otros Servicios",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-021002001-000000",
+    "parentCode": "502-021002000-000000",
+    "name": "Servicios en línea",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-021002002-000000",
+    "parentCode": "502-021002000-000000",
+    "name": "Servicios funerarios",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-021002003-000000",
+    "parentCode": "502-021002000-000000",
+    "name": "Telefonía e Internet",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-021002004-000000",
+    "parentCode": "502-021002000-000000",
+    "name": "Telefonía celular",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-021002004-001000",
+    "parentCode": "502-021002004-000000",
+    "name": "Plan celular",
+    "level": 6,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-021002004-002000",
+    "parentCode": "502-021002004-000000",
+    "name": "Recarga",
+    "level": 6,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-021002005-000000",
+    "parentCode": "502-021002000-000000",
+    "name": "TV por Cable/Satélite",
+    "level": 5,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-023000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Seguros",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-023001000-000000",
+    "parentCode": "502-023000000-000000",
+    "name": "Seguro de aparatos",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-023002000-000000",
+    "parentCode": "502-023000000-000000",
+    "name": "Seguro de automóvil",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-023003000-000000",
+    "parentCode": "502-023000000-000000",
+    "name": "Seguro del hogar",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-023004000-000000",
+    "parentCode": "502-023000000-000000",
+    "name": "Seguro de salud",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-023005000-000000",
+    "parentCode": "502-023000000-000000",
+    "name": "Seguro de tarjetas",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-023006000-000000",
+    "parentCode": "502-023000000-000000",
+    "name": "Seguro de vida",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-023007000-000000",
+    "parentCode": "502-023000000-000000",
+    "name": "Seguro de asistencia",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-024000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Servicios de Transporte",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-024001000-000000",
+    "parentCode": "502-024000000-000000",
+    "name": "Taxis",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-024002000-000000",
+    "parentCode": "502-024000000-000000",
+    "name": "Transporte público",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-025000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Suscripciones y Membresías",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-025001000-000000",
+    "parentCode": "502-025000000-000000",
+    "name": "Club de Salud",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-025002000-000000",
+    "parentCode": "502-025000000-000000",
+    "name": "Membresías",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-025003000-000000",
+    "parentCode": "502-025000000-000000",
+    "name": "Períodicos",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-025004000-000000",
+    "parentCode": "502-025000000-000000",
+    "name": "Servicios de Streaming",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-025005000-000000",
+    "parentCode": "502-025000000-000000",
+    "name": "Software",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-026000000-000000",
+    "parentCode": "502-000000000-000000",
+    "name": "Viajes y Vacaciones",
+    "level": 3,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": true
+  },
+  {
+    "code": "502-026001000-000000",
+    "parentCode": "502-026000000-000000",
+    "name": "Boletos",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-026002000-000000",
+    "parentCode": "502-026000000-000000",
+    "name": "Hospedaje",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-026003000-000000",
+    "parentCode": "502-026000000-000000",
+    "name": "Maletas",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-026004000-000000",
+    "parentCode": "502-026000000-000000",
+    "name": "Pasaporte",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-026005000-000000",
+    "parentCode": "502-026000000-000000",
+    "name": "Peaje",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  },
+  {
+    "code": "502-026006000-000000",
+    "parentCode": "502-026000000-000000",
+    "name": "Tarifas",
+    "level": 4,
+    "kind": 5,
+    "role": 12,
+    "isPlaceholder": false
+  }
+]

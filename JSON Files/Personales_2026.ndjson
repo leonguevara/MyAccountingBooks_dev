@@ -1,0 +1,294 @@
+{"code":"000-00.000.00-000.000","parent_code":null,"level":0,"name":"Raíz","kind":0,"role":0,"type":"SYSTEM","is_placeholder":true}
+{"code":"100-00.000.00-000.000","parent_code":"000-00.000.00-000.000","level":0,"name":"Activos","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-01.000.00-000.000","parent_code":"100-00.000.00-000.000","level":0,"name":"Activo Circulante","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-01.001.00-000.000","parent_code":"100-01.000.00-000.000","level":0,"name":"Caja","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-01.002.00-000.000","parent_code":"100-01.000.00-000.000","level":0,"name":"Certificados de depósito","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-01.003.00-000.000","parent_code":"100-01.000.00-000.000","level":0,"name":"Cuentas de ahorro","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-01.004.00-000.000","parent_code":"100-01.000.00-000.000","level":0,"name":"Cuentas de cheques","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-01.005.00-000.000","parent_code":"100-01.000.00-000.000","level":0,"name":"Préstamos realizados","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-01.005.01-000.000","parent_code":"100-01.005.00-000.000","level":0,"name":"Familia","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-01.005.02-000.000","parent_code":"100-01.005.00-000.000","level":0,"name":"Otros","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-01.006.06-000.000","parent_code":"100-01.000.00-000.000","level":0,"name":"Inversiones temporales","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.000.00-000.000","parent_code":"100-00.000.00-000.000","level":0,"name":"Activo No Circulante","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.001.00-000.000","parent_code":"100-02.000.00-000.000","level":0,"name":"Propiedades, Planta y Equipo","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.001.01-000.000","parent_code":"100-02.001.00-000.000","level":0,"name":"Terrenos","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.001.02-000.000","parent_code":"100-02.001.00-000.000","level":0,"name":"Edificios","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.001.03-000.000","parent_code":"100-02.001.00-000.000","level":0,"name":"Maquinaria y Equipo","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.001.04-000.000","parent_code":"100-02.001.00-000.000","level":0,"name":"Mobiliario y Equipo de Oficina","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.001.05-000.000","parent_code":"100-02.001.00-000.000","level":0,"name":"Vehículos","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.002.00-000.000","parent_code":"100-02.000.00-000.000","level":0,"name":"Depreciación Acumulada","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.002.01-000.000","parent_code":"100-02.002.00-000.000","level":0,"name":"Dep. Edificios","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.002.02-000.000","parent_code":"100-02.002.00-000.000","level":0,"name":"Dep. Maquinaria","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.002.03-000.000","parent_code":"100-02.002.00-000.000","level":0,"name":"Dep. Vehículos","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.003.00-000.000","parent_code":"100-02.000.00-000.000","level":0,"name":"Inversiones a Largo Plazo","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.003.01-000.000","parent_code":"100-02.003.00-000.000","level":0,"name":"Ahorro para el retiro","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.003.01-001.000","parent_code":"100-02.003.01-000.000","level":0,"name":"Acciones","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.003.01-002.000","parent_code":"100-02.003.01-000.000","level":0,"name":"Ahorros","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.003.01-003.000","parent_code":"100-02.003.01-000.000","level":0,"name":"Bonos","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.003.01-004.000","parent_code":"100-02.003.01-000.000","level":0,"name":"Fondos de Inversión","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.003.01-005.000","parent_code":"100-02.003.01-000.000","level":0,"name":"Índice de Mercado","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.003.02-000.000","parent_code":"100-02.003.00-000.000","level":0,"name":"Cuentas de Corretaje","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.003.02-001.000","parent_code":"100-02.003.02-000.000","level":0,"name":"Acciones","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.003.02-002.000","parent_code":"100-02.003.02-000.000","level":0,"name":"Bonos","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.003.02-003.000","parent_code":"100-02.003.02-000.000","level":0,"name":"Fondos de Inversión","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.003.02-004.000","parent_code":"100-02.003.02-000.000","level":0,"name":"Índice de Mercado","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.004.00-000.000","parent_code":"100-02.000.00-000.000","level":0,"name":"Activos Intangibles","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.004.01-000.000","parent_code":"100-02.004.00-000.000","level":0,"name":"Marcas","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.004.02-000.000","parent_code":"100-02.004.00-000.000","level":0,"name":"Patentes","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.004.03-000.000","parent_code":"100-02.004.00-000.000","level":0,"name":"Software","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-02.004.04-000.000","parent_code":"100-02.004.00-000.000","level":0,"name":"Licencias","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-03.000.00-000.000","parent_code":"100-00.000.00-000.000","level":0,"name":"Otros Activos","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-03.001.00-000.000","parent_code":"100-03.000.00-000.000","level":0,"name":"Depósitos en Garantía","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-03.002.00-000.000","parent_code":"100-03.000.00-000.000","level":0,"name":"Préstamos realizados a largo plazo","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-03.002.01-000.000","parent_code":"100-03.002.00-000.000","level":0,"name":"Familia","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"100-03.002.02-000.000","parent_code":"100-03.002.00-000.000","level":0,"name":"Otros","kind":1,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"200-00.000.00-000.000","parent_code":"000-00.000.00-000.000","level":0,"name":"Pasivos","kind":2,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"200-01.000.00-000.000","parent_code":"200-00.000.00-000.000","level":0,"name":"Pasivo Circulante","kind":2,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"200-01.001.00-000.000","parent_code":"200-01.000.00-000.000","level":0,"name":"Préstamos no bancarios","kind":2,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"200-01.002.00-000.000","parent_code":"200-01.000.00-000.000","level":0,"name":"Créditos Bancarios a Corto Plazo","kind":2,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"200-01.003.00-000.000","parent_code":"200-01.000.00-000.000","level":0,"name":"Tarjetas de Crédito","kind":2,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"200-02.000.00-000.000","parent_code":"200-00.000.00-000.000","level":0,"name":"Pasivo No Circulante","kind":2,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"200-02.001.00-000.000","parent_code":"200-02.000.00-000.000","level":0,"name":"Préstamos Bancarios a Largo Plazo","kind":2,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"200-02.002.00-000.000","parent_code":"200-02.000.00-000.000","level":0,"name":"Arrendamientos Financieros","kind":2,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"200-02.003.00-000.000","parent_code":"200-02.000.00-000.000","level":0,"name":"Hipotecas","kind":2,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"200-02.004.00-000.000","parent_code":"200-02.000.00-000.000","level":0,"name":"Obligaciones Fiscales a Largo Plazo","kind":2,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"300-00.000.00-000.000","parent_code":"000-00.000.00-000.000","level":0,"name":"Capital","kind":3,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"300-01.000.00-000.000","parent_code":"300-00.000.00-000.000","level":0,"name":"Balance inicial","kind":3,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-00.000.00-000.000","parent_code":"000-00.000.00-000.000","level":0,"name":"Ingresos","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"400-01.000.00-000.000","parent_code":"400-00.000.00-000.000","level":0,"name":"Ingresos por Sueldos y Salarios","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"400-02.000.00-000.000","parent_code":"400-00.000.00-000.000","level":0,"name":"Ingresos por Bonos Laborales","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"400-02.001.00-000.000","parent_code":"400-02.000.00-000.000","level":0,"name":"Aguinaldo","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-02.002.00-000.000","parent_code":"400-02.000.00-000.000","level":0,"name":"Prima Vacacional","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-03.000.00-000.000","parent_code":"400-00.000.00-000.000","level":0,"name":"Ingresos por Pensiones","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"400-04.000.00-000.000","parent_code":"400-00.000.00-000.000","level":0,"name":"Ingresos Financieros","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"400-04.001.00-000.000","parent_code":"400-04.000.00-000.000","level":0,"name":"Intereses","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"400-04.001.01-000.000","parent_code":"400-04.001.00-000.000","level":0,"name":"Intereses por Ahorros","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-04.001.02-000.000","parent_code":"400-04.001.00-000.000","level":0,"name":"Intereses por Bonos","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-04.001.03-000.000","parent_code":"400-04.001.00-000.000","level":0,"name":"Intereses por Certificados","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-04.001.04-000.000","parent_code":"400-04.001.00-000.000","level":0,"name":"Intereses por Cheques","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-04.001.05-000.000","parent_code":"400-04.001.00-000.000","level":0,"name":"Intereses por Mercado de Monedas","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-04.001.06-000.000","parent_code":"400-04.001.00-000.000","level":0,"name":"Otros Intereses","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-04.001.07-000.000","parent_code":"400-04.000.00-000.000","level":0,"name":"Rendimiento de inversiones","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"400-05.000.00-000.000","parent_code":"400-00.000.00-000.000","level":0,"name":"Ingresos por Honorarios","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"400-06.000.00-000.000","parent_code":"400-00.000.00-000.000","level":0,"name":"Ingresos por Rentas","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"400-07.000.00-000.000","parent_code":"400-00.000.00-000.000","level":0,"name":"Otros Ingresos","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"400-07.001.00-000.000","parent_code":"400-07.000.00-000.000","level":0,"name":"Anticipos Laborales","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-07.002.00-000.000","parent_code":"400-07.000.00-000.000","level":0,"name":"Aportaciones Patronales","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-07.003.00-000.000","parent_code":"400-07.000.00-000.000","level":0,"name":"Apoyo Gubernamental","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-07.004.00-000.000","parent_code":"400-07.000.00-000.000","level":0,"name":"Apoyos Alimenticios","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-07.005.00-000.000","parent_code":"400-07.000.00-000.000","level":0,"name":"Ingresos por devolución de impuestos","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-07.006.00-000.000","parent_code":"400-07.000.00-000.000","level":0,"name":"Ingresos por devolución de compras","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-07.007.00-000.000","parent_code":"400-07.000.00-000.000","level":0,"name":"Premios por Sorteos y Loterías","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-07.008.00-000.000","parent_code":"400-07.000.00-000.000","level":0,"name":"Préstamos","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"400-07.009.00-000.000","parent_code":"400-07.000.00-000.000","level":0,"name":"Puntos redimidos","kind":4,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-00.000.00-000.000","parent_code":"000-00.000.00-000.000","level":0,"name":"Egresos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-01.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Ajustes","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-02.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Alcohol y Tabaco","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-02.001.00-000.000","parent_code":"500-02.000.00-000.000","level":0,"name":"Destilados","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-02.002.00-000.000","parent_code":"500-02.000.00-000.000","level":0,"name":"Fermentados","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-02.003.00-000.000","parent_code":"500-02.000.00-000.000","level":0,"name":"Otras bebidas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-02.004.00-000.000","parent_code":"500-02.000.00-000.000","level":0,"name":"Tabaco","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-03.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Alimentos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-03.001.00-000.000","parent_code":"500-03.000.00-000.000","level":0,"name":"Comida para llevar","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-03.002.00-000.000","parent_code":"500-03.000.00-000.000","level":0,"name":"Restaurantes y cocinas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-03.003.00-000.000","parent_code":"500-03.000.00-000.000","level":0,"name":"Comestibles","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-03.003.01-000.000","parent_code":"500-03.003.00-000.000","level":0,"name":"Bebidas no alcohólicas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-03.003.02-000.000","parent_code":"500-03.003.00-000.000","level":0,"name":"Carnes","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-03.003.03-000.000","parent_code":"500-03.003.00-000.000","level":0,"name":"Congelados","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-03.003.04-000.000","parent_code":"500-03.003.00-000.000","level":0,"name":"Despensa","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-03.003.05-000.000","parent_code":"500-03.003.00-000.000","level":0,"name":"Huevos y Lácteos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-03.003.06-000.000","parent_code":"500-03.003.00-000.000","level":0,"name":"Panadería y Tortillería","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-03.003.07-000.000","parent_code":"500-03.003.00-000.000","level":0,"name":"Snacks","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-04.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Automóvil","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-04.001.00-000.000","parent_code":"500-04.000.00-000.000","level":0,"name":"Accesorios","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-04.002.00-000.000","parent_code":"500-04.000.00-000.000","level":0,"name":"Combustible y Aditivos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-04.002.01-000.000","parent_code":"500-04.002.00-000.000","level":0,"name":"Combustible","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-04.002.02-000.000","parent_code":"500-04.002.00-000.000","level":0,"name":"Aditivos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-04.003.00-000.000","parent_code":"500-04.000.00-000.000","level":0,"name":"Cuotas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-04.004.00-000.000","parent_code":"500-04.000.00-000.000","level":0,"name":"Estacionamientos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-04.005.00-000.000","parent_code":"500-04.000.00-000.000","level":0,"name":"Reparaciones y Mantenimiento","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-04.005.01-000.000","parent_code":"500-04.005.00-000.000","level":0,"name":"Refacciones","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-04.005.02-000.000","parent_code":"500-04.005.00-000.000","level":0,"name":"Mantenimiento","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-04.005.03-000.000","parent_code":"500-04.005.00-000.000","level":0,"name":"Reparaciones","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-04.006.00-000.000","parent_code":"500-04.000.00-000.000","level":0,"name":"Pago de automóvil","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-04.007.00-000.000","parent_code":"500-04.000.00-000.000","level":0,"name":"Servicios de Limpieza","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-05.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Cuidado Personal","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-05.001.00-000.000","parent_code":"500-05.000.00-000.000","level":0,"name":"Cortes de cabello","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-05.002.00-000.000","parent_code":"500-05.000.00-000.000","level":0,"name":"Lociones y perfumes","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-05.003.00-000.000","parent_code":"500-05.000.00-000.000","level":0,"name":"Manicure y pedicure","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-05.004.00-000.000","parent_code":"500-05.000.00-000.000","level":0,"name":"Productos de higiene personal","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-05.005.00-000.000","parent_code":"500-05.000.00-000.000","level":0,"name":"Tratamientos de belleza","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Cuidado de la Salud","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-06.001.00-000.000","parent_code":"500-06.000.00-000.000","level":0,"name":"Salud","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-06.001.01-000.000","parent_code":"500-06.001.00-000.000","level":0,"name":"Accesorios","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.001.02-000.000","parent_code":"500-06.001.00-000.000","level":0,"name":"Dispositivos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.001.03-000.000","parent_code":"500-06.001.00-000.000","level":0,"name":"Gastos de Enfermería","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.001.04-000.000","parent_code":"500-06.001.00-000.000","level":0,"name":"Gastos de Hospital","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.001.05-000.000","parent_code":"500-06.001.00-000.000","level":0,"name":"Laboratorios","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.001.06-000.000","parent_code":"500-06.001.00-000.000","level":0,"name":"Medicinas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.001.07-000.000","parent_code":"500-06.001.00-000.000","level":0,"name":"Honorarios médicos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.001.08-000.000","parent_code":"500-06.001.00-000.000","level":0,"name":"Salud dental","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.001.09-000.000","parent_code":"500-06.001.00-000.000","level":0,"name":"Salud ocular","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.001.10-000.000","parent_code":"500-06.001.00-000.000","level":0,"name":"Salud sexual","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.001.11-000.000","parent_code":"500-06.001.00-000.000","level":0,"name":"Salud mental","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.001.12-000.000","parent_code":"500-06.001.00-000.000","level":0,"name":"Suministros","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.001.13-000.000","parent_code":"500-06.001.00-000.000","level":0,"name":"Vitaminas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.002.00-000.000","parent_code":"500-06.000.00-000.000","level":0,"name":"Ejercicio y deportes","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-06.002.01-000.000","parent_code":"500-06.002.00-000.000","level":0,"name":"Accesorios deportivos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.002.02-000.000","parent_code":"500-06.002.00-000.000","level":0,"name":"Equipo de ejercicio","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.002.03-000.000","parent_code":"500-06.002.00-000.000","level":0,"name":"Inscripción a eventos deportivos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-06.002.04-000.000","parent_code":"500-06.002.00-000.000","level":0,"name":"Gimansios","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-07.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Donativos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-07.001.00-000.000","parent_code":"500-07.000.00-000.000","level":0,"name":"Donativo sin recibo","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-07.002.00-000.000","parent_code":"500-07.000.00-000.000","level":0,"name":"Donativo con recibo","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-07.003.00-000.000","parent_code":"500-07.000.00-000.000","level":0,"name":"Propinas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-08.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Educación","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-08.001.00-000.000","parent_code":"500-08.000.00-000.000","level":0,"name":"Colegiatura","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-08.002.00-000.000","parent_code":"500-08.000.00-000.000","level":0,"name":"Cuotas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-08.003.00-000.000","parent_code":"500-08.000.00-000.000","level":0,"name":"Libros","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-08.004.00-000.000","parent_code":"500-08.000.00-000.000","level":0,"name":"MOOCs","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-08.005.00-000.000","parent_code":"500-08.000.00-000.000","level":0,"name":"Recursos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-09.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Entretenimiento","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-09.001.00-000.000","parent_code":"500-09.000.00-000.000","level":0,"name":"Actividades Recreativas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-09.001.01-000.000","parent_code":"500-09.001.00-000.000","level":0,"name":"Conciertos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-09.001.02-000.000","parent_code":"500-09.001.00-000.000","level":0,"name":"Eventos Culturales","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-09.001.03-000.000","parent_code":"500-09.001.00-000.000","level":0,"name":"Eventos Deportivos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-09.002.00-000.000","parent_code":"500-09.000.00-000.000","level":0,"name":"Hobbies","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-09.003.00-000.000","parent_code":"500-09.000.00-000.000","level":0,"name":"Libros y Revistas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-09.003.01-000.000","parent_code":"500-09.003.00-000.000","level":0,"name":"Digitales","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-09.003.02-000.000","parent_code":"500-09.003.00-000.000","level":0,"name":"Físicos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-09.004.00-000.000","parent_code":"500-09.000.00-000.000","level":0,"name":"Películas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-09.004.01-000.000","parent_code":"500-09.004.00-000.000","level":0,"name":"Cine","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-09.004.02-000.000","parent_code":"500-09.004.00-000.000","level":0,"name":"Digitales","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Electrónicos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-10.001.00-000.000","parent_code":"500-10.000.00-000.000","level":0,"name":"Equipo de cómputo","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-10.001.01-000.000","parent_code":"500-10.001.00-000.000","level":0,"name":"Computadoras de escritorio","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.001.02-000.000","parent_code":"500-10.001.00-000.000","level":0,"name":"Computadoras portátiles","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.001.03-000.000","parent_code":"500-10.001.00-000.000","level":0,"name":"Servidores","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.002.00-000.000","parent_code":"500-10.000.00-000.000","level":0,"name":"Equipo de impresión y digitalización","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-10.002.01-000.000","parent_code":"500-10.002.00-000.000","level":0,"name":"Impresoras","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.002.02-000.000","parent_code":"500-10.002.00-000.000","level":0,"name":"Plotters","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.002.03-000.000","parent_code":"500-10.002.00-000.000","level":0,"name":"Scanners","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.002.04-000.000","parent_code":"500-10.002.00-000.000","level":0,"name":"Multifuncionales","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.003.00-000.000","parent_code":"500-10.000.00-000.000","level":0,"name":"Equipo de video","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-10.003.01-000.000","parent_code":"500-10.003.00-000.000","level":0,"name":"Televisores","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.003.02-000.000","parent_code":"500-10.003.00-000.000","level":0,"name":"Pantallas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.003.03-000.000","parent_code":"500-10.003.00-000.000","level":0,"name":"Videocámaras","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.004.00-000.000","parent_code":"500-10.000.00-000.000","level":0,"name":"Equipo de audio","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-10.004.01-000.000","parent_code":"500-10.004.00-000.000","level":0,"name":"Bocinas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.004.02-000.000","parent_code":"500-10.004.00-000.000","level":0,"name":"Micrófonos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.004.03-000.000","parent_code":"500-10.004.00-000.000","level":0,"name":"Multicomponentes","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.005.00-000.000","parent_code":"500-10.000.00-000.000","level":0,"name":"Equipo de IoT","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-10.005.01-000.000","parent_code":"500-10.005.00-000.000","level":0,"name":"Hubs de hogar inteligente","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.005.02-000.000","parent_code":"500-10.005.00-000.000","level":0,"name":"Procesadores","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.005.03-000.000","parent_code":"500-10.005.00-000.000","level":0,"name":"Sensores","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.005.04-000.000","parent_code":"500-10.005.00-000.000","level":0,"name":"Actuadores","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.006.00-000.000","parent_code":"500-10.000.00-000.000","level":0,"name":"Equipo de comunicaciones","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-10.006.01-000.000","parent_code":"500-10.006.00-000.000","level":0,"name":"Teléfonos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.006.02-000.000","parent_code":"500-10.006.00-000.000","level":0,"name":"Teléfonos celulares","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.006.03-000.000","parent_code":"500-10.006.00-000.000","level":0,"name":"Radio-comunicadores","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.007.00-000.000","parent_code":"500-10.000.00-000.000","level":0,"name":"Equipo de conectividad","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.008.00-000.000","parent_code":"500-10.000.00-000.000","level":0,"name":"Accesorios","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.009.00-000.000","parent_code":"500-10.000.00-000.000","level":0,"name":"Reparaciones","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.010.00-000.000","parent_code":"500-10.000.00-000.000","level":0,"name":"Suministros","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.011.00-000.000","parent_code":"500-10.000.00-000.000","level":0,"name":"Tabletas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-10.012.00-000.000","parent_code":"500-10.000.00-000.000","level":0,"name":"Wearables","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Vivienda y Gastos del Hogar","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-11.001.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Renta","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.002.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Consumibles","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.003.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Iluminación","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.004.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Electrodomésticos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.005.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Artículos de limpieza","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.006.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Herramientas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.007.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Lavandería/Tintorería","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.008.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Mantenimiento","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.009.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Mejoras a la Casa","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.010.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Mobiliario","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.011.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Reparaciones del hogar","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.012.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Línea blanca","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.013.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Seguridad y vigilancia","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.014.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Servicios de jardinería","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.015.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Servicios de limpieza","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-11.016.00-000.000","parent_code":"500-11.000.00-000.000","level":0,"name":"Suministros de cocina","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-12.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Gastos Financieros","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-12.001.00-000.000","parent_code":"500-12.000.00-000.000","level":0,"name":"Pérdidas en Inversiones","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-12.002.00-000.000","parent_code":"500-12.000.00-000.000","level":0,"name":"Comisiones Bancarias","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-12.003.00-000.000","parent_code":"500-12.000.00-000.000","level":0,"name":"Intereses Pagados","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-13.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Gastos Laborales","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-13.001.00-000.000","parent_code":"500-13.000.00-000.000","level":0,"name":"Gasto reembolsable","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-13.002.00-000.000","parent_code":"500-13.000.00-000.000","level":0,"name":"Gasto no reembolsable","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-13.003.00-000.000","parent_code":"500-13.000.00-000.000","level":0,"name":"Devolución de anticipo","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-14.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Impuestos y Contribuciones","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-14.001.00-000.000","parent_code":"500-14.000.00-000.000","level":0,"name":"Impuestos Federales","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-14.001.01-000.000","parent_code":"500-14.001.00-000.000","level":0,"name":"Impuesto sobre la renta (ISR)","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-14.001.02-000.000","parent_code":"500-14.001.00-000.000","level":0,"name":"Impuesto al valor agregado (IVA)","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-14.002.00-000.000","parent_code":"500-14.000.00-000.000","level":0,"name":"Impuestos Estatales","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-14.002.01-000.000","parent_code":"500-14.002.00-000.000","level":0,"name":"Derechos Vehiculares","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-14.002.02-000.000","parent_code":"500-14.002.00-000.000","level":0,"name":"Emplacamiento","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-14.003.00-000.000","parent_code":"500-14.000.00-000.000","level":0,"name":"Impuestos Locales","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-14.003.01-000.000","parent_code":"500-14.003.00-000.000","level":0,"name":"Predial","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-14.004.00-000.000","parent_code":"500-14.000.00-000.000","level":0,"name":"Medicare","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-14.005.00-000.000","parent_code":"500-14.000.00-000.000","level":0,"name":"Otros Impuestos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-14.006.00-000.000","parent_code":"500-14.000.00-000.000","level":0,"name":"Seguridad Social","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-15.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Mascotas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-15.001.00-000.000","parent_code":"500-15.000.00-000.000","level":0,"name":"Adquisición de mascotas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-15.002.00-000.000","parent_code":"500-15.000.00-000.000","level":0,"name":"Cuidado de mascotas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-15.002.01-000.000","parent_code":"500-15.002.00-000.000","level":0,"name":"Alimento para mascotas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-15.002.02-000.000","parent_code":"500-15.002.00-000.000","level":0,"name":"Medicinas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-15.002.03-000.000","parent_code":"500-15.002.00-000.000","level":0,"name":"Suministros","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-15.002.04-000.000","parent_code":"500-15.002.00-000.000","level":0,"name":"Veterinario","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-15.002.05-000.000","parent_code":"500-15.002.00-000.000","level":0,"name":"Baño y aseo de mascotas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-16.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Misceláneos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-16.001.00-000.000","parent_code":"500-16.000.00-000.000","level":0,"name":"Apuestas, Sorteos y Juegos de Azar","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-16.002.00-000.000","parent_code":"500-16.000.00-000.000","level":0,"name":"Artículos diversos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-16.003.00-000.000","parent_code":"500-16.000.00-000.000","level":0,"name":"Decoraciones","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-16.004.00-000.000","parent_code":"500-16.000.00-000.000","level":0,"name":"Regalos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-16.005.00-000.000","parent_code":"500-16.000.00-000.000","level":0,"name":"Suministros de oficina","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-17.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Préstamos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-17.001.00-000.000","parent_code":"500-17.000.00-000.000","level":0,"name":"Interés del préstamo","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-17.002.00-000.000","parent_code":"500-17.000.00-000.000","level":0,"name":"Interés del préstamo automotriz","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-17.003.00-000.000","parent_code":"500-17.000.00-000.000","level":0,"name":"Interés del préstamo educativo","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-17.004.00-000.000","parent_code":"500-17.000.00-000.000","level":0,"name":"Interés hipotecario","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-18.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Retiro de Efectivo","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-19.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Ropa y Calzado","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-19.001.00-000.000","parent_code":"500-19.000.00-000.000","level":0,"name":"Accesorios","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-19.002.00-000.000","parent_code":"500-19.000.00-000.000","level":0,"name":"Calzado","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-19.003.00-000.000","parent_code":"500-19.000.00-000.000","level":0,"name":"Ropa","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-20.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Servicios","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-20.001.00-000.000","parent_code":"500-20.000.00-000.000","level":0,"name":"Servicios Básicos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-20.001.01-000.000","parent_code":"500-20.001.00-000.000","level":0,"name":"Agua y alcantarllado","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-20.001.02-000.000","parent_code":"500-20.001.00-000.000","level":0,"name":"Electricidad","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-20.001.03-000.000","parent_code":"500-20.001.00-000.000","level":0,"name":"Gas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-20.001.04-000.000","parent_code":"500-20.001.00-000.000","level":0,"name":"Manejo de desechos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-20.002.00-000.000","parent_code":"500-20.000.00-000.000","level":0,"name":"Otros Servicios","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-20.002.01-000.000","parent_code":"500-20.002.00-000.000","level":0,"name":"Servicios en línea","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-20.002.02-000.000","parent_code":"500-20.002.00-000.000","level":0,"name":"Servicios funerarios","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-20.002.03-000.000","parent_code":"500-20.002.00-000.000","level":0,"name":"Telefonía e Internet","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-20.002.04-000.000","parent_code":"500-20.002.00-000.000","level":0,"name":"Telefonía celular","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-20.002.04-001.000","parent_code":"500-20.002.04-000.000","level":0,"name":"Plan celular","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-20.002.04-002.000","parent_code":"500-20.002.04-000.000","level":0,"name":"Recarga","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-20.002.05-000.000","parent_code":"500-20.002.00-000.000","level":0,"name":"TV por Cable/Satélite","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-21.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Seguros","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-21.001.00-000.000","parent_code":"500-21.000.00-000.000","level":0,"name":"Seguro de aparatos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-21.002.00-000.000","parent_code":"500-21.000.00-000.000","level":0,"name":"Seguro de automóvil","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-21.003.00-000.000","parent_code":"500-21.000.00-000.000","level":0,"name":"Seguro del hogar","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-21.004.00-000.000","parent_code":"500-21.000.00-000.000","level":0,"name":"Seguro de salud","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-21.005.00-000.000","parent_code":"500-21.000.00-000.000","level":0,"name":"Seguro de tarjetas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-21.006.00-000.000","parent_code":"500-21.000.00-000.000","level":0,"name":"Seguro de vida","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-21.007.00-000.000","parent_code":"500-21.000.00-000.000","level":0,"name":"Seguro de asistencia","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-22.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Servicios de Transporte","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-22.001.00-000.000","parent_code":"500-22.000.00-000.000","level":0,"name":"Taxis","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-22.002.00-000.000","parent_code":"500-22.000.00-000.000","level":0,"name":"Transporte público","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-23.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Suscripciones y Membresías","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-23.001.00-000.000","parent_code":"500-23.000.00-000.000","level":0,"name":"Club de Salud","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-23.002.00-000.000","parent_code":"500-23.000.00-000.000","level":0,"name":"Membresías","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-23.003.00-000.000","parent_code":"500-23.000.00-000.000","level":0,"name":"Períodicos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-23.004.00-000.000","parent_code":"500-23.000.00-000.000","level":0,"name":"Servicios de Streaming","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-23.005.00-000.000","parent_code":"500-23.000.00-000.000","level":0,"name":"Software","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-24.000.00-000.000","parent_code":"500-00.000.00-000.000","level":0,"name":"Viajes y Vacaciones","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":true}
+{"code":"500-24.001.00-000.000","parent_code":"500-24.000.00-000.000","level":0,"name":"Boletos","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-24.002.00-000.000","parent_code":"500-24.000.00-000.000","level":0,"name":"Hospedaje","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-24.003.00-000.000","parent_code":"500-24.000.00-000.000","level":0,"name":"Maletas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-24.004.00-000.000","parent_code":"500-24.000.00-000.000","level":0,"name":"Pasaporte","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-24.005.00-000.000","parent_code":"500-24.000.00-000.000","level":0,"name":"Peaje","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}
+{"code":"500-24.006.00-000.000","parent_code":"500-24.000.00-000.000","level":0,"name":"Tarifas","kind":6,"role":0,"type":"OTHER_ASSET","is_placeholder":false}

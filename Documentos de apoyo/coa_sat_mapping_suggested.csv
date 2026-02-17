@@ -1,0 +1,176 @@
+code,parentCode,name,level,group,sat_code,sat_name,confidence,alt1,alt2,isPlaceholder,kind,role,needs_review
+201-002001000-000000,201-002000000-000000,IVA por Pagar,4,201,213.01,IVA por pagar,1.0,213.03 ISR por pagar,213.02 IEPS por pagar,False,2,7,False
+201-002002000-000000,201-002000000-000000,ISR por Pagar,4,201,213.03,ISR por pagar,1.0,213.02 IEPS por pagar,213.01 IVA por pagar,False,2,7,False
+201-002003000-000000,201-002000000-000000,Otros Impuestos,4,201,259.03,Otros impuestos diferidos,0.696,113.08 Otros impuestos a favor,213.07 Otros impuestos por pagar,False,2,7,False
+301-000000000-000000,300-000000000-000000,Balance inicial,2,301,102.01,Bancos nacionales,0.219,109 Pagos anticipados,152 Edificios,False,3,10,True
+302-000000000-000000,300-000000000-000000,Capital Social / Aportaciones de Socios,2,302,301,Capital social,0.402,301.03 Aportaciones para futuros aumentos de capital,605.25 Aportaciones para el plan de jubilación,False,3,10,True
+303-000000000-000000,300-000000000-000000,Resultados Acumulados / Utilidades Retenidas,2,303,608,Participación en resultados de subsidiarias,0.233,608.01 Participación en resultados de subsidiarias,609 Participación en resultados de asociadas,False,3,10,True
+304-000000000-000000,300-000000000-000000,Resultado del Ejercicio,2,304,305,Resultado del ejercicio,1.0,305.01 Utilidad del ejercicio,806 CUCA del ejercicio,False,3,10,False
+305-000000000-000000,300-000000000-000000,Reservas,2,305,107,Deudores diversos,0.168,103.01 Inversiones temporales,115.04 Productos terminados,False,3,10,True
+305-001000000-000000,305-000000000-000000,Reserva Legal,2,305,303,Reserva legal,1.0,303.01 Reserva legal,"205.01 Socios, accionistas o representante legal",False,3,10,False
+305-002000000-000000,305-000000000-000000,Reserva Estatutaria,2,305,303,Reserva legal,0.435,303.01 Reserva legal,,False,3,10,True
+305-003000000-000000,305-000000000-000000,Reserva Voluntaria,2,305,303,Reserva legal,0.442,303.01 Reserva legal,,False,3,10,True
+306-000000000-000000,300-000000000-000000,Aportaciones Adicionales de los Propietarios,2,306,301.03,Aportaciones para futuros aumentos de capital,0.341,216.11 Retenciones de IMSS a los trabajadores,601.24 Aportaciones para el plan de jubilación,False,3,10,True
+402-001000000-000000,402-000000000-000000,Aguinaldo,3,402,604.12,Aguinaldo,1.0,601.12 Aguinaldo,603.12 Aguinaldo,False,4,11,False
+402-002000000-000000,402-000000000-000000,Prima Vacacional,3,402,601.07,Prima vacacional,1.0,603.07 Prima vacacional,605.08 Prima vacacional,False,4,11,False
+404-001000000-000000,404-000000000-000000,Bienes,3,404,184.02,Depósitos de arrendamiento de bienes inmuebles,0.211,602.82 Recolección de bienes del sector agropecuario y/o ganadero,604.80 Recolección de bienes del sector agropecuario y/o ganadero,False,4,11,True
+404-002000000-000000,404-000000000-000000,Productos,3,404,704,Otros productos,0.587,704.23 Otros productos,115.04 Productos terminados,False,4,11,False
+404-003000000-000000,404-000000000-000000,Servicios,3,404,602.32,Servicios administrativos,0.51,604.32 Servicios administrativos,601.32 Servicios administrativos,False,4,11,False
+405-001001000-000000,405-001000000-000000,Intereses por Ahorros,4,405,109.10,Intereses pagados por anticipado extranjero,0.424,109.09 Intereses pagados por anticipado nacional,202.08 Intereses por pagar a corto plazo extranjero,False,4,11,True
+405-001002000-000000,405-001000000-000000,Intereses por Bonos,4,405,109.10,Intereses pagados por anticipado extranjero,0.409,109.09 Intereses pagados por anticipado nacional,401.31 Ingresos por donativos,False,4,11,True
+405-001003000-000000,405-001000000-000000,Intereses por Certificados,4,405,401.32,Ingresos por intereses (actividad propia),0.394,401.28 Ingresos por coordinados,109.09 Intereses pagados por anticipado nacional,False,4,11,True
+405-001004000-000000,405-001000000-000000,Intereses por Cheques,4,405,109.10,Intereses pagados por anticipado extranjero,0.403,109.09 Intereses pagados por anticipado nacional,401.26 Ingresos por comisiones,False,4,11,True
+405-001005000-000000,405-001000000-000000,Intereses por Mercado de Monedas,4,405,109.09,Intereses pagados por anticipado nacional,0.373,403.05 Ingresos por condonación de adeudo,109.10 Intereses pagados por anticipado extranjero,False,4,11,True
+405-001006000-000000,405-001000000-000000,Otros Intereses,4,405,403,Otros ingresos,0.506,403.01 Otros Ingresos,115.07 Otros,False,4,11,False
+408-001000000-000000,408-000000000-000000,Anticipos Laborales,3,408,206.05,Otros anticipos de clientes,0.328,210.06 Provisión de anticipos o remanentes por distribuir,,False,4,11,True
+408-002000000-000000,408-000000000-000000,Aportaciones Patronales,3,408,605.30,Aportaciones al SAR,0.429,602.28 Aportaciones al SAR,604.28 Aportaciones al SAR,False,4,11,True
+408-003000000-000000,408-000000000-000000,Apoyo Gubernamental,3,408,184,Depósitos en garantía,0.158,102.01 Bancos nacionales,180 Crédito mercantil,False,4,11,True
+408-004000000-000000,408-000000000-000000,Apoyos Alimenticios,3,408,109,Pagos anticipados,0.233,104 Otros instrumentos financieros,104.01 Otros instrumentos financieros,False,4,11,True
+408-005000000-000000,408-000000000-000000,Ingresos por devolución de impuestos,3,408,403.05,Ingresos por condonación de adeudo,0.529,401.34 Ingresos por fideicomisos,401.25 Ingresos por exportación,False,4,11,False
+408-006000000-000000,408-000000000-000000,Ingresos por devolución de compras,3,408,403.05,Ingresos por condonación de adeudo,0.526,401.34 Ingresos por fideicomisos,401.25 Ingresos por exportación,False,4,11,False
+408-007000000-000000,408-000000000-000000,Premios por Sorteos y Loterías,3,408,216.01,Impuestos retenidos de ISR por sueldos y salarios,0.304,401.29 Ingresos por regalías,213 Impuestos y derechos por pagar,False,4,11,True
+408-008000000-000000,408-000000000-000000,Préstamos,3,408,112,Otros estímulos,0.175,112.01 Otros estímulos,201.02 Proveedores extranjeros,False,4,11,True
+408-009000000-000000,408-000000000-000000,Puntos redimidos,3,408,185,Impuestos diferidos,0.24,216 Impuestos retenidos,115.04 Productos terminados,False,4,11,True
+501-003001000-000000,501-003000000-000000,Electricidad,4,501,207.02,IEPS trasladado,0.156,109 Pagos anticipados,109.23 Otros pagos anticipados,False,5,12,True
+501-003002000-000000,501-003000000-000000,Agua,4,501,603.51,Agua,1.0,604.51 Agua,602.51 Agua,False,5,12,False
+501-003003000-000000,501-003000000-000000,Internet / Teléfono,4,501,602.50,"Teléfono, internet",0.589,"604.50 Teléfono, internet","601.50 Teléfono, internet",False,5,12,False
+501-003004000-000000,501-003000000-000000,Otros Servicios,4,501,115.07,Otros,0.5,703 Otros gastos,703.21 Otros gastos,False,5,12,False
+501-009001000-000000,501-009000000-000000,Intereses Pagados,4,501,109.09,Intereses pagados por anticipado nacional,0.465,109.10 Intereses pagados por anticipado extranjero,118 Impuestos acreditables pagados,False,5,12,False
+501-009002000-000000,501-009000000-000000,Comisiones Bancarias,4,501,701.10,Comisiones bancarias,1.0,601.74 Comisiones sobre ventas,602.74 Comisiones sobre ventas,False,5,12,False
+501-010000000-000000,501-000000000-000000,Ajustes,3,501,173,Gastos diferidos,0.152,173.01 Gastos diferidos,163 Aviones,False,5,12,True
+502-004001000-000000,502-004000000-000000,Accesorios,4,502,115.07,Otros,0.187,102 Bancos,185 Impuestos diferidos,False,5,12,True
+502-004002001-000000,502-004002000-000000,Combustible,5,502,176,Activos intangibles,0.187,176.01 Activos intangibles,102.01 Bancos nacionales,False,5,12,True
+502-004002002-000000,502-004002000-000000,Aditivos,5,502,100,Activo,0.25,152 Edificios,152.01 Edificios,False,5,12,True
+502-004003000-000000,502-004000000-000000,Cuotas,4,502,605.21,Cuotas sindicales,0.508,602.20 Cuotas sindicales,604.20 Cuotas sindicales,False,5,12,False
+502-004004000-000000,502-004000000-000000,Estacionamientos,4,502,105.01,Clientes nacionales,0.2,162 Embarcaciones,162.01 Embarcaciones,False,5,12,True
+502-004005001-000000,502-004005000-000000,Refacciones,5,502,162,Embarcaciones,0.233,162.01 Embarcaciones,163 Aviones,False,5,12,True
+502-004005002-000000,502-004005000-000000,Mantenimiento,5,502,602.56,Mantenimiento y conservación,0.439,604.56 Mantenimiento y conservación,601.56 Mantenimiento y conservación,False,5,12,True
+502-004005003-000000,502-004005000-000000,Reparaciones,5,502,162,Embarcaciones,0.28,162.01 Embarcaciones,163 Aviones,False,5,12,True
+502-004006000-000000,502-004000000-000000,Pago de automóvil,4,502,113.07,Pago de lo indebido,0.454,119.01 IVA pendiente de pago,119.03 IEPS pendiente de pago,False,5,12,False
+502-004007000-000000,502-004000000-000000,Servicios de Limpieza,4,502,601.54,Limpieza,0.41,602.54 Limpieza,603.54 Limpieza,False,5,12,True
+502-005001000-000000,502-005000000-000000,Cortes de cabello,4,502,501.01,Costo de venta,0.311,800 Cuentas de orden,502.03 Compras de Importación,False,5,12,True
+502-005002000-000000,502-005000000-000000,Lociones y perfumes,4,502,170,Adaptaciones y mejoras,0.335,170.01 Adaptaciones y mejoras,107.01 Funcionarios y empleados,False,5,12,True
+502-005003000-000000,502-005000000-000000,Manicure y pedicure,4,502,179,Marcas y patentes,0.305,179.01 Marcas y patentes,601.53 Vigilancia y seguridad,False,5,12,True
+502-005004000-000000,502-005000000-000000,Productos de higiene personal,4,502,702,Productos financieros,0.34,115.04 Productos terminados,702.10 Otros productos financieros,False,5,12,True
+502-005005000-000000,502-005000000-000000,Tratamientos de belleza,4,502,602,Gastos de venta,0.314,605.01 Mano de obra,601.04 Premios de asistencia,False,5,12,True
+502-006001001-000000,502-006001000-000000,Accesorios,5,502,115.07,Otros,0.187,102 Bancos,185 Impuestos diferidos,False,5,12,True
+502-006001002-000000,502-006001000-000000,Dispositivos,5,502,174,Gastos pre operativos,0.17,174.01 Gastos pre operativos,109 Pagos anticipados,False,5,12,True
+502-006001003-000000,502-006001000-000000,Gastos de Enfermería,5,502,602,Gastos de venta,0.585,603 Gastos de administración,181 Gastos de instalación,False,5,12,False
+502-006001004-000000,502-006001000-000000,Gastos de Hospital,5,502,602,Gastos de venta,0.58,181 Gastos de instalación,181.01 Gastos de instalación,False,5,12,False
+502-006001005-000000,502-006001000-000000,Laboratorios,5,502,173,Gastos diferidos,0.175,173.01 Gastos diferidos,216.12 Otras impuestos retenidos,False,5,12,True
+502-006001006-000000,502-006001000-000000,Medicinas,5,502,152,Edificios,0.233,152.01 Edificios,162 Embarcaciones,False,5,12,True
+502-006001007-000000,502-006001000-000000,Honorarios médicos,5,502,602.42,Honorarios aduanales personas físicas,0.321,601.42 Honorarios aduanales personas físicas,604.42 Honorarios aduanales personas físicas,False,5,12,True
+502-006001008-000000,502-006001000-000000,Salud dental,5,502,181,Gastos de instalación,0.17,181.01 Gastos de instalación,118.04 IEPS pagado en importación,False,5,12,True
+502-006001009-000000,502-006001000-000000,Salud ocular,5,502,113.02,ISR a favor,0.152,213.01 IVA por pagar,217 Pagos realizados por cuenta de terceros,False,5,12,True
+502-006001010-000000,502-006001000-000000,Salud sexual,5,502,113.06,Subsidio al empleo,0.14,207.02 IEPS trasladado,113.02 ISR a favor,False,5,12,True
+502-006001011-000000,502-006001000-000000,Salud mental,5,502,180,Crédito mercantil,0.169,180.01 Crédito mercantil,181 Gastos de instalación,False,5,12,True
+502-006001012-000000,502-006001000-000000,Suministros,5,502,115.07,Otros,0.175,107.02 Socios y accionistas,103.01 Inversiones temporales,False,5,12,True
+502-006001013-000000,502-006001000-000000,Vitaminas,5,502,163,Aviones,0.175,163.01 Aviones,114 Pagos provisionales,False,5,12,True
+502-006002001-000000,502-006002000-000000,Accesorios deportivos,5,502,174,Gastos pre operativos,0.217,174.01 Gastos pre operativos,173 Gastos diferidos,False,5,12,True
+502-006002002-000000,502-006002000-000000,Equipo de ejercicio,5,502,156,Equipo de cómputo,0.558,156.01 Equipo de cómputo,157 Equipo de comunicación,False,5,12,False
+502-006002003-000000,502-006002000-000000,Inscripción a eventos deportivos,5,502,120,Anticipo a proveedores,0.277,113.02 ISR a favor,120.02 Anticipo a proveedores extranjero,False,5,12,True
+502-006002004-000000,502-006002000-000000,Gimansios,5,502,103,Inversiones,0.21,102 Bancos,200 Pasivo,False,5,12,True
+502-007001000-000000,502-007000000-000000,Donativo sin recibo,4,502,601.71,Regalías sin retención,0.301,603.71 Regalías sin retención,604.71 Regalías sin retención,False,5,12,True
+502-007002000-000000,502-007000000-000000,Donativo con recibo,4,502,401.37,Ingresos de extranjeros con establecimiento en el país,0.17,167 Equipo de adaptaciones para personas con capacidades diferentes,167.01 Equipo de adaptaciones para personas con capacidades diferentes,False,5,12,True
+502-007003000-000000,502-007000000-000000,Propinas,4,502,114,Pagos provisionales,0.181,115.04 Productos terminados,115.07 Otros,False,5,12,True
+502-008001000-000000,502-008000000-000000,Colegiatura,4,502,105,Clientes,0.147,102.02 Bancos extranjeros,101 Caja,False,5,12,True
+502-008002000-000000,502-008000000-000000,Cuotas,4,502,605.21,Cuotas sindicales,0.508,602.20 Cuotas sindicales,604.20 Cuotas sindicales,False,5,12,False
+502-008003000-000000,502-008000000-000000,Libros,4,502,115.07,Otros,0.191,102 Bancos,103 Inversiones,False,5,12,True
+502-008004000-000000,502-008000000-000000,MOOCs,4,502,115.07,Otros,0.21,201 Proveedores,102 Bancos,False,5,12,True
+502-008005000-000000,502-008000000-000000,Recursos,4,502,103,Inversiones,0.184,151 Terrenos,151.01 Terrenos,False,5,12,True
+502-009001001-000000,502-009001000-000000,Conciertos,5,502,105,Clientes,0.194,115.07 Otros,102.01 Bancos nacionales,False,5,12,True
+502-009001002-000000,502-009001000-000000,Eventos Culturales,5,502,103.01,Inversiones temporales,0.193,105.01 Clientes nacionales,102.01 Bancos nacionales,False,5,12,True
+502-009001003-000000,502-009001000-000000,Eventos Deportivos,5,502,174,Gastos pre operativos,0.215,174.01 Gastos pre operativos,185 Impuestos diferidos,False,5,12,True
+502-009002000-000000,502-009000000-000000,Hobbies,4,502,163,Aviones,0.15,163.01 Aviones,105 Clientes,False,5,12,True
+502-009003001-000000,502-009003000-000000,Digitales,5,502,105,Clientes,0.165,103.01 Inversiones temporales,152 Edificios,False,5,12,True
+502-009003002-000000,502-009003000-000000,Físicos,5,502,152,Edificios,0.219,152.01 Edificios,102 Bancos,False,5,12,True
+502-009004001-000000,502-009004000-000000,Cine,5,502,105,Clientes,0.233,163 Aviones,163.01 Aviones,False,5,12,True
+502-009004002-000000,502-009004000-000000,Digitales,5,502,105,Clientes,0.165,103.01 Inversiones temporales,152 Edificios,False,5,12,True
+502-010001000-000000,502-010000000-000000,Equipo de cómputo,4,502,156,Equipo de cómputo,1.0,156.01 Equipo de cómputo,504.11 Depreciación de equipo de cómputo,False,5,12,False
+502-010002000-000000,502-010000000-000000,Equipo de video,4,502,156,Equipo de cómputo,0.566,156.01 Equipo de cómputo,157 Equipo de comunicación,False,5,12,False
+502-010003000-000000,502-010000000-000000,Equipo de audio,4,502,156,Equipo de cómputo,0.587,156.01 Equipo de cómputo,157 Equipo de comunicación,False,5,12,False
+502-010004000-000000,502-010000000-000000,Equipo de comunicaciones,4,502,165,Equipo de comunicaciones telefónicas,0.768,165.01 Equipo de comunicaciones telefónicas,157 Equipo de comunicación,False,5,12,False
+502-010005000-000000,502-010000000-000000,Equipo de conectividad,4,502,157,Equipo de comunicación,0.564,157.01 Equipo de comunicación,156 Equipo de cómputo,False,5,12,False
+502-010006000-000000,502-010000000-000000,Accesorios,4,502,115.07,Otros,0.187,102 Bancos,185 Impuestos diferidos,False,5,12,True
+502-010007000-000000,502-010000000-000000,Reparaciones,4,502,162,Embarcaciones,0.28,162.01 Embarcaciones,163 Aviones,False,5,12,True
+502-010008000-000000,502-010000000-000000,Suministros,4,502,115.07,Otros,0.175,107.02 Socios y accionistas,103.01 Inversiones temporales,False,5,12,True
+502-010009000-000000,502-010000000-000000,Tabletas,4,502,176,Activos intangibles,0.156,176.01 Activos intangibles,118.01 IVA acreditable pagado,False,5,12,True
+502-010010000-000000,502-010000000-000000,Wearables,4,502,161,Ferrocarriles,0.191,161.01 Ferrocarriles,162 Embarcaciones,False,5,12,True
+502-011001000-000000,502-011000000-000000,Consumibles,4,502,176,Activos intangibles,0.187,176.01 Activos intangibles,102.01 Bancos nacionales,False,5,12,True
+502-011002000-000000,502-011000000-000000,Iluminación,4,502,157,Equipo de comunicación,0.17,157.01 Equipo de comunicación,181 Gastos de instalación,False,5,12,True
+502-011003000-000000,502-011000000-000000,Electrodomésticos,4,502,109.23,Otros pagos anticipados,0.175,203.18 Otros cobros anticipados,152 Edificios,False,5,12,True
+502-011004000-000000,502-011000000-000000,Artículos de limpieza,4,502,601.55,Papelería y artículos de oficina,0.428,602.55 Papelería y artículos de oficina,603.55 Papelería y artículos de oficina,False,5,12,True
+502-011005000-000000,502-011000000-000000,Herramientas,4,502,151,Terrenos,0.21,151.01 Terrenos,161 Ferrocarriles,False,5,12,True
+502-011006000-000000,502-011000000-000000,Lavandería/Tintorería,4,502,206,Anticipo de cliente,0.14,206.02 Anticipo de cliente extranjero,119.01 IVA pendiente de pago,False,5,12,True
+502-011007000-000000,502-011000000-000000,Mantenimiento,4,502,602.56,Mantenimiento y conservación,0.439,604.56 Mantenimiento y conservación,601.56 Mantenimiento y conservación,False,5,12,True
+502-011008000-000000,502-011000000-000000,Mejoras a la Casa,4,502,401.01,Ventas y/o servicios gravados a la tasa general,0.283,601.31 Asimilados a salarios,602.31 Asimilados a salarios,False,5,12,True
+502-011009000-000000,502-011000000-000000,Mobiliario,4,502,155,Mobiliario y equipo de oficina,0.305,155.01 Mobiliario y equipo de oficina,504.10 Depreciación de mobiliario y equipo de oficina,False,5,12,True
+502-011010000-000000,502-011000000-000000,Reparaciones del hogar,4,502,305,Resultado del ejercicio,0.286,802 CUFIN del ejercicio,603.79 Fletes del extranjero,False,5,12,True
+502-011011000-000000,502-011000000-000000,Línea blanca,4,502,102,Bancos,0.156,109 Pagos anticipados,207.01 IVA trasladado,False,5,12,True
+502-011012000-000000,502-011000000-000000,y vigilancia,5,502,601.53,Vigilancia y seguridad,0.639,602.53 Vigilancia y seguridad,603.53 Vigilancia y seguridad,False,5,12,False
+502-011013000-000000,502-011000000-000000,Servicios de jardinería,4,502,501.02,Costo de servicios (Mano de obra),0.392,601.32 Servicios administrativos,602.32 Servicios administrativos,False,5,12,True
+502-011014000-000000,502-011000000-000000,Servicios de limpieza,4,502,601.54,Limpieza,0.41,602.54 Limpieza,603.54 Limpieza,False,5,12,True
+502-011015000-000000,502-011000000-000000,Suministros de cocina,4,502,401.33,Ingresos de copropiedad,0.337,184.01 Depósitos de fianzas,601.73 Gastos de importación,False,5,12,True
+502-012001000-000000,502-012000000-000000,Pérdidas en Inversiones,4,502,103.02,Inversiones en fideicomisos,0.479,103 Inversiones,103.03 Otras inversiones,False,5,12,False
+502-012002000-000000,502-012000000-000000,Comisiones Bancarias,4,502,701.10,Comisiones bancarias,1.0,601.74 Comisiones sobre ventas,602.74 Comisiones sobre ventas,False,5,12,False
+502-012003000-000000,502-012000000-000000,Intereses Pagados,4,502,109.09,Intereses pagados por anticipado nacional,0.465,109.10 Intereses pagados por anticipado extranjero,118 Impuestos acreditables pagados,False,5,12,False
+502-014001000-000000,502-014000000-000000,Gasto reembolsable,4,502,174,Gastos pre operativos,0.197,174.01 Gastos pre operativos,173 Gastos diferidos,False,5,12,True
+502-014002000-000000,502-014000000-000000,Gasto no reembolsable,4,502,612,Gastos no deducibles para CUFIN,0.268,612.01 Gastos no deducibles para CUFIN,209.01 IVA trasladado no cobrado,False,5,12,True
+502-014003000-000000,502-014000000-000000,Devolución de anticipo,4,502,206,Anticipo de cliente,0.462,206.01 Anticipo de cliente nacional,206.02 Anticipo de cliente extranjero,False,5,12,False
+502-015001001-000000,502-015001000-000000,Impuesto sobre la renta (ISR),5,502,611,Impuesto Sobre la renta,0.83,611.01 Impuesto Sobre la renta,611.02 Impuesto Sobre la renta por remanente distribuible,False,5,12,False
+502-015001002-000000,502-015001000-000000,Impuesto al valor agregado (IVA),5,502,611,Impuesto Sobre la renta,0.272,611.01 Impuesto Sobre la renta,213.05 Impuesto estatal y municipal por pagar,False,5,12,True
+502-015002001-000000,502-015002000-000000,Derechos Vehiculares,5,502,253.17,Derechos fiduciarios,0.462,203.17 Derechos fiduciarios,109.22 Derechos fiduciarios,False,5,12,False
+502-015002002-000000,502-015002000-000000,Emplacamiento,5,502,105,Clientes,0.167,179 Marcas y patentes,179.01 Marcas y patentes,False,5,12,True
+502-015003001-000000,502-015003000-000000,Predial,5,502,201.01,Proveedores nacionales,0.169,118.03 IEPS acreditable pagado,201 Proveedores,False,5,12,True
+502-015004000-000000,502-015000000-000000,Medicare,4,502,161,Ferrocarriles,0.167,161.01 Ferrocarriles,152 Edificios,False,5,12,True
+502-015005000-000000,502-015000000-000000,Otros Impuestos,4,502,259.03,Otros impuestos diferidos,0.696,113.08 Otros impuestos a favor,213.07 Otros impuestos por pagar,False,5,12,False
+502-015006000-000000,502-015000000-000000,Seguridad Social,4,502,301,Capital social,0.427,605.24 Previsión social,602.23 Previsión social,False,5,12,True
+502-016001000-000000,502-016000000-000000,Adquisición de mascotas,4,502,810,Deducción de inversión,0.301,810.01 Deducción de inversión,814.02 Consignación de mercancías recibidas,False,5,12,True
+502-016002001-000000,502-016002000-000000,Alimento para mascotas,5,502,612,Gastos no deducibles para CUFIN,0.225,612.01 Gastos no deducibles para CUFIN,301.03 Aportaciones para futuros aumentos de capital,False,5,12,True
+502-016002002-000000,502-016002000-000000,Medicinas,5,502,152,Edificios,0.233,152.01 Edificios,162 Embarcaciones,False,5,12,True
+502-016002003-000000,502-016002000-000000,Suministros,5,502,115.07,Otros,0.175,107.02 Socios y accionistas,103.01 Inversiones temporales,False,5,12,True
+502-016002004-000000,502-016002000-000000,Veterinario,5,502,115,Inventario,0.233,115.01 Inventario,151 Terrenos,False,5,12,True
+502-016002005-000000,502-016002000-000000,Baño y aseo de mascotas,5,502,155,Mobiliario y equipo de oficina,0.334,155.01 Mobiliario y equipo de oficina,601.49 Viáticos y gastos de viaje,False,5,12,True
+502-017001000-000000,502-017000000-000000,"Apuestas, Sorteos y Juegos de Azar",4,502,601.49,Viáticos y gastos de viaje,0.311,602.49 Viáticos y gastos de viaje,603.49 Viáticos y gastos de viaje,False,5,12,True
+502-017002000-000000,502-017000000-000000,Artículos diversos,4,502,107,Deudores diversos,0.437,107.05 Otros deudores diversos,205 Acreedores diversos a corto plazo,False,5,12,True
+502-017003000-000000,502-017000000-000000,Decoraciones,4,502,162,Embarcaciones,0.252,162.01 Embarcaciones,163 Aviones,False,5,12,True
+502-017004000-000000,502-017000000-000000,Regalos,4,502,151,Terrenos,0.187,151.01 Terrenos,115.07 Otros,False,5,12,True
+502-017005000-000000,502-017000000-000000,Suministros de oficina,4,502,155,Mobiliario y equipo de oficina,0.405,155.01 Mobiliario y equipo de oficina,601.55 Papelería y artículos de oficina,False,5,12,True
+502-018001000-000000,502-018000000-000000,Interés del préstamo,4,502,603.79,Fletes del extranjero,0.318,602.81 Fletes del extranjero,604.79 Fletes del extranjero,False,5,12,True
+502-018002000-000000,502-018000000-000000,Interés del préstamo automotriz,4,502,804,CUFINRE del ejercicio,0.243,603.79 Fletes del extranjero,602.81 Fletes del extranjero,False,5,12,True
+502-018003000-000000,502-018000000-000000,Interés del préstamo educativo,4,502,603.79,Fletes del extranjero,0.259,602.81 Fletes del extranjero,604.79 Fletes del extranjero,False,5,12,True
+502-018004000-000000,502-018000000-000000,Interés hipotecario,4,502,109.22,Derechos fiduciarios,0.179,203.17 Derechos fiduciarios,253.17 Derechos fiduciarios,False,5,12,True
+502-019000000-000000,502-000000000-000000,Retiro de Efectivo,3,502,101.01,Caja y efectivo,0.342,156 Equipo de cómputo,156.01 Equipo de cómputo,False,5,12,True
+502-020001000-000000,502-020000000-000000,Accesorios,4,502,115.07,Otros,0.187,102 Bancos,185 Impuestos diferidos,False,5,12,True
+502-020002000-000000,502-020000000-000000,Calzado,4,502,101,Caja,0.191,207.01 IVA trasladado,207.02 IEPS trasladado,False,5,12,True
+502-020003000-000000,502-020000000-000000,Ropa,4,502,213.03,ISR por pagar,0.165,115.07 Otros,200 Pasivo,False,5,12,True
+502-021001001-000000,502-021001000-000000,Agua y alcantarllado,5,502,601.51,Agua,0.333,602.51 Agua,603.51 Agua,False,5,12,True
+502-021001002-000000,502-021001000-000000,Electricidad,5,502,207.02,IEPS trasladado,0.156,109 Pagos anticipados,109.23 Otros pagos anticipados,False,5,12,True
+502-021001003-000000,502-021001000-000000,Gas,5,502,102,Bancos,0.156,200 Pasivo,163 Aviones,False,5,12,True
+502-021001004-000000,502-021001000-000000,Manejo de desechos,5,502,605.01,Mano de obra,0.34,501.06 Mano de obra directa,605 Mano de obra directa,False,5,12,True
+502-021002001-000000,502-021002000-000000,Servicios en línea,5,502,601.32,Servicios administrativos,0.358,602.32 Servicios administrativos,603.32 Servicios administrativos,False,5,12,True
+502-021002002-000000,502-021002000-000000,Servicios funerarios,5,502,602.32,Servicios administrativos,0.466,604.32 Servicios administrativos,601.32 Servicios administrativos,False,5,12,False
+502-021002003-000000,502-021002000-000000,Telefonía e Internet,5,502,602.50,"Teléfono, internet",0.446,"601.50 Teléfono, internet","604.50 Teléfono, internet",False,5,12,True
+502-021002004-001000,502-021002004-000000,Plan celular,6,502,605.25,Aportaciones para el plan de jubilación,0.216,602.24 Aportaciones para el plan de jubilación,604.24 Aportaciones para el plan de jubilación,False,5,12,True
+502-021002004-002000,502-021002004-000000,Recarga,6,502,101,Caja,0.191,161 Ferrocarriles,161.01 Ferrocarriles,False,5,12,True
+502-021002005-000000,502-021002000-000000,TV por Cable/Satélite,5,502,213.01,IVA por pagar,0.295,215 PTU por pagar,215.01 PTU por pagar,False,5,12,True
+502-023001000-000000,502-023000000-000000,Seguro de aparatos,4,502,156,Equipo de cómputo,0.33,156.01 Equipo de cómputo,601.19 Fondo de ahorro,False,5,12,True
+502-023002000-000000,502-023000000-000000,Seguro de automóvil,4,502,156,Equipo de cómputo,0.324,156.01 Equipo de cómputo,157 Equipo de comunicación,False,5,12,True
+502-023003000-000000,502-023000000-000000,Seguro del hogar,4,502,305,Resultado del ejercicio,0.292,806 CUCA del ejercicio,801 UFIN del ejercicio,False,5,12,True
+502-023004000-000000,502-023000000-000000,Seguro de salud,4,502,156,Equipo de cómputo,0.305,156.01 Equipo de cómputo,181 Gastos de instalación,False,5,12,True
+502-023005000-000000,502-023000000-000000,Seguro de tarjetas,4,502,601.75,Comisiones por tarjetas de crédito,0.378,602.75 Comisiones por tarjetas de crédito,501.01 Costo de venta,False,5,12,True
+502-023006000-000000,502-023000000-000000,Seguro de vida,4,502,501.01,Costo de venta,0.33,602 Gastos de venta,157 Equipo de comunicación,False,5,12,True
+502-023007000-000000,502-023000000-000000,Seguro de asistencia,4,502,601.04,Premios de asistencia,0.581,602.04 Premios de asistencia,603.04 Premios de asistencia,False,5,12,False
+502-024001000-000000,502-024000000-000000,Taxis,4,502,163,Aviones,0.175,163.01 Aviones,115 Inventario,False,5,12,True
+502-024002000-000000,502-024000000-000000,Transporte público,4,502,602.16,Transporte,0.575,604.16 Transporte,601.16 Transporte,False,5,12,False
+502-025001000-000000,502-025000000-000000,Club de Salud,4,502,800,Cuentas de orden,0.299,501.01 Costo de venta,181 Gastos de instalación,False,5,12,True
+502-025002000-000000,502-025000000-000000,Membresías,4,502,162,Embarcaciones,0.183,162.01 Embarcaciones,151 Terrenos,False,5,12,True
+502-025003000-000000,502-025000000-000000,Períodicos,4,502,152,Edificios,0.221,152.01 Edificios,115.03 Producción en proceso,False,5,12,True
+502-025004000-000000,502-025000000-000000,Servicios de Streaming,4,502,501.02,Costo de servicios (Mano de obra),0.408,601.32 Servicios administrativos,602.32 Servicios administrativos,False,5,12,True
+502-025005000-000000,502-025000000-000000,Software,4,502,113,Impuestos a favor,0.14,161 Ferrocarriles,161.01 Ferrocarriles,False,5,12,True
+502-026001000-000000,502-026000000-000000,Boletos,4,502,115.07,Otros,0.233,105 Clientes,102 Bancos,False,5,12,True
+502-026002000-000000,502-026000000-000000,Hospedaje,4,502,102.02,Bancos extranjeros,0.156,201 Proveedores,213.06 Derechos por pagar,False,5,12,True
+502-026003000-000000,502-026000000-000000,Maletas,4,502,105,Clientes,0.187,163 Aviones,163.01 Aviones,False,5,12,True
+502-026004000-000000,502-026000000-000000,Pasaporte,4,502,200,Pasivo,0.187,200.01 Pasivo a corto plazo,109 Pagos anticipados,False,5,12,True
+502-026005000-000000,502-026000000-000000,Peaje,4,502,101,Caja,0.156,201 Proveedores,200 Pasivo,False,5,12,True
+502-026006000-000000,502-026000000-000000,Tarifas,4,502,115.07,Otros,0.175,115 Inventario,115.01 Inventario,False,5,12,True
