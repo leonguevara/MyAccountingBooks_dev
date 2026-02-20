@@ -1,5 +1,4 @@
-\
--- 031_seed_crypto_to_commodity.sql
+-- 003_seed_crypto_to_commodity.pgsql
 -- Seed common crypto "commodities" into public.commodity.
 --
 -- Notes:

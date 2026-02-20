@@ -1,9 +1,9 @@
--- 040_instantiate_template_to_ledger_v2.sql
+-- 005_function_instantiate_template_to_ledger.pgsql
 -- Instantiates a COA template into a Ledger, using:
 --   coa_template_node.account_type_code -> account_type.id -> account.account_type_id
 --
 -- Run:
---   psql -h localhost -U postgres -d myaccounting_dev -f 040_instantiate_template_to_ledger_v2.sql
+--   psql -h localhost -U postgres -d myaccounting_dev -f 005_function_instantiate_template_to_ledger.pgsql
 
 CREATE OR REPLACE FUNCTION public.instantiate_coa_template_to_ledger(
   p_template_id uuid,

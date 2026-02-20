@@ -1,4 +1,4 @@
--- 041_create_ledger.sql
+-- 006_function_create_ledger_with_optional_template.sql
 -- Purpose:
 --   Create a new Ledger and (optionally) instantiate its Chart of Accounts from a COA template.
 --

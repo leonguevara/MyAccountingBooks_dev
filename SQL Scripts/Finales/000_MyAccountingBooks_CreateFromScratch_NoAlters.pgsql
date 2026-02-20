@@ -1,5 +1,5 @@
 -- ============================================================
--- 000Y_MyAccountingBooks_CreateFromScratch_NoAlters.sql
+-- 000_MyAccountingBooks_CreateFromScratch_NoAlters.sql
 --
 -- PostgreSQL schema for the MyAccountingBooks multiplatform app. It is
 -- derived from an initial CoreData XML model.  However, it has some
@@ -158,8 +158,8 @@ CREATE TABLE account_type (
   -- Sync metadata
   updated_at     timestamptz NOT NULL DEFAULT now(),
   revision       bigint NOT NULL DEFAULT 0,
-  deleted_at     timestamptz NULL
-  ,CONSTRAINT account_type_code_uq UNIQUE (code)
+  deleted_at     timestamptz NULL,
+  CONSTRAINT account_type_code_uq UNIQUE (code)
 );
 
 -- =========================
@@ -329,7 +329,48 @@ CREATE TABLE account (
 
   updated_at      timestamptz NOT NULL DEFAULT now(),
   revision        bigint NOT NULL DEFAULT 0,
-  deleted_at      timestamptz NULL
+  deleted_at      timestamptz NULL,
+
+  CONSTRAINT chk_account_kind
+  CHECK (kind IN (0,1,2,3,4,5,6,7,8)),
+
+  CONSTRAINT chk_account_role
+  CHECK (account_role IN (
+    -- Generic
+    0,
+
+    -- Assets
+    100,101,110,120,130,131,199,
+
+    -- Liabilities
+    200,210,220,299,
+
+    -- Equity
+    300,310,320,
+
+    -- Income
+    400,410,420,430,499,
+
+    -- Cost of Sales
+    500,510,
+
+    -- Expenses
+    600,610,620,699,
+
+    -- Memorandum (classic)
+    700,800,
+
+    -- Financial result roles (RIF / SAT 700s)
+    4300,4301,
+    4310,4311,
+    4320,4321,
+    4330,4331,
+    4340,4341,
+    4390,4391,
+
+    -- Statistical
+    900
+  ))
 );
 
 -- =========================

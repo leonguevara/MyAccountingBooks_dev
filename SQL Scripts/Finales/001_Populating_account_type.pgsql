@@ -1,17 +1,15 @@
--- 012_Populating_account_type_v3.sql
+-- 001_Populating_account_type.pgsql
 -- Seeds the AccountType catalog.
---
--- Updates vs v2:
--- - Adds more specific financial AccountTypes aligned with finer AccountRole RIF roles:
---   INTEREST_INCOME / INTEREST_EXPENSE / FX_GAIN / FX_LOSS / INFLATION_GAIN / INFLATION_LOSS
---   BANK_FEES_INCOME / BANK_FEES_EXPENSE / OTHER_FIN_INCOME / OTHER_FIN_EXPENSE
 --
 -- Assumptions:
 -- - account_type columns: code, name, kind, normal_balance, sort_order, standard, is_active, created_at
 -- - AccountKind raw values:
 --     system=0, asset=1, liability=2, equity=3, income=4, costOfSales=5, expense=6, memorandum=7, statistical=8
 -- - normal_balance raw values: debit=0, credit=1
+-- Note: this is a simple seed script. In a production environment, you might want to add more fields,
+-- handle localization, or use a more robust seeding mechanism.
 
+-- Run this script in a transaction to ensure atomicity.
 BEGIN;
 
 -- Optional: avoid duplicates if you re-run the script.
@@ -24,10 +22,12 @@ INSERT INTO account_type
 VALUES
 -- =========================
 -- System
+-- Special type used for internal purposes.
 -- =========================
 ('SYSTEM','SYSTEM',0,0,0,'GEN',true,now()),
 -- =========================
 -- Assets
+-- Types of assets commonly used in small business accounting.
 -- =========================
 ('CASH','Cash',1,0,10,'GEN',true,now()),
 ('BANK','Bank accounts',1,0,20,'GEN',true,now()),
@@ -40,6 +40,7 @@ VALUES
 
 -- =========================
 -- Liabilities
+-- Types of liabilities commonly used in small business accounting.
 -- =========================
 ('AP','Accounts payable',2,1,110,'GEN',true,now()),
 ('TAX_PAYABLE','Taxes payable',2,1,120,'GEN',true,now()),
@@ -49,6 +50,7 @@ VALUES
 
 -- =========================
 -- Equity
+-- Types of equity accounts commonly used in small business accounting.
 -- =========================
 ('CAPITAL','Owner capital',3,1,210,'GEN',true,now()),
 ('RET_EARN','Retained earnings',3,1,220,'GEN',true,now()),
@@ -56,6 +58,7 @@ VALUES
 
 -- =========================
 -- Income
+-- Types of income accounts commonly used in small business accounting.
 -- =========================
 ('SALES','Sales revenue',4,1,310,'GEN',true,now()),
 ('SERVICE_REV','Service revenue',4,1,320,'GEN',true,now()),
@@ -65,12 +68,14 @@ VALUES
 
 -- =========================
 -- Cost of Sales
+-- Types of cost of sales accounts commonly used in small business accounting.
 -- =========================
 ('COGS','Cost of goods sold',5,0,410,'GEN',true,now()),
 ('COST_SERVICE','Cost of services',5,0,420,'GEN',true,now()),
 
 -- =========================
 -- Expenses
+-- Types of expense accounts commonly used in small business accounting.
 -- =========================
 ('RENT','Rent expense',6,0,510,'GEN',true,now()),
 ('PAYROLL','Payroll expense',6,0,520,'GEN',true,now()),
