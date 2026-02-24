@@ -226,7 +226,7 @@ CREATE TABLE coa_template_node (
   is_placeholder boolean NOT NULL DEFAULT false,
 
   -- Option 2: stable reference to account_type catalog
-  account_type_code text NULL REFERENCES account_type(code) ON DELETE RESTRICT,
+  account_type_code text NULL REFERENCES account_type(code) ON UPDATE CASCADE ON DELETE RESTRICT,
 
   created_at     timestamptz NOT NULL DEFAULT now(),
   updated_at     timestamptz NOT NULL DEFAULT now(),
@@ -234,13 +234,37 @@ CREATE TABLE coa_template_node (
   UNIQUE (template_id, code),
   CHECK (level >= 0),
 
-  CHECK (is_placeholder OR account_type_code IS NOT NULL)
+  CHECK (is_placeholder OR account_type_code IS NOT NULL),
+
+  CONSTRAINT chk_coa_template_node_kind
+  CHECK (kind IN (0,1,2,3,4,5,6,7,8),
+
+  CONSTRAINT chk_coa_template_node_role
+  CHECK (role IN (0,100,101,110,120,130,131,199,200,210,220,299,300,310,320,400,410,420,430,499,500,510,600,610,620,699,700,800,4300,4301,4310,4311,4320,4321,4330,4331,4340,4341,4390,4391,900)
+
+  CONSTRAINT chk_coa_template_node_parent_code_fkey
+  FOREIGN KEY (template_id, parent_code) REFERENCES coa_template_node(template_id, code) ON UPDATE CASCADE ON DELETE RESTRICT,
+
+  CONSTRAINT chk_coa_template_node_no_self_parent
+  CHECK (code <> parent_code)
+
+  CONSTRAINT chk_coa_template_node_root_level
+  CHECK (
+    (parent_code IS NULL and level = 0)
+    OR
+    (parent_code IS NOT NULL and level > 0)
+  )
 );
 
 -- Index to optimize lookups by template_id and account_type_code, 
 -- which are common in account instantiation.
 CREATE INDEX IF NOT EXISTS idx_coa_node_template_typecode
   ON coa_template_node(template_id, account_type_code);
+
+-- Index to enforce one root node per template (parent_code IS NULL).
+CREATE UNIQUE INDEX IF NOT EXISTS idx_coa_template_one_root_per_template_ux
+  ON coa_template_node(template_id)
+  WHERE parent_code IS NULL;
 
 -- =========================
 -- Ledger and operational tables
@@ -373,6 +397,13 @@ CREATE TABLE account (
   ))
 );
 
+-- This index enforces that account codes are unique within a ledger, but only for active accounts 
+-- (deleted_at IS NULL) and accounts that have a code (code IS NOT NULL). This allows for multiple accounts without codes, 
+-- and for "soft-deleted" accounts to retain their codes without blocking new accounts from using those codes.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_account_ledger_code_ux
+  ON account(ledger_id, code)
+  WHERE code IS NOT NULL AND deleted_at IS NULL;
+
 -- =========================
 -- price
 -- This table represents prices of commodities in different currencies.
@@ -450,7 +481,28 @@ CREATE TABLE split (
 
   updated_at     timestamptz NOT NULL DEFAULT now(),
   revision       bigint NOT NULL DEFAULT 0,
-  deleted_at     timestamptz NULL
+  deleted_at     timestamptz NULL,
+
+  CONSTRAINT chk_split_side
+  CHECK (side IN (0,1)),
+
+  CONSTRAINT chk_split_reconcile_state
+  CHECK (reconcile_state IN (true, false),
+
+  CONSTRAINT chk_split_amount
+  CHECK (amount >= 0),
+
+  CONSTRAINT chk_split_quantity
+  CHECK (quantity_num >= 0),
+
+  CONSTRAINT chk_split_value
+  CHECK (value_num >= 0),
+
+  CONSTRAINT chk_split_value_zero
+  CHECK (value_num = 0 OR (value_denom > 0 AND value_num > 0),
+
+  CONSTRAINT chk_split_quantity_zero
+  CHECK (quantity_num = 0 OR (quantity_denom > 0 AND quantity_num > 0),
 );
 
 -- =========================
@@ -524,7 +576,7 @@ id                      uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at              timestamptz NOT NULL DEFAULT now(),
   memo                    text NULL,
   side                    smallint NOT NULL DEFAULT 0,
-  value_denom             integer NOT NULL DEFAULT 0,
+  value_denom             integer NOT NULL DEFAULT 100,
   value_num               bigint NOT NULL DEFAULT 0,
 
   scheduled_transaction_id uuid NOT NULL REFERENCES scheduled_transaction(id) ON DELETE CASCADE,
@@ -532,7 +584,16 @@ id                      uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 
   updated_at              timestamptz NOT NULL DEFAULT now(),
   revision                bigint NOT NULL DEFAULT 0,
-  deleted_at              timestamptz NULL
+  deleted_at              timestamptz NULL,
+
+  CONSTRAINT chk_scheduled_split_side
+  CHECK (side IN (0,1)
+
+  CONSTRAINT chk_scheduled_split_value
+  CHECK (value_num >= 0 AND value_denom > 0 OR value_num = 0)
+
+  CONSTRAINT chk_scheduled_split_action
+  CHECK (action IS NULL OR action <> '')
 );
 
 -- NOTE: root_account_id is intentionally left without an FK here to avoid a circular 
