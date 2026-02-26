@@ -2,7 +2,7 @@
 
 ```mermaid
 flowchart LR
-  UI[Client UI<br/>\(macOS/iOS/Windows/Android\)] -->|HTTP/JSON| API[Backend/API]
+  UI["Client UI<br/>macOS/iOS/Windows/Android"] -->|HTTP/JSON| API[Backend/API]
   API -->|SQL| DB[(PostgreSQL)]
   DB --> ledger[ledger]
   DB --> account[account]
