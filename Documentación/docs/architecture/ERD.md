@@ -3,209 +3,209 @@
 ```mermaid
 erDiagram
   public_account {
-     id
-     ledger_id
-     account_role
-     code
-     commodity_scu
-     created_at
-     is_active
-     is_hidden
-     is_placeholder
-     kind
-     name
-     non_std_scu
+     string id
+     string ledger_id
+     string account_role
+     string code
+     string commodity_scu
+     string created_at
+     string is_active
+     string is_hidden
+     string is_placeholder
+     string kind
+     string name
+     string non_std_scu
   }
   public_account_type {
-     id
-     code
-     name
-     standard
-     kind
-     normal_balance
-     sort_order
-     is_active
-     created_at
-     updated_at
-     revision
-     deleted_at
+     string id
+     string code
+     string name
+     string standard
+     string kind
+     string normal_balance
+     string sort_order
+     string is_active
+     string created_at
+     string updated_at
+     string revision
+     string deleted_at
   }
   public_auth_identity {
-     id
-     ledger_owner_id
-     provider
-     provider_user_id
-     provider_email
-     email_verified
-     created_at
-     last_login_at
-     revision
-     deleted_at
+     string id
+     string ledger_owner_id
+     string provider
+     string provider_user_id
+     string provider_email
+     string email_verified
+     string created_at
+     string last_login_at
+     string revision
+     string deleted_at
   }
   public_coa_template {
-     id
-     code
-     name
-     description
-     country
-     locale
-     industry
-     version
-     is_active
-     created_at
-     updated_at
+     string id
+     string code
+     string name
+     string description
+     string country
+     string locale
+     string industry
+     string version
+     string is_active
+     string created_at
+     string updated_at
   }
   public_coa_template_node {
-     id
-     template_id
-     code
-     parent_code
-     name
-     level
-     kind
-     role
-     is_placeholder
-     account_type_code
-     created_at
-     updated_at
+     string id
+     string template_id
+     string code
+     string parent_code
+     string name
+     string level
+     string kind
+     string role
+     string is_placeholder
+     string account_type_code
+     string created_at
+     string updated_at
   }
   public_commodity {
-     id
-     mnemonic
-     namespace
-     full_name
-     fraction
-     is_active
-     created_at
-     updated_at
-     revision
-     deleted_at
+     string id
+     string mnemonic
+     string namespace
+     string full_name
+     string fraction
+     string is_active
+     string created_at
+     string updated_at
+     string revision
+     string deleted_at
   }
   public_enum_label {
-     enum_name
-     enum_value
-     locale
-     label
-     description
+     string enum_name
+     string enum_value
+     string locale
+     string label
+     string description
   }
   public_ledger {
-     id
-     owner_id
-     name
-     currency_code
-     precision
-     template
-     is_active
-     closed_at
-     created_at
-     currency_commodity_id
-     root_account_id
-     coa_template_id
+     string id
+     string owner_id
+     string name
+     string currency_code
+     string precision
+     string template
+     string is_active
+     string closed_at
+     string created_at
+     string currency_commodity_id
+     string root_account_id
+     string coa_template_id
   }
   public_ledger_owner {
-     id
-     email
-     email_verified
-     password_hash
-     display_name
-     is_active
-     created_at
-     updated_at
-     last_login_at
-     revision
-     deleted_at
+     string id
+     string email
+     string email_verified
+     string password_hash
+     string display_name
+     string is_active
+     string created_at
+     string updated_at
+     string last_login_at
+     string revision
+     string deleted_at
   }
   public_payee {
-     id
-     ledger_id
-     name
-     is_active
-     created_at
-     updated_at
-     revision
-     deleted_at
+     string id
+     string ledger_id
+     string name
+     string is_active
+     string created_at
+     string updated_at
+     string revision
+     string deleted_at
   }
   public_price {
-     id
-     commodity_id
-     currency_id
-     date
-     source
-     type
-     value_denom
-     value_num
-     created_at
-     updated_at
-     revision
-     deleted_at
+     string id
+     string commodity_id
+     string currency_id
+     string date
+     string source
+     string type
+     string value_denom
+     string value_num
+     string created_at
+     string updated_at
+     string revision
+     string deleted_at
   }
   public_recurrence {
-     id
-     created_at
-     mult
-     period_start
-     period_type
-     weekend_adjust
-     scheduled_transaction_id
-     updated_at
-     revision
-     deleted_at
+     string id
+     string created_at
+     string mult
+     string period_start
+     string period_type
+     string weekend_adjust
+     string scheduled_transaction_id
+     string updated_at
+     string revision
+     string deleted_at
   }
   public_scheduled_split {
-     id
-     action
-     created_at
-     memo
-     side
-     value_denom
-     value_num
-     scheduled_transaction_id
-     account_id
-     updated_at
-     revision
-     deleted_at
+     string id
+     string action
+     string created_at
+     string memo
+     string side
+     string value_denom
+     string value_num
+     string scheduled_transaction_id
+     string account_id
+     string updated_at
+     string revision
+     string deleted_at
   }
   public_scheduled_transaction {
-     id
-     ledger_id
-     adv_creation
-     adv_notify
-     auto_create
-     auto_notify
-     created_at
-     enabled
-     end_date
-     instance_count
-     is_active
-     last_occur
+     string id
+     string ledger_id
+     string adv_creation
+     string adv_notify
+     string auto_create
+     string auto_notify
+     string created_at
+     string enabled
+     string end_date
+     string instance_count
+     string is_active
+     string last_occur
   }
   public_split {
-     id
-     action
-     amount
-     created_at
-     memo
-     quantity_denom
-     quantity_num
-     reconcile_date
-     reconcile_state
-     side
-     value_denom
-     value_num
+     string id
+     string action
+     string amount
+     string created_at
+     string memo
+     string quantity_denom
+     string quantity_num
+     string reconcile_date
+     string reconcile_state
+     string side
+     string value_denom
+     string value_num
   }
   public_transaction {
-     id
-     ledger_id
-     created_at
-     enter_date
-     is_voided
-     memo
-     num
-     post_date
-     status
-     currency_commodity_id
-     payee_id
-     updated_at
+     string id
+     string ledger_id
+     string created_at
+     string enter_date
+     string is_voided
+     string memo
+     string num
+     string post_date
+     string status
+     string currency_commodity_id
+     string payee_id
+     string updated_at
   }
   public_account }o--|| public_account_type : "account_type_id->id"
   public_account }o--|| public_commodity : "commodity_id->id"
