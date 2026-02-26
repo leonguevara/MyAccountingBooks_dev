@@ -25,7 +25,7 @@
 -- ============================================================
 
 -- Enable strict error handling: the script will stop on the first error.
-\set ON_ERROR_STOP on
+-- \set ON_ERROR_STOP on
 
 -- Use a transaction to ensure the entire script is applied atomically.
 BEGIN;
@@ -237,16 +237,16 @@ CREATE TABLE coa_template_node (
   CHECK (is_placeholder OR account_type_code IS NOT NULL),
 
   CONSTRAINT chk_coa_template_node_kind
-  CHECK (kind IN (0,1,2,3,4,5,6,7,8),
+  CHECK (kind IN (0,1,2,3,4,5,6,7,8)),
 
   CONSTRAINT chk_coa_template_node_role
-  CHECK (role IN (0,100,101,110,120,130,131,199,200,210,220,299,300,310,320,400,410,420,430,499,500,510,600,610,620,699,700,800,4300,4301,4310,4311,4320,4321,4330,4331,4340,4341,4390,4391,900)
+  CHECK (role IN (0,100,101,110,120,130,131,199,200,210,220,299,300,310,320,400,410,420,430,499,500,510,600,610,620,699,700,800,4300,4301,4310,4311,4320,4321,4330,4331,4340,4341,4390,4391,900)),
 
   CONSTRAINT chk_coa_template_node_parent_code_fkey
   FOREIGN KEY (template_id, parent_code) REFERENCES coa_template_node(template_id, code) ON UPDATE CASCADE ON DELETE RESTRICT,
 
   CONSTRAINT chk_coa_template_node_no_self_parent
-  CHECK (code <> parent_code)
+  CHECK (code <> parent_code),
 
   CONSTRAINT chk_coa_template_node_root_level
   CHECK (
@@ -487,7 +487,7 @@ CREATE TABLE split (
   CHECK (side IN (0,1)),
 
   CONSTRAINT chk_split_reconcile_state
-  CHECK (reconcile_state IN (true, false),
+  CHECK (reconcile_state IN (true, false)),
 
   CONSTRAINT chk_split_amount
   CHECK (amount >= 0),
@@ -499,10 +499,10 @@ CREATE TABLE split (
   CHECK (value_num >= 0),
 
   CONSTRAINT chk_split_value_zero
-  CHECK (value_num = 0 OR (value_denom > 0 AND value_num > 0),
+  CHECK (value_num = 0 OR (value_denom > 0 AND value_num > 0)),
 
   CONSTRAINT chk_split_quantity_zero
-  CHECK (quantity_num = 0 OR (quantity_denom > 0 AND quantity_num > 0),
+  CHECK (quantity_num = 0 OR (quantity_denom > 0 AND quantity_num > 0))
 );
 
 -- =========================
@@ -587,10 +587,10 @@ id                      uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   deleted_at              timestamptz NULL,
 
   CONSTRAINT chk_scheduled_split_side
-  CHECK (side IN (0,1)
+  CHECK (side IN (0,1)),
 
   CONSTRAINT chk_scheduled_split_value
-  CHECK (value_num >= 0 AND value_denom > 0 OR value_num = 0)
+  CHECK (value_num >= 0 AND value_denom > 0 OR value_num = 0),
 
   CONSTRAINT chk_scheduled_split_action
   CHECK (action IS NULL OR action <> '')

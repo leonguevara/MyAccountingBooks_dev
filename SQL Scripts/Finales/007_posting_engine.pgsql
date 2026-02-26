@@ -9,7 +9,7 @@
 -- Safety:
 --   Uses a per-ledger transactional advisory lock to prevent concurrent postings from racing.
 
-\set ON_ERROR_STOP on
+-- \set ON_ERROR_STOP on
 
 BEGIN;
 
