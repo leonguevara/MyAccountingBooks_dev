@@ -1,0 +1,26 @@
+openapi: 3.0.3
+info:
+  title: MyAccountingBooks API
+  version: 0.1.0
+  description: Draft API contract for a future backend.
+servers:
+  - url: https://api.example.com
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+  /ledgers:
+    post:
+      summary: Create ledger
+      responses:
+        '201':
+          description: Created
+  /transactions:
+    post:
+      summary: Post transaction (double-entry)
+      responses:
+        '201':
+          description: Posted
