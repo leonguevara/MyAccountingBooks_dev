@@ -2,14 +2,14 @@
 -- Generic/parameterized ISO4217 -> commodity importer (UPSERT + optional sync deactivate).
 --
 -- Usage examples:
---   psql -d your_db -f "SQL Scripts/015_import_iso4217_to_commodity_with_sync_v2.pgsql"
+--   psql -d your_db -f "SQL Scripts/002_import_iso4217_to_commodity_with_sync_gexec.pgsql"
 --   psql -d your_db \
---     -v csv_path='/absolute/path/iso4217_current_list_one.csv' \
---     -v namespace='CURRENCY' \
---     -v default_fraction=100 \
---     -v na_fraction=100 \
---     -v do_deactivate_missing=1 \
---     -f "SQL Scripts/015_import_iso4217_to_commodity_with_sync_v2.pgsql"
+--     -v "csv_path=/absolute/path/iso4217_current_list_one.csv" \
+--     -v "namespace=CURRENCY" \
+--     -v "default_fraction=100" \
+--     -v "na_fraction=100" \
+--     -v "do_deactivate_missing=1" \
+--     -f "SQL Scripts/002_import_iso4217_to_commodity_with_sync_gexec.pgsql"
 
 \set ON_ERROR_STOP on
 ROLLBACK;
@@ -66,7 +66,7 @@ CREATE TEMP TABLE _stg_iso4217 (
 -- >>> EDIT THIS PATH (absolute) <<<
 -- Use a literal path in \copy (most robust across terminals/pgAdmin)
 -- Robust dynamic \copy (works across macOS/Windows) using \gexec + format(%L).
-SELECT format(E'\\copy _stg_iso4217(alphabetic_code, numeric_code, minor_unit, currency, entity) FROM %L WITH (FORMAT csv, HEADER true, ENCODING ''UTF8'')', :'csv_path') \gexec
+SELECT format(E'\copy _stg_iso4217(alphabetic_code, numeric_code, minor_unit, currency, entity) FROM %L WITH (FORMAT csv, HEADER true, ENCODING ''UTF8'')', :'csv_path') \gexec
 
 -- 2) Normalize to a distinct set
 DROP TABLE IF EXISTS _stg_iso4217_norm;

@@ -2,12 +2,10 @@
 -- PostgreSQL database dump
 --
 
-\restrict Vhj5ZYTw4LJgF7hFvAQqNFkw2hDbn1SqXhBa45cZ3dpBVgHpG56O1RmhehVe5Ir
+\restrict 30ZmUlzhaY9oXcI3FKPq2Qbl9gzIosfsLcmMLkP17uweea6uXpvkzfdPJGVwgMs
 
--- Dumped from database version 18.0
--- Dumped by pg_dump version 18.0
-
--- Started on 2026-02-24 09:37:01
+-- Dumped from database version 18.1
+-- Dumped by pg_dump version 18.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,8 +19,86 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+ALTER TABLE IF EXISTS ONLY public.transaction DROP CONSTRAINT IF EXISTS transaction_payee_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.transaction DROP CONSTRAINT IF EXISTS transaction_ledger_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.transaction DROP CONSTRAINT IF EXISTS transaction_currency_commodity_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.split DROP CONSTRAINT IF EXISTS split_transaction_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.split DROP CONSTRAINT IF EXISTS split_account_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_transaction DROP CONSTRAINT IF EXISTS scheduled_transaction_template_root_account_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_transaction DROP CONSTRAINT IF EXISTS scheduled_transaction_payee_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_transaction DROP CONSTRAINT IF EXISTS scheduled_transaction_ledger_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_transaction DROP CONSTRAINT IF EXISTS scheduled_transaction_currency_commodity_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_split DROP CONSTRAINT IF EXISTS scheduled_split_scheduled_transaction_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_split DROP CONSTRAINT IF EXISTS scheduled_split_account_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.recurrence DROP CONSTRAINT IF EXISTS recurrence_scheduled_transaction_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.price DROP CONSTRAINT IF EXISTS price_currency_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.price DROP CONSTRAINT IF EXISTS price_commodity_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.payee DROP CONSTRAINT IF EXISTS payee_ledger_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.ledger DROP CONSTRAINT IF EXISTS ledger_owner_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.ledger DROP CONSTRAINT IF EXISTS ledger_currency_commodity_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.ledger DROP CONSTRAINT IF EXISTS ledger_coa_template_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.ledger DROP CONSTRAINT IF EXISTS fk_ledger_root_account;
+ALTER TABLE IF EXISTS ONLY public.coa_template_node DROP CONSTRAINT IF EXISTS coa_template_node_template_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.coa_template_node DROP CONSTRAINT IF EXISTS coa_template_node_account_type_code_fkey;
+ALTER TABLE IF EXISTS ONLY public.coa_template_node DROP CONSTRAINT IF EXISTS chk_coa_template_node_parent_code_fkey;
+ALTER TABLE IF EXISTS ONLY public.auth_identity DROP CONSTRAINT IF EXISTS auth_identity_ledger_owner_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.account DROP CONSTRAINT IF EXISTS account_parent_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.account DROP CONSTRAINT IF EXISTS account_ledger_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.account DROP CONSTRAINT IF EXISTS account_commodity_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.account DROP CONSTRAINT IF EXISTS account_account_type_id_fkey;
+DROP INDEX IF EXISTS public.idx_coa_template_one_root_per_template_ux;
+DROP INDEX IF EXISTS public.idx_coa_node_template_typecode;
+DROP INDEX IF EXISTS public.idx_account_ledger_code_ux;
+DROP INDEX IF EXISTS public.commodity_namespace_mnemonic_ux;
+DROP INDEX IF EXISTS public.commodity_namespace_mnemonic_uq;
+ALTER TABLE IF EXISTS ONLY public.transaction DROP CONSTRAINT IF EXISTS transaction_pkey;
+ALTER TABLE IF EXISTS ONLY public.split DROP CONSTRAINT IF EXISTS split_pkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_transaction DROP CONSTRAINT IF EXISTS scheduled_transaction_pkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_split DROP CONSTRAINT IF EXISTS scheduled_split_pkey;
+ALTER TABLE IF EXISTS ONLY public.recurrence DROP CONSTRAINT IF EXISTS recurrence_pkey;
+ALTER TABLE IF EXISTS ONLY public.price DROP CONSTRAINT IF EXISTS price_pkey;
+ALTER TABLE IF EXISTS ONLY public.price DROP CONSTRAINT IF EXISTS price_commodity_id_currency_id_date_key;
+ALTER TABLE IF EXISTS ONLY public.payee DROP CONSTRAINT IF EXISTS payee_pkey;
+ALTER TABLE IF EXISTS ONLY public.payee DROP CONSTRAINT IF EXISTS payee_ledger_id_name_key;
+ALTER TABLE IF EXISTS ONLY public.ledger DROP CONSTRAINT IF EXISTS ledger_pkey;
+ALTER TABLE IF EXISTS ONLY public.ledger_owner DROP CONSTRAINT IF EXISTS ledger_owner_pkey;
+ALTER TABLE IF EXISTS ONLY public.ledger_owner DROP CONSTRAINT IF EXISTS ledger_owner_email_key;
+ALTER TABLE IF EXISTS ONLY public.enum_label DROP CONSTRAINT IF EXISTS enum_label_pkey;
+ALTER TABLE IF EXISTS ONLY public.commodity DROP CONSTRAINT IF EXISTS commodity_pkey;
+ALTER TABLE IF EXISTS ONLY public.coa_template DROP CONSTRAINT IF EXISTS coa_template_pkey;
+ALTER TABLE IF EXISTS ONLY public.coa_template_node DROP CONSTRAINT IF EXISTS coa_template_node_template_id_code_key;
+ALTER TABLE IF EXISTS ONLY public.coa_template_node DROP CONSTRAINT IF EXISTS coa_template_node_pkey;
+ALTER TABLE IF EXISTS ONLY public.coa_template DROP CONSTRAINT IF EXISTS coa_template_code_version_key;
+ALTER TABLE IF EXISTS ONLY public.auth_identity DROP CONSTRAINT IF EXISTS auth_identity_provider_provider_user_id_key;
+ALTER TABLE IF EXISTS ONLY public.auth_identity DROP CONSTRAINT IF EXISTS auth_identity_pkey;
+ALTER TABLE IF EXISTS ONLY public.account_type DROP CONSTRAINT IF EXISTS account_type_pkey;
+ALTER TABLE IF EXISTS ONLY public.account_type DROP CONSTRAINT IF EXISTS account_type_code_uq;
+ALTER TABLE IF EXISTS ONLY public.account DROP CONSTRAINT IF EXISTS account_pkey;
+DROP TABLE IF EXISTS public.transaction;
+DROP TABLE IF EXISTS public.split;
+DROP TABLE IF EXISTS public.scheduled_transaction;
+DROP TABLE IF EXISTS public.scheduled_split;
+DROP TABLE IF EXISTS public.recurrence;
+DROP TABLE IF EXISTS public.price;
+DROP TABLE IF EXISTS public.payee;
+DROP TABLE IF EXISTS public.ledger_owner;
+DROP TABLE IF EXISTS public.ledger;
+DROP TABLE IF EXISTS public.enum_label;
+DROP TABLE IF EXISTS public.commodity;
+DROP TABLE IF EXISTS public.coa_template_node;
+DROP TABLE IF EXISTS public.coa_template;
+DROP TABLE IF EXISTS public.auth_identity;
+DROP TABLE IF EXISTS public.account_type;
+DROP TABLE IF EXISTS public.account;
+DROP FUNCTION IF EXISTS public.mab_void_transaction(p_tx_id uuid, p_reason text);
+DROP FUNCTION IF EXISTS public.mab_reverse_transaction(p_tx_id uuid, p_post_date timestamp with time zone, p_enter_date timestamp with time zone, p_memo text);
+DROP FUNCTION IF EXISTS public.mab_post_transaction(p_ledger_id uuid, p_splits jsonb, p_post_date timestamp with time zone, p_enter_date timestamp with time zone, p_memo text, p_num text, p_status smallint, p_currency_commodity_id uuid, p_payee_id uuid);
+DROP FUNCTION IF EXISTS public.mab__assert(p_ok boolean, p_message text);
+DROP FUNCTION IF EXISTS public.instantiate_coa_template_to_ledger(p_template_id uuid, p_ledger_id uuid);
+DROP FUNCTION IF EXISTS public.instantiate_coa_template(p_ledger_id uuid, p_template_id uuid);
+DROP FUNCTION IF EXISTS public.create_ledger_with_optional_template(p_owner_id uuid, p_ledger_name text, p_currency_mnemonic text, p_precision smallint, p_template_label text, p_coa_template_code text, p_coa_template_version text);
+DROP EXTENSION IF EXISTS pgcrypto;
 --
--- TOC entry 2 (class 3079 OID 16388)
 -- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -30,8 +106,6 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
 
 
 --
--- TOC entry 5307 (class 0 OID 0)
--- Dependencies: 2
 -- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: -
 --
 
@@ -39,7 +113,6 @@ COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
 --
--- TOC entry 286 (class 1255 OID 16953)
 -- Name: create_ledger_with_optional_template(uuid, text, text, smallint, text, text, text); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -214,7 +287,109 @@ $$;
 
 
 --
--- TOC entry 285 (class 1255 OID 16952)
+-- Name: instantiate_coa_template(uuid, uuid); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.instantiate_coa_template(p_ledger_id uuid, p_template_id uuid) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+  v_root_code text;
+BEGIN
+  -- 1) Attach template to ledger for traceability.
+  UPDATE ledger
+  SET coa_template_id = p_template_id,
+      updated_at = now(),
+      revision = revision + 1
+  WHERE id = p_ledger_id;
+
+  -- 2) Insert accounts from template nodes.
+  -- We keep a mapping (template_id, ledger_id, code -> account_id) using a temp table.
+  CREATE TEMP TABLE IF NOT EXISTS tmp_coa_map (
+    code text PRIMARY KEY,
+    account_id uuid NOT NULL
+  ) ON COMMIT DROP;
+
+  INSERT INTO account (
+    ledger_id,
+    account_role,
+    code,
+    commodity_scu,
+    is_active,
+    is_hidden,
+    is_placeholder,
+    kind,
+    name,
+    non_std_scu,
+    notes,
+    created_at,
+    updated_at,
+    revision
+  )
+  SELECT
+    p_ledger_id,
+    n.role,
+    n.code,
+    100,                 -- commoditySCU default from your CoreData model
+    true,                -- isActive
+    false,               -- isHidden
+    n.is_placeholder,
+    n.kind,
+    n.name,
+    0,                   -- nonStdSCU default
+    NULL,                -- notes
+    now(),
+    now(),
+    0
+  FROM coa_template_node n
+  WHERE n.template_id = p_template_id
+  ON CONFLICT (ledger_id, code) DO NOTHING;
+
+  -- 3) Build code -> account_id mapping for this ledger.
+  INSERT INTO tmp_coa_map (code, account_id)
+  SELECT a.code, a.id
+  FROM account a
+  WHERE a.ledger_id = p_ledger_id
+    AND a.code IS NOT NULL;
+
+  -- 4) Update parent_id according to template parent_code.
+  UPDATE account a
+  SET parent_id = p.account_id,
+      updated_at = now(),
+      revision = a.revision + 1
+  FROM coa_template_node n
+  JOIN tmp_coa_map c ON c.code = n.code
+  JOIN tmp_coa_map p ON p.code = n.parent_code
+  WHERE n.template_id = p_template_id
+    AND a.id = c.account_id
+    AND n.parent_code IS NOT NULL;
+
+  -- 5) Determine root node (parent_code IS NULL). Enforce single root.
+  SELECT code INTO v_root_code
+  FROM coa_template_node
+  WHERE template_id = p_template_id
+    AND parent_code IS NULL
+  ORDER BY level ASC, code ASC
+  LIMIT 1;
+
+  IF v_root_code IS NULL THEN
+    RAISE EXCEPTION 'Template % has no root node (parent_code IS NULL).', p_template_id;
+  END IF;
+
+  -- 6) Set ledger.root_account_id to the root account in this ledger.
+  UPDATE ledger l
+  SET root_account_id = m.account_id,
+      updated_at = now(),
+      revision = l.revision + 1
+  FROM tmp_coa_map m
+  WHERE l.id = p_ledger_id
+    AND m.code = v_root_code;
+
+END;
+$$;
+
+
+--
 -- Name: instantiate_coa_template_to_ledger(uuid, uuid); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -378,7 +553,6 @@ $$;
 
 
 --
--- TOC entry 287 (class 1255 OID 16955)
 -- Name: mab__assert(boolean, text); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -394,7 +568,6 @@ $$;
 
 
 --
--- TOC entry 288 (class 1255 OID 16956)
 -- Name: mab_post_transaction(uuid, jsonb, timestamp with time zone, timestamp with time zone, text, text, smallint, uuid, uuid); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -597,7 +770,6 @@ $$;
 
 
 --
--- TOC entry 289 (class 1255 OID 16958)
 -- Name: mab_reverse_transaction(uuid, timestamp with time zone, timestamp with time zone, text); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -676,7 +848,6 @@ $$;
 
 
 --
--- TOC entry 273 (class 1255 OID 16959)
 -- Name: mab_void_transaction(uuid, text); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -715,7 +886,6 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- TOC entry 229 (class 1259 OID 16664)
 -- Name: account; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -745,7 +915,6 @@ CREATE TABLE public.account (
 
 
 --
--- TOC entry 223 (class 1259 OID 16486)
 -- Name: account_type; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -766,7 +935,6 @@ CREATE TABLE public.account_type (
 
 
 --
--- TOC entry 222 (class 1259 OID 16461)
 -- Name: auth_identity; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -785,7 +953,6 @@ CREATE TABLE public.auth_identity (
 
 
 --
--- TOC entry 225 (class 1259 OID 16540)
 -- Name: coa_template; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -805,7 +972,6 @@ CREATE TABLE public.coa_template (
 
 
 --
--- TOC entry 226 (class 1259 OID 16560)
 -- Name: coa_template_node; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -822,13 +988,16 @@ CREATE TABLE public.coa_template_node (
     account_type_code text,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT chk_coa_template_node_kind CHECK ((kind = ANY (ARRAY[0, 1, 2, 3, 4, 5, 6, 7, 8]))),
+    CONSTRAINT chk_coa_template_node_no_self_parent CHECK ((code <> parent_code)),
+    CONSTRAINT chk_coa_template_node_role CHECK ((role = ANY (ARRAY[0, 100, 101, 110, 120, 130, 131, 199, 200, 210, 220, 299, 300, 310, 320, 400, 410, 420, 430, 499, 500, 510, 600, 610, 620, 699, 700, 800, 4300, 4301, 4310, 4311, 4320, 4321, 4330, 4331, 4340, 4341, 4390, 4391, 900]))),
+    CONSTRAINT chk_coa_template_node_root_level CHECK ((((parent_code IS NULL) AND (level = 0)) OR ((parent_code IS NOT NULL) AND (level > 0)))),
     CONSTRAINT coa_template_node_check CHECK ((is_placeholder OR (account_type_code IS NOT NULL))),
     CONSTRAINT coa_template_node_level_check CHECK ((level >= 0))
 );
 
 
 --
--- TOC entry 224 (class 1259 OID 16516)
 -- Name: commodity; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -847,7 +1016,6 @@ CREATE TABLE public.commodity (
 
 
 --
--- TOC entry 220 (class 1259 OID 16426)
 -- Name: enum_label; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -861,7 +1029,6 @@ CREATE TABLE public.enum_label (
 
 
 --
--- TOC entry 227 (class 1259 OID 16596)
 -- Name: ledger; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -885,7 +1052,6 @@ CREATE TABLE public.ledger (
 
 
 --
--- TOC entry 221 (class 1259 OID 16437)
 -- Name: ledger_owner; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -905,7 +1071,6 @@ CREATE TABLE public.ledger_owner (
 
 
 --
--- TOC entry 228 (class 1259 OID 16637)
 -- Name: payee; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -922,7 +1087,6 @@ CREATE TABLE public.payee (
 
 
 --
--- TOC entry 230 (class 1259 OID 16718)
 -- Name: price; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -943,7 +1107,6 @@ CREATE TABLE public.price (
 
 
 --
--- TOC entry 234 (class 1259 OID 16887)
 -- Name: recurrence; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -962,7 +1125,6 @@ CREATE TABLE public.recurrence (
 
 
 --
--- TOC entry 235 (class 1259 OID 16912)
 -- Name: scheduled_split; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -972,18 +1134,20 @@ CREATE TABLE public.scheduled_split (
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     memo text,
     side smallint DEFAULT 0 NOT NULL,
-    value_denom integer DEFAULT 0 NOT NULL,
+    value_denom integer DEFAULT 100 NOT NULL,
     value_num bigint DEFAULT 0 NOT NULL,
     scheduled_transaction_id uuid NOT NULL,
     account_id uuid NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
     revision bigint DEFAULT 0 NOT NULL,
-    deleted_at timestamp with time zone
+    deleted_at timestamp with time zone,
+    CONSTRAINT chk_scheduled_split_action CHECK (((action IS NULL) OR (action <> ''::text))),
+    CONSTRAINT chk_scheduled_split_side CHECK ((side = ANY (ARRAY[0, 1]))),
+    CONSTRAINT chk_scheduled_split_value CHECK ((((value_num >= 0) AND (value_denom > 0)) OR (value_num = 0)))
 );
 
 
 --
--- TOC entry 233 (class 1259 OID 16833)
 -- Name: scheduled_transaction; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1014,7 +1178,6 @@ CREATE TABLE public.scheduled_transaction (
 
 
 --
--- TOC entry 232 (class 1259 OID 16792)
 -- Name: split; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1035,12 +1198,18 @@ CREATE TABLE public.split (
     transaction_id uuid NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
     revision bigint DEFAULT 0 NOT NULL,
-    deleted_at timestamp with time zone
+    deleted_at timestamp with time zone,
+    CONSTRAINT chk_split_amount CHECK ((amount >= (0)::numeric)),
+    CONSTRAINT chk_split_quantity CHECK ((quantity_num >= 0)),
+    CONSTRAINT chk_split_quantity_zero CHECK (((quantity_num = 0) OR ((quantity_denom > 0) AND (quantity_num > 0)))),
+    CONSTRAINT chk_split_reconcile_state CHECK ((reconcile_state = ANY (ARRAY[true, false]))),
+    CONSTRAINT chk_split_side CHECK ((side = ANY (ARRAY[0, 1]))),
+    CONSTRAINT chk_split_value CHECK ((value_num >= 0)),
+    CONSTRAINT chk_split_value_zero CHECK (((value_num = 0) OR ((value_denom > 0) AND (value_num > 0))))
 );
 
 
 --
--- TOC entry 231 (class 1259 OID 16753)
 -- Name: transaction; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1063,7 +1232,6 @@ CREATE TABLE public.transaction (
 
 
 --
--- TOC entry 5114 (class 2606 OID 16697)
 -- Name: account account_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1072,7 +1240,6 @@ ALTER TABLE ONLY public.account
 
 
 --
--- TOC entry 5092 (class 2606 OID 16515)
 -- Name: account_type account_type_code_uq; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1081,7 +1248,6 @@ ALTER TABLE ONLY public.account_type
 
 
 --
--- TOC entry 5094 (class 2606 OID 16513)
 -- Name: account_type account_type_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1090,7 +1256,6 @@ ALTER TABLE ONLY public.account_type
 
 
 --
--- TOC entry 5088 (class 2606 OID 16478)
 -- Name: auth_identity auth_identity_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1099,7 +1264,6 @@ ALTER TABLE ONLY public.auth_identity
 
 
 --
--- TOC entry 5090 (class 2606 OID 16480)
 -- Name: auth_identity auth_identity_provider_provider_user_id_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1108,7 +1272,6 @@ ALTER TABLE ONLY public.auth_identity
 
 
 --
--- TOC entry 5099 (class 2606 OID 16559)
 -- Name: coa_template coa_template_code_version_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1117,7 +1280,6 @@ ALTER TABLE ONLY public.coa_template
 
 
 --
--- TOC entry 5103 (class 2606 OID 16582)
 -- Name: coa_template_node coa_template_node_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1126,7 +1288,6 @@ ALTER TABLE ONLY public.coa_template_node
 
 
 --
--- TOC entry 5105 (class 2606 OID 16584)
 -- Name: coa_template_node coa_template_node_template_id_code_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1135,7 +1296,6 @@ ALTER TABLE ONLY public.coa_template_node
 
 
 --
--- TOC entry 5101 (class 2606 OID 16557)
 -- Name: coa_template coa_template_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1144,7 +1304,6 @@ ALTER TABLE ONLY public.coa_template
 
 
 --
--- TOC entry 5097 (class 2606 OID 16539)
 -- Name: commodity commodity_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1153,7 +1312,6 @@ ALTER TABLE ONLY public.commodity
 
 
 --
--- TOC entry 5082 (class 2606 OID 16436)
 -- Name: enum_label enum_label_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1162,7 +1320,6 @@ ALTER TABLE ONLY public.enum_label
 
 
 --
--- TOC entry 5084 (class 2606 OID 16460)
 -- Name: ledger_owner ledger_owner_email_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1171,7 +1328,6 @@ ALTER TABLE ONLY public.ledger_owner
 
 
 --
--- TOC entry 5086 (class 2606 OID 16458)
 -- Name: ledger_owner ledger_owner_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1180,7 +1336,6 @@ ALTER TABLE ONLY public.ledger_owner
 
 
 --
--- TOC entry 5108 (class 2606 OID 16621)
 -- Name: ledger ledger_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1189,7 +1344,6 @@ ALTER TABLE ONLY public.ledger
 
 
 --
--- TOC entry 5110 (class 2606 OID 16658)
 -- Name: payee payee_ledger_id_name_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1198,7 +1352,6 @@ ALTER TABLE ONLY public.payee
 
 
 --
--- TOC entry 5112 (class 2606 OID 16656)
 -- Name: payee payee_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1207,7 +1360,6 @@ ALTER TABLE ONLY public.payee
 
 
 --
--- TOC entry 5116 (class 2606 OID 16742)
 -- Name: price price_commodity_id_currency_id_date_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1216,7 +1368,6 @@ ALTER TABLE ONLY public.price
 
 
 --
--- TOC entry 5118 (class 2606 OID 16740)
 -- Name: price price_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1225,7 +1376,6 @@ ALTER TABLE ONLY public.price
 
 
 --
--- TOC entry 5126 (class 2606 OID 16906)
 -- Name: recurrence recurrence_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1234,7 +1384,6 @@ ALTER TABLE ONLY public.recurrence
 
 
 --
--- TOC entry 5128 (class 2606 OID 16934)
 -- Name: scheduled_split scheduled_split_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1243,7 +1392,6 @@ ALTER TABLE ONLY public.scheduled_split
 
 
 --
--- TOC entry 5124 (class 2606 OID 16866)
 -- Name: scheduled_transaction scheduled_transaction_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1252,7 +1400,6 @@ ALTER TABLE ONLY public.scheduled_transaction
 
 
 --
--- TOC entry 5122 (class 2606 OID 16822)
 -- Name: split split_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1261,7 +1408,6 @@ ALTER TABLE ONLY public.split
 
 
 --
--- TOC entry 5120 (class 2606 OID 16776)
 -- Name: transaction transaction_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1270,7 +1416,13 @@ ALTER TABLE ONLY public.transaction
 
 
 --
--- TOC entry 5095 (class 1259 OID 16950)
+-- Name: commodity_namespace_mnemonic_uq; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX commodity_namespace_mnemonic_uq ON public.commodity USING btree (namespace, mnemonic);
+
+
+--
 -- Name: commodity_namespace_mnemonic_ux; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1278,7 +1430,13 @@ CREATE UNIQUE INDEX commodity_namespace_mnemonic_ux ON public.commodity USING bt
 
 
 --
--- TOC entry 5106 (class 1259 OID 16595)
+-- Name: idx_account_ledger_code_ux; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_account_ledger_code_ux ON public.account USING btree (ledger_id, code) WHERE ((code IS NOT NULL) AND (deleted_at IS NULL));
+
+
+--
 -- Name: idx_coa_node_template_typecode; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1286,7 +1444,13 @@ CREATE INDEX idx_coa_node_template_typecode ON public.coa_template_node USING bt
 
 
 --
--- TOC entry 5137 (class 2606 OID 16703)
+-- Name: idx_coa_template_one_root_per_template_ux; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_coa_template_one_root_per_template_ux ON public.coa_template_node USING btree (template_id) WHERE (parent_code IS NULL);
+
+
+--
 -- Name: account account_account_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1295,7 +1459,6 @@ ALTER TABLE ONLY public.account
 
 
 --
--- TOC entry 5138 (class 2606 OID 16708)
 -- Name: account account_commodity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1304,7 +1467,6 @@ ALTER TABLE ONLY public.account
 
 
 --
--- TOC entry 5139 (class 2606 OID 16698)
 -- Name: account account_ledger_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1313,7 +1475,6 @@ ALTER TABLE ONLY public.account
 
 
 --
--- TOC entry 5140 (class 2606 OID 16713)
 -- Name: account account_parent_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1322,7 +1483,6 @@ ALTER TABLE ONLY public.account
 
 
 --
--- TOC entry 5129 (class 2606 OID 16481)
 -- Name: auth_identity auth_identity_ledger_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1331,16 +1491,22 @@ ALTER TABLE ONLY public.auth_identity
 
 
 --
--- TOC entry 5130 (class 2606 OID 16590)
+-- Name: coa_template_node chk_coa_template_node_parent_code_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.coa_template_node
+    ADD CONSTRAINT chk_coa_template_node_parent_code_fkey FOREIGN KEY (template_id, parent_code) REFERENCES public.coa_template_node(template_id, code) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
 -- Name: coa_template_node coa_template_node_account_type_code_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.coa_template_node
-    ADD CONSTRAINT coa_template_node_account_type_code_fkey FOREIGN KEY (account_type_code) REFERENCES public.account_type(code) ON DELETE RESTRICT;
+    ADD CONSTRAINT coa_template_node_account_type_code_fkey FOREIGN KEY (account_type_code) REFERENCES public.account_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
--- TOC entry 5131 (class 2606 OID 16585)
 -- Name: coa_template_node coa_template_node_template_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1349,7 +1515,6 @@ ALTER TABLE ONLY public.coa_template_node
 
 
 --
--- TOC entry 5132 (class 2606 OID 16945)
 -- Name: ledger fk_ledger_root_account; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1358,7 +1523,6 @@ ALTER TABLE ONLY public.ledger
 
 
 --
--- TOC entry 5133 (class 2606 OID 16632)
 -- Name: ledger ledger_coa_template_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1367,7 +1531,6 @@ ALTER TABLE ONLY public.ledger
 
 
 --
--- TOC entry 5134 (class 2606 OID 16627)
 -- Name: ledger ledger_currency_commodity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1376,7 +1539,6 @@ ALTER TABLE ONLY public.ledger
 
 
 --
--- TOC entry 5135 (class 2606 OID 16622)
 -- Name: ledger ledger_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1385,7 +1547,6 @@ ALTER TABLE ONLY public.ledger
 
 
 --
--- TOC entry 5136 (class 2606 OID 16659)
 -- Name: payee payee_ledger_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1394,7 +1555,6 @@ ALTER TABLE ONLY public.payee
 
 
 --
--- TOC entry 5141 (class 2606 OID 16743)
 -- Name: price price_commodity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1403,7 +1563,6 @@ ALTER TABLE ONLY public.price
 
 
 --
--- TOC entry 5142 (class 2606 OID 16748)
 -- Name: price price_currency_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1412,7 +1571,6 @@ ALTER TABLE ONLY public.price
 
 
 --
--- TOC entry 5152 (class 2606 OID 16907)
 -- Name: recurrence recurrence_scheduled_transaction_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1421,7 +1579,6 @@ ALTER TABLE ONLY public.recurrence
 
 
 --
--- TOC entry 5153 (class 2606 OID 16940)
 -- Name: scheduled_split scheduled_split_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1430,7 +1587,6 @@ ALTER TABLE ONLY public.scheduled_split
 
 
 --
--- TOC entry 5154 (class 2606 OID 16935)
 -- Name: scheduled_split scheduled_split_scheduled_transaction_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1439,7 +1595,6 @@ ALTER TABLE ONLY public.scheduled_split
 
 
 --
--- TOC entry 5148 (class 2606 OID 16872)
 -- Name: scheduled_transaction scheduled_transaction_currency_commodity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1448,7 +1603,6 @@ ALTER TABLE ONLY public.scheduled_transaction
 
 
 --
--- TOC entry 5149 (class 2606 OID 16867)
 -- Name: scheduled_transaction scheduled_transaction_ledger_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1457,7 +1611,6 @@ ALTER TABLE ONLY public.scheduled_transaction
 
 
 --
--- TOC entry 5150 (class 2606 OID 16877)
 -- Name: scheduled_transaction scheduled_transaction_payee_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1466,7 +1619,6 @@ ALTER TABLE ONLY public.scheduled_transaction
 
 
 --
--- TOC entry 5151 (class 2606 OID 16882)
 -- Name: scheduled_transaction scheduled_transaction_template_root_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1475,7 +1627,6 @@ ALTER TABLE ONLY public.scheduled_transaction
 
 
 --
--- TOC entry 5146 (class 2606 OID 16823)
 -- Name: split split_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1484,7 +1635,6 @@ ALTER TABLE ONLY public.split
 
 
 --
--- TOC entry 5147 (class 2606 OID 16828)
 -- Name: split split_transaction_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1493,7 +1643,6 @@ ALTER TABLE ONLY public.split
 
 
 --
--- TOC entry 5143 (class 2606 OID 16782)
 -- Name: transaction transaction_currency_commodity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1502,7 +1651,6 @@ ALTER TABLE ONLY public.transaction
 
 
 --
--- TOC entry 5144 (class 2606 OID 16777)
 -- Name: transaction transaction_ledger_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1511,7 +1659,6 @@ ALTER TABLE ONLY public.transaction
 
 
 --
--- TOC entry 5145 (class 2606 OID 16787)
 -- Name: transaction transaction_payee_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1519,11 +1666,9 @@ ALTER TABLE ONLY public.transaction
     ADD CONSTRAINT transaction_payee_id_fkey FOREIGN KEY (payee_id) REFERENCES public.payee(id) ON DELETE SET NULL;
 
 
--- Completed on 2026-02-24 09:37:02
-
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict Vhj5ZYTw4LJgF7hFvAQqNFkw2hDbn1SqXhBa45cZ3dpBVgHpG56O1RmhehVe5Ir
+\unrestrict 30ZmUlzhaY9oXcI3FKPq2Qbl9gzIosfsLcmMLkP17uweea6uXpvkzfdPJGVwgMs
 
