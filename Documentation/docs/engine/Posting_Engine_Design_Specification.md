@@ -20,6 +20,13 @@
 - `reverse_transaction(tx_id) -> new_transaction_id`
 - Optional: `void_transaction(tx_id)` (if business rules allow)
 
+## Core Invariants
+
+1. All splits belong to same ledger
+2. No posting to placeholder/deleted accounts
+3. Real accounts balance to zero
+4. Memo accounts balance internally
+
 ## Concurrency
 
 - Ledger-level `pg_advisory_xact_lock` per posting.

@@ -2,6 +2,16 @@
 
 A multi-ledger, multi-currency accounting system built on PostgreSQL.
 
+## Architecture Version: v4 (Excel-Only Pipeline)
+
+This version reflects the current architecture:
+
+- COA Templates are imported from Excel (.xlsx)
+- ISO 4217 currencies are imported from Excel
+- No JSON/NDJSON import pipeline
+- Root node inferred from level = 0
+- Python-based importers (cross-platform)
+
 ## Documentation
 
 - **Architecture**
@@ -23,4 +33,4 @@ A multi-ledger, multi-currency accounting system built on PostgreSQL.
   - `docs/api/openapi.yaml`
   - `docs/api/API_Contract.md`
 
-Last Updated: 2026-02-26
+Last Updated: 2026-02-27

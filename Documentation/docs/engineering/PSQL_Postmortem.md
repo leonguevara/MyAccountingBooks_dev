@@ -62,7 +62,7 @@ matching the conflict target.
 Used:
 
     SELECT format(
-      E'\\copy table(cols) FROM %L WITH (FORMAT csv, HEADER true)',
+      E'\copy table(cols) FROM %L WITH (FORMAT csv, HEADER true)',
       :'csv_path'
     ) \gexec;
 
