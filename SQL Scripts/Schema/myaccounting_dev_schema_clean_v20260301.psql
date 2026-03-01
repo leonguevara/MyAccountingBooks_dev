@@ -1,0 +1,1894 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict GcdGcCgMRMMWPgzrJNt2x6Eq6zFo3AQNMEV69pVysNGkaiS6AaX2PhhNby0P8b9
+
+-- Dumped from database version 18.3
+-- Dumped by pg_dump version 18.3
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+DROP POLICY IF EXISTS rls_transaction_owner ON public.transaction;
+DROP POLICY IF EXISTS rls_split_owner ON public.split;
+DROP POLICY IF EXISTS rls_scheduled_transaction_owner ON public.scheduled_transaction;
+DROP POLICY IF EXISTS rls_payee_owner ON public.payee;
+DROP POLICY IF EXISTS rls_ledger_owner ON public.ledger;
+DROP POLICY IF EXISTS rls_account_owner ON public.account;
+ALTER TABLE IF EXISTS ONLY public.transaction DROP CONSTRAINT IF EXISTS transaction_payee_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.transaction DROP CONSTRAINT IF EXISTS transaction_ledger_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.transaction DROP CONSTRAINT IF EXISTS transaction_currency_commodity_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.split DROP CONSTRAINT IF EXISTS split_transaction_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.split DROP CONSTRAINT IF EXISTS split_account_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_transaction DROP CONSTRAINT IF EXISTS scheduled_transaction_template_root_account_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_transaction DROP CONSTRAINT IF EXISTS scheduled_transaction_payee_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_transaction DROP CONSTRAINT IF EXISTS scheduled_transaction_ledger_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_transaction DROP CONSTRAINT IF EXISTS scheduled_transaction_currency_commodity_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_split DROP CONSTRAINT IF EXISTS scheduled_split_scheduled_transaction_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_split DROP CONSTRAINT IF EXISTS scheduled_split_account_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.recurrence DROP CONSTRAINT IF EXISTS recurrence_scheduled_transaction_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.price DROP CONSTRAINT IF EXISTS price_currency_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.price DROP CONSTRAINT IF EXISTS price_commodity_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.payee DROP CONSTRAINT IF EXISTS payee_ledger_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.ledger DROP CONSTRAINT IF EXISTS ledger_owner_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.ledger DROP CONSTRAINT IF EXISTS ledger_currency_commodity_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.ledger DROP CONSTRAINT IF EXISTS ledger_coa_template_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.transaction DROP CONSTRAINT IF EXISTS fk_transaction_reversed_by;
+ALTER TABLE IF EXISTS ONLY public.ledger DROP CONSTRAINT IF EXISTS fk_ledger_root_account;
+ALTER TABLE IF EXISTS ONLY public.coa_template_node DROP CONSTRAINT IF EXISTS coa_template_node_template_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.coa_template_node DROP CONSTRAINT IF EXISTS coa_template_node_account_type_code_fkey;
+ALTER TABLE IF EXISTS ONLY public.coa_template_node DROP CONSTRAINT IF EXISTS chk_coa_template_node_parent_code_fkey;
+ALTER TABLE IF EXISTS ONLY public.auth_identity DROP CONSTRAINT IF EXISTS auth_identity_ledger_owner_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.account DROP CONSTRAINT IF EXISTS account_parent_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.account DROP CONSTRAINT IF EXISTS account_ledger_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.account DROP CONSTRAINT IF EXISTS account_commodity_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.account DROP CONSTRAINT IF EXISTS account_account_type_id_fkey;
+DROP TRIGGER IF EXISTS trg_audit ON public.transaction;
+DROP TRIGGER IF EXISTS trg_audit ON public.split;
+DROP TRIGGER IF EXISTS trg_audit ON public.scheduled_transaction;
+DROP TRIGGER IF EXISTS trg_audit ON public.scheduled_split;
+DROP TRIGGER IF EXISTS trg_audit ON public.payee;
+DROP TRIGGER IF EXISTS trg_audit ON public.ledger;
+DROP TRIGGER IF EXISTS trg_audit ON public.account;
+DROP INDEX IF EXISTS public.idx_transaction_reversed_by;
+DROP INDEX IF EXISTS public.idx_transaction_ledger_postdate;
+DROP INDEX IF EXISTS public.idx_transaction_ledger_id;
+DROP INDEX IF EXISTS public.idx_split_transaction_id;
+DROP INDEX IF EXISTS public.idx_split_account_id;
+DROP INDEX IF EXISTS public.idx_scheduled_transaction_ledger_id;
+DROP INDEX IF EXISTS public.idx_price_commodity_date;
+DROP INDEX IF EXISTS public.idx_payee_ledger_id;
+DROP INDEX IF EXISTS public.idx_coa_template_one_root_per_template_ux;
+DROP INDEX IF EXISTS public.idx_coa_node_template_typecode;
+DROP INDEX IF EXISTS public.idx_auth_identity_owner_id;
+DROP INDEX IF EXISTS public.idx_audit_log_table_row;
+DROP INDEX IF EXISTS public.idx_audit_log_owner;
+DROP INDEX IF EXISTS public.idx_audit_log_occurred_at;
+DROP INDEX IF EXISTS public.idx_account_parent_id;
+DROP INDEX IF EXISTS public.idx_account_ledger_id;
+DROP INDEX IF EXISTS public.idx_account_ledger_code_ux;
+DROP INDEX IF EXISTS public.commodity_namespace_mnemonic_ux;
+ALTER TABLE IF EXISTS ONLY public.transaction DROP CONSTRAINT IF EXISTS transaction_pkey;
+ALTER TABLE IF EXISTS ONLY public.split DROP CONSTRAINT IF EXISTS split_pkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_transaction DROP CONSTRAINT IF EXISTS scheduled_transaction_pkey;
+ALTER TABLE IF EXISTS ONLY public.scheduled_split DROP CONSTRAINT IF EXISTS scheduled_split_pkey;
+ALTER TABLE IF EXISTS ONLY public.recurrence DROP CONSTRAINT IF EXISTS recurrence_pkey;
+ALTER TABLE IF EXISTS ONLY public.price DROP CONSTRAINT IF EXISTS price_pkey;
+ALTER TABLE IF EXISTS ONLY public.price DROP CONSTRAINT IF EXISTS price_commodity_id_currency_id_date_key;
+ALTER TABLE IF EXISTS ONLY public.payee DROP CONSTRAINT IF EXISTS payee_pkey;
+ALTER TABLE IF EXISTS ONLY public.payee DROP CONSTRAINT IF EXISTS payee_ledger_id_name_key;
+ALTER TABLE IF EXISTS ONLY public.ledger DROP CONSTRAINT IF EXISTS ledger_pkey;
+ALTER TABLE IF EXISTS ONLY public.ledger_owner DROP CONSTRAINT IF EXISTS ledger_owner_pkey;
+ALTER TABLE IF EXISTS ONLY public.ledger_owner DROP CONSTRAINT IF EXISTS ledger_owner_email_key;
+ALTER TABLE IF EXISTS ONLY public.enum_label DROP CONSTRAINT IF EXISTS enum_label_pkey;
+ALTER TABLE IF EXISTS ONLY public.commodity DROP CONSTRAINT IF EXISTS commodity_pkey;
+ALTER TABLE IF EXISTS ONLY public.coa_template DROP CONSTRAINT IF EXISTS coa_template_pkey;
+ALTER TABLE IF EXISTS ONLY public.coa_template_node DROP CONSTRAINT IF EXISTS coa_template_node_template_id_code_key;
+ALTER TABLE IF EXISTS ONLY public.coa_template_node DROP CONSTRAINT IF EXISTS coa_template_node_pkey;
+ALTER TABLE IF EXISTS ONLY public.coa_template DROP CONSTRAINT IF EXISTS coa_template_code_version_key;
+ALTER TABLE IF EXISTS ONLY public.auth_identity DROP CONSTRAINT IF EXISTS auth_identity_provider_provider_user_id_key;
+ALTER TABLE IF EXISTS ONLY public.auth_identity DROP CONSTRAINT IF EXISTS auth_identity_pkey;
+ALTER TABLE IF EXISTS ONLY public.audit_log DROP CONSTRAINT IF EXISTS audit_log_pkey;
+ALTER TABLE IF EXISTS ONLY public.account_type DROP CONSTRAINT IF EXISTS account_type_pkey;
+ALTER TABLE IF EXISTS ONLY public.account_type DROP CONSTRAINT IF EXISTS account_type_code_uq;
+ALTER TABLE IF EXISTS ONLY public.account DROP CONSTRAINT IF EXISTS account_pkey;
+DROP VIEW IF EXISTS public.v_role_password_age;
+DROP VIEW IF EXISTS public.v_ledger_owner_redacted;
+DROP VIEW IF EXISTS public.v_ledger;
+DROP TABLE IF EXISTS public.transaction;
+DROP TABLE IF EXISTS public.split;
+DROP TABLE IF EXISTS public.scheduled_transaction;
+DROP TABLE IF EXISTS public.scheduled_split;
+DROP TABLE IF EXISTS public.recurrence;
+DROP TABLE IF EXISTS public.price;
+DROP TABLE IF EXISTS public.payee;
+DROP TABLE IF EXISTS public.ledger_owner;
+DROP TABLE IF EXISTS public.ledger;
+DROP TABLE IF EXISTS public.enum_label;
+DROP TABLE IF EXISTS public.commodity;
+DROP TABLE IF EXISTS public.coa_template_node;
+DROP TABLE IF EXISTS public.coa_template;
+DROP TABLE IF EXISTS public.auth_identity;
+DROP TABLE IF EXISTS public.audit_log;
+DROP TABLE IF EXISTS public.account_type;
+DROP TABLE IF EXISTS public.account;
+DROP FUNCTION IF EXISTS public.mab_void_transaction(p_tx_id uuid, p_reason text);
+DROP FUNCTION IF EXISTS public.mab_reverse_transaction(p_tx_id uuid, p_post_date timestamp with time zone, p_enter_date timestamp with time zone, p_memo text);
+DROP FUNCTION IF EXISTS public.mab_post_transaction(p_ledger_id uuid, p_splits jsonb, p_post_date timestamp with time zone, p_enter_date timestamp with time zone, p_memo text, p_num text, p_status smallint, p_currency_commodity_id uuid, p_payee_id uuid);
+DROP FUNCTION IF EXISTS public.mab_current_owner_id();
+DROP FUNCTION IF EXISTS public.mab_audit_trigger();
+DROP FUNCTION IF EXISTS public.mab__assert(p_ok boolean, p_message text);
+DROP FUNCTION IF EXISTS public.instantiate_coa_template_to_ledger(p_template_id uuid, p_ledger_id uuid);
+DROP FUNCTION IF EXISTS public.instantiate_coa_template(p_ledger_id uuid, p_template_id uuid);
+DROP FUNCTION IF EXISTS public.create_ledger_with_optional_template(p_owner_id uuid, p_ledger_name text, p_currency_mnemonic text, p_decimal_places smallint, p_template_label text, p_coa_template_code text, p_coa_template_version text);
+DROP EXTENSION IF EXISTS pgcrypto;
+--
+-- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
+
+
+--
+-- Name: create_ledger_with_optional_template(uuid, text, text, smallint, text, text, text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.create_ledger_with_optional_template(p_owner_id uuid, p_ledger_name text, p_currency_mnemonic text DEFAULT 'MXN'::text, p_decimal_places smallint DEFAULT 2, p_template_label text DEFAULT 'CUSTOM'::text, p_coa_template_code text DEFAULT NULL::text, p_coa_template_version text DEFAULT NULL::text) RETURNS TABLE(ledger_id uuid, root_account_id uuid, coa_template_id uuid, currency_commodity_id uuid)
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    v_owner_exists boolean;
+    v_currency_id  uuid;
+    v_template_id  uuid;
+    v_root_id      uuid;
+BEGIN
+    -- 1) Validate owner
+    SELECT EXISTS(
+        SELECT 1 FROM public.ledger_owner lo
+         WHERE lo.id = p_owner_id AND lo.deleted_at IS NULL
+    ) INTO v_owner_exists;
+
+    IF NOT v_owner_exists THEN
+        RAISE EXCEPTION 'ledger_owner % not found (or deleted)', p_owner_id;
+    END IF;
+
+    -- 2) Resolve currency commodity
+    SELECT c.id INTO v_currency_id
+      FROM public.commodity c
+     WHERE c.namespace  = 'CURRENCY'
+       AND c.mnemonic   = p_currency_mnemonic
+       AND c.deleted_at IS NULL
+     LIMIT 1;
+
+    IF v_currency_id IS NULL THEN
+        RAISE EXCEPTION 'Currency commodity not found for mnemonic=% (namespace=CURRENCY)',
+            p_currency_mnemonic;
+    END IF;
+
+    -- 3) Resolve template (optional; both params required together)
+    v_template_id := NULL;
+    IF p_coa_template_code IS NOT NULL AND p_coa_template_version IS NOT NULL THEN
+        SELECT t.id INTO v_template_id
+          FROM public.coa_template t
+         WHERE t.code       = p_coa_template_code
+           AND t.version    = p_coa_template_version
+           AND t.is_active  = TRUE
+           AND t.deleted_at IS NULL
+         LIMIT 1;
+
+        IF v_template_id IS NULL THEN
+            RAISE EXCEPTION 'COA template not found for code=% version=%',
+                p_coa_template_code, p_coa_template_version;
+        END IF;
+    ELSIF p_coa_template_code IS NOT NULL OR p_coa_template_version IS NOT NULL THEN
+        RAISE EXCEPTION
+            'Both p_coa_template_code and p_coa_template_version must be provided together (or both NULL)';
+    END IF;
+
+    -- 4) Create ledger
+    INSERT INTO public.ledger (
+        owner_id, name, decimal_places, template, is_active,
+        currency_commodity_id, root_account_id, coa_template_id
+    )
+    VALUES (
+        p_owner_id,
+        COALESCE(NULLIF(p_ledger_name, ''), 'No Name'),
+        COALESCE(p_decimal_places, 2),
+        COALESCE(NULLIF(p_template_label, ''), 'CUSTOM'),
+        TRUE,
+        v_currency_id,
+        NULL,
+        v_template_id
+    )
+    RETURNING id INTO ledger_id;
+
+    currency_commodity_id := v_currency_id;
+    coa_template_id       := v_template_id;
+
+    -- 5) Instantiate template if provided (delegates to canonical function)
+    v_root_id := NULL;
+    IF v_template_id IS NOT NULL THEN
+        v_root_id := public.instantiate_coa_template_to_ledger(v_template_id, ledger_id);
+    END IF;
+
+    root_account_id := v_root_id;
+    RETURN NEXT;
+END;
+$$;
+
+
+--
+-- Name: instantiate_coa_template(uuid, uuid); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.instantiate_coa_template(p_ledger_id uuid, p_template_id uuid) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RAISE EXCEPTION
+        'instantiate_coa_template() is deprecated. '
+        'Use instantiate_coa_template_to_ledger(p_template_id, p_ledger_id) instead. '
+        'Note: argument order is reversed in the replacement function.';
+END;
+$$;
+
+
+--
+-- Name: FUNCTION instantiate_coa_template(p_ledger_id uuid, p_template_id uuid); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON FUNCTION public.instantiate_coa_template(p_ledger_id uuid, p_template_id uuid) IS 'DEPRECATED. Use instantiate_coa_template_to_ledger() instead.';
+
+
+--
+-- Name: instantiate_coa_template_to_ledger(uuid, uuid); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.instantiate_coa_template_to_ledger(p_template_id uuid, p_ledger_id uuid) RETURNS uuid
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    v_root_account_id       uuid;
+    v_currency_commodity_id uuid;
+BEGIN
+    -- Guards
+    IF NOT EXISTS (
+        SELECT 1 FROM public.coa_template
+         WHERE id = p_template_id AND deleted_at IS NULL
+    ) THEN
+        RAISE EXCEPTION 'Template % not found (or deleted)', p_template_id;
+    END IF;
+
+    SELECT currency_commodity_id
+      INTO v_currency_commodity_id
+      FROM public.ledger
+     WHERE id = p_ledger_id;
+
+    IF v_currency_commodity_id IS NULL THEN
+        RAISE EXCEPTION 'Ledger % not found or missing currency_commodity_id', p_ledger_id;
+    END IF;
+
+    IF EXISTS (
+        SELECT 1 FROM public.account
+         WHERE ledger_id = p_ledger_id AND deleted_at IS NULL
+    ) THEN
+        RAISE EXCEPTION 'Ledger % already has accounts. Refusing to instantiate template.', p_ledger_id;
+    END IF;
+
+    IF (SELECT COUNT(*) FROM public.coa_template_node
+         WHERE template_id = p_template_id AND parent_code IS NULL) <> 1 THEN
+        RAISE EXCEPTION 'Template % must have exactly one root node (parent_code IS NULL).', p_template_id;
+    END IF;
+
+    IF EXISTS (
+        SELECT 1 FROM public.coa_template_node
+         WHERE template_id = p_template_id
+           AND NOT is_placeholder
+           AND account_type_code IS NULL
+    ) THEN
+        RAISE EXCEPTION 'Template % has non-placeholder nodes without account_type_code.', p_template_id;
+    END IF;
+
+    IF EXISTS (
+        SELECT 1 FROM public.coa_template_node n
+         WHERE n.template_id = p_template_id
+           AND n.account_type_code IS NOT NULL
+           AND NOT EXISTS (
+               SELECT 1 FROM public.account_type at
+                WHERE at.code = n.account_type_code AND at.deleted_at IS NULL
+           )
+    ) THEN
+        RAISE EXCEPTION 'Template % references account_type codes that do not exist (or are deleted).', p_template_id;
+    END IF;
+
+    -- Mapping: node.code -> inserted account.id
+    CREATE TEMP TABLE _node_to_account (
+        node_code  text PRIMARY KEY,
+        account_id uuid NOT NULL
+    ) ON COMMIT DROP;
+
+    WITH ordered AS (
+        SELECT n.code, n.parent_code, n.name, n.level,
+               n.kind, n.role, n.is_placeholder, n.account_type_code
+          FROM public.coa_template_node n
+         WHERE n.template_id = p_template_id
+         ORDER BY n.level ASC, n.code ASC
+    ),
+    ins AS (
+        INSERT INTO public.account (
+            ledger_id, account_role, code, commodity_scu,
+            created_at, is_active, is_hidden, is_placeholder,
+            kind, name, non_std_scu, notes,
+            account_type_id, commodity_id, parent_id,
+            updated_at, revision, deleted_at
+        )
+        SELECT
+            p_ledger_id,
+            o.role,
+            o.code,
+            LEAST(
+                (SELECT fraction FROM public.commodity WHERE id = v_currency_commodity_id),
+                2147483647
+            )::integer,
+            now(), true, false, o.is_placeholder,
+            o.kind, o.name, 0, NULL,
+            CASE WHEN o.is_placeholder THEN NULL
+                 ELSE (SELECT at.id FROM public.account_type at
+                        WHERE at.code = o.account_type_code AND at.deleted_at IS NULL)
+            END,
+            v_currency_commodity_id,
+            CASE WHEN o.parent_code IS NULL THEN NULL
+                 ELSE (SELECT m.account_id FROM _node_to_account m WHERE m.node_code = o.parent_code)
+            END,
+            now(), 0, NULL
+        FROM ordered o
+        RETURNING id, code
+    )
+    INSERT INTO _node_to_account(node_code, account_id)
+    SELECT code, id FROM ins;
+
+    SELECT m.account_id
+      INTO v_root_account_id
+      FROM _node_to_account m
+      JOIN public.coa_template_node n
+        ON n.template_id = p_template_id
+       AND n.parent_code IS NULL
+       AND n.code = m.node_code
+     LIMIT 1;
+
+    UPDATE public.ledger
+       SET root_account_id = v_root_account_id,
+           coa_template_id = p_template_id,
+           updated_at      = now()
+     WHERE id = p_ledger_id;
+
+    RETURN v_root_account_id;
+END;
+$$;
+
+
+--
+-- Name: mab__assert(boolean, text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.mab__assert(p_ok boolean, p_message text) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    IF NOT p_ok THEN
+        RAISE EXCEPTION USING MESSAGE = p_message, ERRCODE = 'P0001';
+    END IF;
+END;
+$$;
+
+
+--
+-- Name: mab_audit_trigger(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.mab_audit_trigger() RETURNS trigger
+    LANGUAGE plpgsql SECURITY DEFINER
+    AS $$
+DECLARE
+    v_owner_id uuid;
+    v_row_id   uuid;
+BEGIN
+    v_owner_id := NULLIF(current_setting('app.current_owner_id', TRUE), '')::uuid;
+
+    IF TG_OP = 'DELETE' THEN
+        v_row_id := OLD.id;
+    ELSE
+        v_row_id := NEW.id;
+    END IF;
+
+    INSERT INTO public.audit_log(table_name, operation, row_id, owner_id, old_data, new_data)
+    VALUES (
+        TG_TABLE_NAME,
+        TG_OP,
+        v_row_id,
+        v_owner_id,
+        CASE WHEN TG_OP IN ('UPDATE','DELETE') THEN to_jsonb(OLD) ELSE NULL END,
+        CASE WHEN TG_OP IN ('INSERT','UPDATE') THEN to_jsonb(NEW) ELSE NULL END
+    );
+
+    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+END;
+$$;
+
+
+--
+-- Name: mab_current_owner_id(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.mab_current_owner_id() RETURNS uuid
+    LANGUAGE sql STABLE SECURITY DEFINER
+    AS $$
+    SELECT NULLIF(current_setting('app.current_owner_id', TRUE), '')::uuid;
+$$;
+
+
+--
+-- Name: FUNCTION mab_current_owner_id(); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON FUNCTION public.mab_current_owner_id() IS 'Returns the authenticated ledger_owner UUID from session variable app.current_owner_id. NULL if not set (RLS denies all access).';
+
+
+--
+-- Name: mab_post_transaction(uuid, jsonb, timestamp with time zone, timestamp with time zone, text, text, smallint, uuid, uuid); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.mab_post_transaction(p_ledger_id uuid, p_splits jsonb, p_post_date timestamp with time zone DEFAULT now(), p_enter_date timestamp with time zone DEFAULT now(), p_memo text DEFAULT NULL::text, p_num text DEFAULT NULL::text, p_status smallint DEFAULT 0, p_currency_commodity_id uuid DEFAULT NULL::uuid, p_payee_id uuid DEFAULT NULL::uuid) RETURNS uuid
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    v_tx_id                 uuid;
+    v_distinct_value_denoms integer;
+    v_net_value_num         bigint;
+    v_has_memo              boolean;
+    v_has_non_memo          boolean;
+    v_has_mem_debit         boolean;
+    v_has_mem_credit        boolean;
+BEGIN
+    -- 1) Concurrency control
+    PERFORM pg_advisory_xact_lock(hashtext(p_ledger_id::text));
+
+    -- 2) Basic validation
+    PERFORM mab__assert(p_ledger_id IS NOT NULL,                                       'ledger_id is required');
+    PERFORM mab__assert(p_currency_commodity_id IS NOT NULL,                           'currency_commodity_id is required');
+    PERFORM mab__assert(p_splits IS NOT NULL AND jsonb_typeof(p_splits) = 'array',     'splits must be a JSON array');
+    PERFORM mab__assert(jsonb_array_length(p_splits) > 0,                              'splits array cannot be empty');
+
+    -- 3) Stage splits
+    CREATE TEMP TABLE _mab_stg_splits (
+        account_id     uuid     NOT NULL,
+        side           smallint NOT NULL,
+        value_num      bigint   NOT NULL,
+        value_denom    integer  NOT NULL,
+        quantity_num   bigint   NOT NULL DEFAULT 0,
+        quantity_denom integer  NOT NULL DEFAULT 100,
+        memo           text     NULL,
+        action         text     NULL
+    ) ON COMMIT DROP;
+
+    INSERT INTO _mab_stg_splits(
+        account_id, side, value_num, value_denom,
+        quantity_num, quantity_denom, memo, action
+    )
+    SELECT
+        (x.account_id)::uuid,
+        COALESCE((x.side)::smallint, 0),
+        COALESCE((x.value_num)::bigint, 0),
+        COALESCE((x.value_denom)::integer, 100),
+        COALESCE((x.quantity_num)::bigint, 0),
+        COALESCE((x.quantity_denom)::integer, 100),
+        x.memo,
+        x.action
+    FROM jsonb_to_recordset(p_splits) AS x(
+        account_id     text,
+        side           integer,
+        value_num      bigint,
+        value_denom    integer,
+        quantity_num   bigint,
+        quantity_denom integer,
+        memo           text,
+        action         text
+    );
+
+    -- 4) Validate staging rows
+    PERFORM mab__assert(NOT EXISTS (SELECT 1 FROM _mab_stg_splits WHERE account_id IS NULL),      'All splits must include account_id');
+    PERFORM mab__assert(NOT EXISTS (SELECT 1 FROM _mab_stg_splits WHERE side NOT IN (0,1)),       'split.side must be 0 (DEBIT) or 1 (CREDIT)');
+    PERFORM mab__assert(NOT EXISTS (SELECT 1 FROM _mab_stg_splits WHERE value_denom <= 0),        'value_denom must be > 0');
+    PERFORM mab__assert(NOT EXISTS (SELECT 1 FROM _mab_stg_splits WHERE quantity_denom <= 0),     'quantity_denom must be > 0');
+
+    SELECT COUNT(DISTINCT value_denom) INTO v_distinct_value_denoms FROM _mab_stg_splits;
+    PERFORM mab__assert(v_distinct_value_denoms = 1,
+        'All splits must share the same value_denom (single precision per transaction)');
+
+    -- 5) Validate accounts
+    PERFORM mab__assert(
+        NOT EXISTS (SELECT 1 FROM _mab_stg_splits s LEFT JOIN public.account a ON a.id = s.account_id WHERE a.id IS NULL),
+        'All splits must reference an existing account');
+    PERFORM mab__assert(
+        NOT EXISTS (SELECT 1 FROM _mab_stg_splits s JOIN public.account a ON a.id = s.account_id WHERE a.ledger_id <> p_ledger_id),
+        'All split accounts must belong to the same ledger as the transaction');
+    PERFORM mab__assert(
+        NOT EXISTS (SELECT 1 FROM _mab_stg_splits s JOIN public.account a ON a.id = s.account_id WHERE a.is_placeholder = true),
+        'Cannot post to placeholder accounts');
+    PERFORM mab__assert(
+        NOT EXISTS (SELECT 1 FROM _mab_stg_splits s JOIN public.account a ON a.id = s.account_id WHERE a.deleted_at IS NOT NULL),
+        'Cannot post to deleted accounts');
+
+    -- 6) Memo logic
+    SELECT
+        BOOL_OR(at.code IN ('MEM_DEBIT','MEM_CREDIT'))                        AS has_memo,
+        BOOL_OR(at.code NOT IN ('MEM_DEBIT','MEM_CREDIT') OR at.code IS NULL) AS has_non_memo,
+        BOOL_OR(at.code = 'MEM_DEBIT')                                        AS has_mem_debit,
+        BOOL_OR(at.code = 'MEM_CREDIT')                                       AS has_mem_credit
+    INTO v_has_memo, v_has_non_memo, v_has_mem_debit, v_has_mem_credit
+    FROM _mab_stg_splits s
+    JOIN public.account a ON a.id = s.account_id
+    LEFT JOIN public.account_type at ON at.id = a.account_type_id;
+
+    PERFORM mab__assert(
+        NOT (v_has_memo AND v_has_non_memo),
+        'Cannot mix memo and non-memo accounts in the same transaction');
+
+    IF v_has_memo THEN
+        PERFORM mab__assert(
+            v_has_mem_debit AND v_has_mem_credit,
+            'Memo transactions must include at least one MEM_DEBIT and one MEM_CREDIT account');
+    END IF;
+
+    -- 7) Balance check
+    SELECT COALESCE(SUM(CASE WHEN side = 0 THEN value_num ELSE -value_num END), 0)
+      INTO v_net_value_num
+      FROM _mab_stg_splits;
+
+    PERFORM mab__assert(v_net_value_num = 0, 'Transaction is not balanced (net value_num must be zero)');
+
+    -- 8) Insert transaction header
+    INSERT INTO public.transaction(
+        ledger_id, enter_date, post_date, memo, num,
+        status, currency_commodity_id, payee_id
+    )
+    VALUES (
+        p_ledger_id,
+        COALESCE(p_enter_date, now()),
+        COALESCE(p_post_date,  now()),
+        p_memo, p_num,
+        COALESCE(p_status, 0),
+        p_currency_commodity_id,
+        p_payee_id
+    )
+    RETURNING id INTO v_tx_id;
+
+    -- 9) Bulk insert splits (amount is generated — omitted from INSERT list)
+    INSERT INTO public.split(
+        account_id, transaction_id, side,
+        value_num, value_denom,
+        quantity_num, quantity_denom,
+        memo, action
+    )
+    SELECT
+        s.account_id, v_tx_id, s.side,
+        s.value_num, s.value_denom,
+        s.quantity_num, s.quantity_denom,
+        s.memo, s.action
+    FROM _mab_stg_splits s;
+
+    RETURN v_tx_id;
+END;
+$$;
+
+
+--
+-- Name: mab_reverse_transaction(uuid, timestamp with time zone, timestamp with time zone, text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.mab_reverse_transaction(p_tx_id uuid, p_post_date timestamp with time zone DEFAULT now(), p_enter_date timestamp with time zone DEFAULT now(), p_memo text DEFAULT NULL::text) RETURNS uuid
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    v_src       public.transaction%ROWTYPE;
+    v_new_tx_id uuid;
+BEGIN
+    PERFORM mab__assert(p_tx_id IS NOT NULL, 'tx_id is required');
+
+    SELECT * INTO v_src FROM public.transaction WHERE id = p_tx_id;
+
+    PERFORM mab__assert(v_src.id IS NOT NULL,            'Transaction not found');
+    PERFORM mab__assert(v_src.deleted_at IS NULL,        'Cannot reverse a deleted transaction');
+    PERFORM mab__assert(v_src.is_voided = false,         'Cannot reverse a voided transaction');
+    PERFORM mab__assert(
+        v_src.reversed_by_tx_id IS NULL,
+        'Transaction has already been reversed (reversed_by_tx_id is set)');
+
+    PERFORM pg_advisory_xact_lock(hashtext(v_src.ledger_id::text));
+
+    -- Create the reversal transaction
+    INSERT INTO public.transaction(
+        ledger_id, enter_date, post_date, memo, num,
+        status, currency_commodity_id, payee_id
+    )
+    VALUES (
+        v_src.ledger_id,
+        COALESCE(p_enter_date, now()),
+        COALESCE(p_post_date,  now()),
+        COALESCE(p_memo, 'Reversal of ' || v_src.id::text),
+        v_src.num,
+        v_src.status,
+        v_src.currency_commodity_id,
+        v_src.payee_id
+    )
+    RETURNING id INTO v_new_tx_id;
+
+    -- Insert reversed splits (flip side; amount is generated automatically)
+    INSERT INTO public.split(
+        account_id, transaction_id, side,
+        value_num, value_denom,
+        quantity_num, quantity_denom,
+        memo, action
+    )
+    SELECT
+        s.account_id,
+        v_new_tx_id,
+        CASE WHEN s.side = 0 THEN 1 ELSE 0 END,
+        s.value_num, s.value_denom,
+        s.quantity_num, s.quantity_denom,
+        COALESCE(s.memo, '') || ' (reversal)',
+        s.action
+    FROM public.split s
+    WHERE s.transaction_id = v_src.id
+      AND s.deleted_at     IS NULL;
+
+    -- Mark source as reversed
+    UPDATE public.transaction
+       SET reversed_by_tx_id = v_new_tx_id,
+           updated_at        = now(),
+           revision          = revision + 1
+     WHERE id = p_tx_id;
+
+    RETURN v_new_tx_id;
+END;
+$$;
+
+
+--
+-- Name: mab_void_transaction(uuid, text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.mab_void_transaction(p_tx_id uuid, p_reason text DEFAULT NULL::text) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    v_ledger_id uuid;
+BEGIN
+    PERFORM mab__assert(p_tx_id IS NOT NULL, 'tx_id is required');
+
+    SELECT ledger_id INTO v_ledger_id
+      FROM public.transaction
+     WHERE id = p_tx_id;
+
+    PERFORM mab__assert(v_ledger_id IS NOT NULL, 'Transaction not found');
+
+    PERFORM pg_advisory_xact_lock(hashtext(v_ledger_id::text));
+
+    UPDATE public.transaction
+       SET is_voided  = true,
+           voided_at  = now(),
+           memo       = COALESCE(memo, '') ||
+                            CASE WHEN p_reason IS NULL THEN ''
+                                 ELSE ' [VOID: ' || p_reason || ']'
+                            END,
+           updated_at = now(),
+           revision   = revision + 1
+     WHERE id        = p_tx_id
+       AND is_voided = false;
+
+    PERFORM mab__assert(FOUND, 'Transaction is already voided (or not found)');
+END;
+$$;
+
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: account; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.account (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ledger_id uuid NOT NULL,
+    account_role smallint DEFAULT 0 NOT NULL,
+    code text,
+    commodity_scu integer DEFAULT 100 NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    is_active boolean DEFAULT true NOT NULL,
+    is_hidden boolean DEFAULT false NOT NULL,
+    is_placeholder boolean DEFAULT false NOT NULL,
+    kind smallint DEFAULT 1 NOT NULL,
+    name text DEFAULT 'No Name'::text NOT NULL,
+    non_std_scu integer DEFAULT 0 NOT NULL,
+    notes text,
+    account_type_id uuid,
+    commodity_id uuid,
+    parent_id uuid,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    revision bigint DEFAULT 0 NOT NULL,
+    deleted_at timestamp with time zone,
+    CONSTRAINT chk_account_kind CHECK ((kind = ANY (ARRAY[0, 1, 2, 3, 4, 5, 6, 7, 8]))),
+    CONSTRAINT chk_account_role CHECK ((account_role = ANY (ARRAY[0, 100, 101, 110, 120, 130, 131, 199, 200, 210, 220, 299, 300, 310, 320, 400, 410, 420, 430, 499, 500, 510, 600, 610, 620, 699, 700, 800, 4300, 4301, 4310, 4311, 4320, 4321, 4330, 4331, 4340, 4341, 4390, 4391, 900])))
+);
+
+ALTER TABLE ONLY public.account FORCE ROW LEVEL SECURITY;
+
+
+--
+-- Name: account_type; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.account_type (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    code text DEFAULT 'No Code'::text NOT NULL,
+    name text DEFAULT 'No Name'::text NOT NULL,
+    standard text DEFAULT 'SAT/NIIF'::text,
+    kind smallint DEFAULT 1 NOT NULL,
+    normal_balance smallint DEFAULT 0 NOT NULL,
+    sort_order smallint DEFAULT 0 NOT NULL,
+    is_active boolean DEFAULT true NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    revision bigint DEFAULT 0 NOT NULL,
+    deleted_at timestamp with time zone
+);
+
+
+--
+-- Name: audit_log; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.audit_log (
+    id bigint NOT NULL,
+    occurred_at timestamp with time zone DEFAULT now() NOT NULL,
+    table_name text NOT NULL,
+    operation text NOT NULL,
+    row_id uuid,
+    owner_id uuid,
+    old_data jsonb,
+    new_data jsonb,
+    app_user text DEFAULT CURRENT_USER NOT NULL,
+    CONSTRAINT chk_audit_operation CHECK ((operation = ANY (ARRAY['INSERT'::text, 'UPDATE'::text, 'DELETE'::text])))
+);
+
+
+--
+-- Name: TABLE audit_log; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TABLE public.audit_log IS 'Append-only compliance audit trail. Populated by mab_audit_trigger(). Never UPDATE or DELETE rows here.';
+
+
+--
+-- Name: audit_log_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+ALTER TABLE public.audit_log ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.audit_log_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: auth_identity; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.auth_identity (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ledger_owner_id uuid NOT NULL,
+    provider text NOT NULL,
+    provider_user_id text NOT NULL,
+    provider_email text,
+    email_verified boolean DEFAULT false NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    last_login_at timestamp with time zone,
+    revision bigint DEFAULT 0 NOT NULL,
+    deleted_at timestamp with time zone
+);
+
+
+--
+-- Name: coa_template; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.coa_template (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    code text NOT NULL,
+    name text NOT NULL,
+    description text,
+    country text,
+    locale text,
+    industry text,
+    version text NOT NULL,
+    is_active boolean DEFAULT true NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    deleted_at timestamp with time zone
+);
+
+
+--
+-- Name: coa_template_node; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.coa_template_node (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    template_id uuid NOT NULL,
+    code text NOT NULL,
+    parent_code text,
+    name text NOT NULL,
+    level integer NOT NULL,
+    kind smallint NOT NULL,
+    role smallint NOT NULL,
+    is_placeholder boolean DEFAULT false NOT NULL,
+    account_type_code text,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT chk_coa_template_node_kind CHECK ((kind = ANY (ARRAY[0, 1, 2, 3, 4, 5, 6, 7, 8]))),
+    CONSTRAINT chk_coa_template_node_no_self_parent CHECK ((code <> parent_code)),
+    CONSTRAINT chk_coa_template_node_role CHECK ((role = ANY (ARRAY[0, 100, 101, 110, 120, 130, 131, 199, 200, 210, 220, 299, 300, 310, 320, 400, 410, 420, 430, 499, 500, 510, 600, 610, 620, 699, 700, 800, 4300, 4301, 4310, 4311, 4320, 4321, 4330, 4331, 4340, 4341, 4390, 4391, 900]))),
+    CONSTRAINT chk_coa_template_node_root_level CHECK ((((parent_code IS NULL) AND (level = 0)) OR ((parent_code IS NOT NULL) AND (level > 0)))),
+    CONSTRAINT coa_template_node_check CHECK ((is_placeholder OR (account_type_code IS NOT NULL))),
+    CONSTRAINT coa_template_node_level_check CHECK ((level >= 0))
+);
+
+
+--
+-- Name: commodity; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.commodity (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    mnemonic text DEFAULT 'MXN'::text NOT NULL,
+    namespace text DEFAULT 'CURRENCY'::text NOT NULL,
+    full_name text DEFAULT 'No Name'::text,
+    fraction bigint DEFAULT 100 NOT NULL,
+    is_active boolean DEFAULT true NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    revision bigint DEFAULT 0 NOT NULL,
+    deleted_at timestamp with time zone
+);
+
+
+--
+-- Name: enum_label; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.enum_label (
+    enum_name text NOT NULL,
+    enum_value integer NOT NULL,
+    locale text NOT NULL,
+    label text NOT NULL,
+    description text
+);
+
+
+--
+-- Name: ledger; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ledger (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    owner_id uuid CONSTRAINT ledger_owner_id_not_null1 NOT NULL,
+    name text DEFAULT 'No Name'::text NOT NULL,
+    decimal_places smallint DEFAULT 2 NOT NULL,
+    template text DEFAULT 'SAT'::text NOT NULL,
+    is_active boolean DEFAULT true NOT NULL,
+    closed_at timestamp with time zone,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    currency_commodity_id uuid NOT NULL,
+    root_account_id uuid,
+    coa_template_id uuid,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    revision bigint DEFAULT 0 NOT NULL,
+    deleted_at timestamp with time zone
+);
+
+ALTER TABLE ONLY public.ledger FORCE ROW LEVEL SECURITY;
+
+
+--
+-- Name: ledger_owner; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ledger_owner (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    email text NOT NULL,
+    email_verified boolean DEFAULT false NOT NULL,
+    password_hash text,
+    display_name text DEFAULT 'No Name'::text NOT NULL,
+    is_active boolean DEFAULT true NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    last_login_at timestamp with time zone,
+    revision bigint DEFAULT 0 NOT NULL,
+    deleted_at timestamp with time zone
+);
+
+
+--
+-- Name: payee; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.payee (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ledger_id uuid NOT NULL,
+    name text DEFAULT 'No Name'::text NOT NULL,
+    is_active boolean DEFAULT true NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    revision bigint DEFAULT 0 NOT NULL,
+    deleted_at timestamp with time zone
+);
+
+ALTER TABLE ONLY public.payee FORCE ROW LEVEL SECURITY;
+
+
+--
+-- Name: price; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.price (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    commodity_id uuid NOT NULL,
+    currency_id uuid NOT NULL,
+    date timestamp with time zone DEFAULT now() NOT NULL,
+    source text,
+    type text,
+    value_denom integer DEFAULT 100 NOT NULL,
+    value_num bigint DEFAULT 0 NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    revision bigint DEFAULT 0 NOT NULL,
+    deleted_at timestamp with time zone
+);
+
+
+--
+-- Name: recurrence; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.recurrence (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    mult integer DEFAULT 1 NOT NULL,
+    period_start timestamp with time zone,
+    period_type text,
+    weekend_adjust text DEFAULT 'none'::text NOT NULL,
+    scheduled_transaction_id uuid NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    revision bigint DEFAULT 0 NOT NULL,
+    deleted_at timestamp with time zone,
+    CONSTRAINT chk_recurrence_period_type CHECK (((period_type IS NULL) OR (period_type = ANY (ARRAY['daily'::text, 'weekly'::text, 'biweekly'::text, 'monthly'::text, 'quarterly'::text, 'yearly'::text])))),
+    CONSTRAINT chk_recurrence_weekend_adjust CHECK ((weekend_adjust = ANY (ARRAY['none'::text, 'forward'::text, 'back'::text, 'nearest'::text])))
+);
+
+
+--
+-- Name: scheduled_split; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.scheduled_split (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    action text,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    memo text,
+    side smallint DEFAULT 0 NOT NULL,
+    value_denom integer DEFAULT 100 NOT NULL,
+    value_num bigint DEFAULT 0 NOT NULL,
+    scheduled_transaction_id uuid NOT NULL,
+    account_id uuid NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    revision bigint DEFAULT 0 NOT NULL,
+    deleted_at timestamp with time zone,
+    CONSTRAINT chk_scheduled_split_action CHECK (((action IS NULL) OR (action <> ''::text))),
+    CONSTRAINT chk_scheduled_split_side CHECK ((side = ANY (ARRAY[0, 1]))),
+    CONSTRAINT chk_scheduled_split_value CHECK ((((value_num >= 0) AND (value_denom > 0)) OR (value_num = 0)))
+);
+
+
+--
+-- Name: scheduled_transaction; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.scheduled_transaction (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ledger_id uuid NOT NULL,
+    adv_creation integer DEFAULT 0 NOT NULL,
+    adv_notify integer DEFAULT 1 NOT NULL,
+    auto_create boolean DEFAULT false NOT NULL,
+    auto_notify boolean DEFAULT true NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    enabled boolean DEFAULT true NOT NULL,
+    end_date timestamp with time zone,
+    instance_count integer DEFAULT 0 NOT NULL,
+    is_active boolean DEFAULT true NOT NULL,
+    last_occur timestamp with time zone,
+    name text,
+    num_occur integer DEFAULT 0 NOT NULL,
+    rem_occur integer DEFAULT 0 NOT NULL,
+    start_date timestamp with time zone,
+    currency_commodity_id uuid,
+    payee_id uuid,
+    template_root_account_id uuid,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    revision bigint DEFAULT 0 NOT NULL,
+    deleted_at timestamp with time zone
+);
+
+ALTER TABLE ONLY public.scheduled_transaction FORCE ROW LEVEL SECURITY;
+
+
+--
+-- Name: split; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.split (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    action text,
+    amount numeric(19,10) GENERATED ALWAYS AS ((abs((value_num)::numeric) / (NULLIF(value_denom, 0))::numeric)) STORED,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    memo text,
+    quantity_denom integer DEFAULT 100 NOT NULL,
+    quantity_num bigint DEFAULT 0 NOT NULL,
+    reconcile_date timestamp with time zone,
+    reconcile_state boolean DEFAULT false NOT NULL,
+    side smallint DEFAULT 0 NOT NULL,
+    value_denom integer DEFAULT 100 NOT NULL,
+    value_num bigint DEFAULT 0 NOT NULL,
+    account_id uuid NOT NULL,
+    transaction_id uuid NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    revision bigint DEFAULT 0 NOT NULL,
+    deleted_at timestamp with time zone,
+    CONSTRAINT chk_split_quantity CHECK ((quantity_num >= 0)),
+    CONSTRAINT chk_split_quantity_zero CHECK (((quantity_num = 0) OR ((quantity_denom > 0) AND (quantity_num > 0)))),
+    CONSTRAINT chk_split_reconcile_state CHECK ((reconcile_state = ANY (ARRAY[true, false]))),
+    CONSTRAINT chk_split_side CHECK ((side = ANY (ARRAY[0, 1]))),
+    CONSTRAINT chk_split_value CHECK ((value_num >= 0)),
+    CONSTRAINT chk_split_value_zero CHECK (((value_num = 0) OR ((value_denom > 0) AND (value_num > 0))))
+);
+
+ALTER TABLE ONLY public.split FORCE ROW LEVEL SECURITY;
+
+
+--
+-- Name: transaction; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.transaction (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ledger_id uuid NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    enter_date timestamp with time zone DEFAULT now() NOT NULL,
+    is_voided boolean DEFAULT false NOT NULL,
+    voided_at timestamp with time zone,
+    memo text,
+    num text,
+    post_date timestamp with time zone DEFAULT now() NOT NULL,
+    status smallint DEFAULT 0 NOT NULL,
+    currency_commodity_id uuid NOT NULL,
+    payee_id uuid,
+    reversed_by_tx_id uuid,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    revision bigint DEFAULT 0 NOT NULL,
+    deleted_at timestamp with time zone,
+    CONSTRAINT chk_transaction_no_self_reversal CHECK (((reversed_by_tx_id IS NULL) OR (reversed_by_tx_id <> id))),
+    CONSTRAINT chk_transaction_voided_consistency CHECK ((((is_voided = false) AND (voided_at IS NULL)) OR ((is_voided = true) AND (voided_at IS NOT NULL))))
+);
+
+ALTER TABLE ONLY public.transaction FORCE ROW LEVEL SECURITY;
+
+
+--
+-- Name: v_ledger; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.v_ledger AS
+ SELECT l.id,
+    l.owner_id,
+    l.name,
+    c.mnemonic AS currency_code,
+    l.decimal_places,
+    l.template,
+    l.is_active,
+    l.closed_at,
+    l.created_at,
+    l.currency_commodity_id,
+    l.root_account_id,
+    l.coa_template_id,
+    l.updated_at,
+    l.revision,
+    l.deleted_at
+   FROM (public.ledger l
+     JOIN public.commodity c ON ((c.id = l.currency_commodity_id)));
+
+
+--
+-- Name: VIEW v_ledger; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON VIEW public.v_ledger IS 'Convenience view: exposes currency_code (derived from commodity.mnemonic) and all ledger fields. Use instead of direct ledger table queries where currency_code text is needed.';
+
+
+--
+-- Name: v_ledger_owner_redacted; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.v_ledger_owner_redacted AS
+ SELECT id,
+    email,
+    email_verified,
+    display_name,
+    is_active,
+    created_at,
+    updated_at,
+    last_login_at,
+    revision,
+    deleted_at
+   FROM public.ledger_owner;
+
+
+--
+-- Name: VIEW v_ledger_owner_redacted; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON VIEW public.v_ledger_owner_redacted IS 'Redacted view of ledger_owner: excludes password_hash. Grant this view to mab_readonly and mab_app instead of direct table access for reporting.';
+
+
+--
+-- Name: v_role_password_age; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.v_role_password_age AS
+ SELECT rolname AS role_name,
+    rolvaliduntil AS password_expires_at,
+        CASE
+            WHEN (rolvaliduntil IS NULL) THEN 'No expiry set — rotate manually'::text
+            WHEN (rolvaliduntil < now()) THEN 'EXPIRED'::text
+            WHEN (rolvaliduntil < (now() + '30 days'::interval)) THEN 'Expiring soon'::text
+            ELSE 'OK'::text
+        END AS status
+   FROM pg_roles
+  WHERE (rolname ~~ 'mab_%'::text)
+  ORDER BY rolname;
+
+
+--
+-- Name: VIEW v_role_password_age; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON VIEW public.v_role_password_age IS 'Monitor mab_* role credential expiry. Run: SELECT * FROM v_role_password_age;';
+
+
+--
+-- Name: account account_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.account
+    ADD CONSTRAINT account_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: account_type account_type_code_uq; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.account_type
+    ADD CONSTRAINT account_type_code_uq UNIQUE (code);
+
+
+--
+-- Name: account_type account_type_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.account_type
+    ADD CONSTRAINT account_type_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: audit_log audit_log_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.audit_log
+    ADD CONSTRAINT audit_log_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_identity auth_identity_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.auth_identity
+    ADD CONSTRAINT auth_identity_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_identity auth_identity_provider_provider_user_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.auth_identity
+    ADD CONSTRAINT auth_identity_provider_provider_user_id_key UNIQUE (provider, provider_user_id);
+
+
+--
+-- Name: coa_template coa_template_code_version_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.coa_template
+    ADD CONSTRAINT coa_template_code_version_key UNIQUE (code, version);
+
+
+--
+-- Name: coa_template_node coa_template_node_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.coa_template_node
+    ADD CONSTRAINT coa_template_node_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: coa_template_node coa_template_node_template_id_code_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.coa_template_node
+    ADD CONSTRAINT coa_template_node_template_id_code_key UNIQUE (template_id, code);
+
+
+--
+-- Name: coa_template coa_template_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.coa_template
+    ADD CONSTRAINT coa_template_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: commodity commodity_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.commodity
+    ADD CONSTRAINT commodity_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: enum_label enum_label_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.enum_label
+    ADD CONSTRAINT enum_label_pkey PRIMARY KEY (enum_name, enum_value, locale);
+
+
+--
+-- Name: ledger_owner ledger_owner_email_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ledger_owner
+    ADD CONSTRAINT ledger_owner_email_key UNIQUE (email);
+
+
+--
+-- Name: ledger_owner ledger_owner_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ledger_owner
+    ADD CONSTRAINT ledger_owner_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ledger ledger_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ledger
+    ADD CONSTRAINT ledger_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: payee payee_ledger_id_name_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.payee
+    ADD CONSTRAINT payee_ledger_id_name_key UNIQUE (ledger_id, name);
+
+
+--
+-- Name: payee payee_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.payee
+    ADD CONSTRAINT payee_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: price price_commodity_id_currency_id_date_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.price
+    ADD CONSTRAINT price_commodity_id_currency_id_date_key UNIQUE (commodity_id, currency_id, date);
+
+
+--
+-- Name: price price_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.price
+    ADD CONSTRAINT price_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: recurrence recurrence_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.recurrence
+    ADD CONSTRAINT recurrence_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: scheduled_split scheduled_split_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.scheduled_split
+    ADD CONSTRAINT scheduled_split_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: scheduled_transaction scheduled_transaction_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.scheduled_transaction
+    ADD CONSTRAINT scheduled_transaction_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: split split_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.split
+    ADD CONSTRAINT split_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: transaction transaction_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transaction
+    ADD CONSTRAINT transaction_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: commodity_namespace_mnemonic_ux; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX commodity_namespace_mnemonic_ux ON public.commodity USING btree (namespace, mnemonic) WHERE (deleted_at IS NULL);
+
+
+--
+-- Name: idx_account_ledger_code_ux; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_account_ledger_code_ux ON public.account USING btree (ledger_id, code) WHERE ((code IS NOT NULL) AND (deleted_at IS NULL));
+
+
+--
+-- Name: idx_account_ledger_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_account_ledger_id ON public.account USING btree (ledger_id) WHERE (deleted_at IS NULL);
+
+
+--
+-- Name: idx_account_parent_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_account_parent_id ON public.account USING btree (parent_id) WHERE ((parent_id IS NOT NULL) AND (deleted_at IS NULL));
+
+
+--
+-- Name: idx_audit_log_occurred_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_audit_log_occurred_at ON public.audit_log USING btree (occurred_at DESC);
+
+
+--
+-- Name: idx_audit_log_owner; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_audit_log_owner ON public.audit_log USING btree (owner_id, occurred_at DESC);
+
+
+--
+-- Name: idx_audit_log_table_row; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_audit_log_table_row ON public.audit_log USING btree (table_name, row_id);
+
+
+--
+-- Name: idx_auth_identity_owner_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_auth_identity_owner_id ON public.auth_identity USING btree (ledger_owner_id) WHERE (deleted_at IS NULL);
+
+
+--
+-- Name: idx_coa_node_template_typecode; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_coa_node_template_typecode ON public.coa_template_node USING btree (template_id, account_type_code);
+
+
+--
+-- Name: idx_coa_template_one_root_per_template_ux; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_coa_template_one_root_per_template_ux ON public.coa_template_node USING btree (template_id) WHERE (parent_code IS NULL);
+
+
+--
+-- Name: idx_payee_ledger_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_payee_ledger_id ON public.payee USING btree (ledger_id) WHERE (deleted_at IS NULL);
+
+
+--
+-- Name: idx_price_commodity_date; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_price_commodity_date ON public.price USING btree (commodity_id, date DESC) WHERE (deleted_at IS NULL);
+
+
+--
+-- Name: idx_scheduled_transaction_ledger_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_scheduled_transaction_ledger_id ON public.scheduled_transaction USING btree (ledger_id) WHERE (deleted_at IS NULL);
+
+
+--
+-- Name: idx_split_account_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_split_account_id ON public.split USING btree (account_id) WHERE (deleted_at IS NULL);
+
+
+--
+-- Name: idx_split_transaction_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_split_transaction_id ON public.split USING btree (transaction_id) WHERE (deleted_at IS NULL);
+
+
+--
+-- Name: idx_transaction_ledger_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_transaction_ledger_id ON public.transaction USING btree (ledger_id) WHERE (deleted_at IS NULL);
+
+
+--
+-- Name: idx_transaction_ledger_postdate; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_transaction_ledger_postdate ON public.transaction USING btree (ledger_id, post_date DESC) WHERE (deleted_at IS NULL);
+
+
+--
+-- Name: idx_transaction_reversed_by; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_transaction_reversed_by ON public.transaction USING btree (reversed_by_tx_id) WHERE (reversed_by_tx_id IS NOT NULL);
+
+
+--
+-- Name: account trg_audit; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER trg_audit AFTER INSERT OR DELETE OR UPDATE ON public.account FOR EACH ROW EXECUTE FUNCTION public.mab_audit_trigger();
+
+
+--
+-- Name: ledger trg_audit; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER trg_audit AFTER INSERT OR DELETE OR UPDATE ON public.ledger FOR EACH ROW EXECUTE FUNCTION public.mab_audit_trigger();
+
+
+--
+-- Name: payee trg_audit; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER trg_audit AFTER INSERT OR DELETE OR UPDATE ON public.payee FOR EACH ROW EXECUTE FUNCTION public.mab_audit_trigger();
+
+
+--
+-- Name: scheduled_split trg_audit; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER trg_audit AFTER INSERT OR DELETE OR UPDATE ON public.scheduled_split FOR EACH ROW EXECUTE FUNCTION public.mab_audit_trigger();
+
+
+--
+-- Name: scheduled_transaction trg_audit; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER trg_audit AFTER INSERT OR DELETE OR UPDATE ON public.scheduled_transaction FOR EACH ROW EXECUTE FUNCTION public.mab_audit_trigger();
+
+
+--
+-- Name: split trg_audit; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER trg_audit AFTER INSERT OR DELETE OR UPDATE ON public.split FOR EACH ROW EXECUTE FUNCTION public.mab_audit_trigger();
+
+
+--
+-- Name: transaction trg_audit; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER trg_audit AFTER INSERT OR DELETE OR UPDATE ON public.transaction FOR EACH ROW EXECUTE FUNCTION public.mab_audit_trigger();
+
+
+--
+-- Name: account account_account_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.account
+    ADD CONSTRAINT account_account_type_id_fkey FOREIGN KEY (account_type_id) REFERENCES public.account_type(id) ON DELETE SET NULL;
+
+
+--
+-- Name: account account_commodity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.account
+    ADD CONSTRAINT account_commodity_id_fkey FOREIGN KEY (commodity_id) REFERENCES public.commodity(id) ON DELETE SET NULL;
+
+
+--
+-- Name: account account_ledger_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.account
+    ADD CONSTRAINT account_ledger_id_fkey FOREIGN KEY (ledger_id) REFERENCES public.ledger(id) ON DELETE CASCADE;
+
+
+--
+-- Name: account account_parent_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.account
+    ADD CONSTRAINT account_parent_id_fkey FOREIGN KEY (parent_id) REFERENCES public.account(id) ON DELETE SET NULL;
+
+
+--
+-- Name: auth_identity auth_identity_ledger_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.auth_identity
+    ADD CONSTRAINT auth_identity_ledger_owner_id_fkey FOREIGN KEY (ledger_owner_id) REFERENCES public.ledger_owner(id) ON DELETE CASCADE;
+
+
+--
+-- Name: coa_template_node chk_coa_template_node_parent_code_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.coa_template_node
+    ADD CONSTRAINT chk_coa_template_node_parent_code_fkey FOREIGN KEY (template_id, parent_code) REFERENCES public.coa_template_node(template_id, code) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: coa_template_node coa_template_node_account_type_code_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.coa_template_node
+    ADD CONSTRAINT coa_template_node_account_type_code_fkey FOREIGN KEY (account_type_code) REFERENCES public.account_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: coa_template_node coa_template_node_template_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.coa_template_node
+    ADD CONSTRAINT coa_template_node_template_id_fkey FOREIGN KEY (template_id) REFERENCES public.coa_template(id) ON DELETE CASCADE;
+
+
+--
+-- Name: ledger fk_ledger_root_account; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ledger
+    ADD CONSTRAINT fk_ledger_root_account FOREIGN KEY (root_account_id) REFERENCES public.account(id) ON DELETE SET NULL;
+
+
+--
+-- Name: transaction fk_transaction_reversed_by; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transaction
+    ADD CONSTRAINT fk_transaction_reversed_by FOREIGN KEY (reversed_by_tx_id) REFERENCES public.transaction(id) ON DELETE SET NULL;
+
+
+--
+-- Name: ledger ledger_coa_template_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ledger
+    ADD CONSTRAINT ledger_coa_template_id_fkey FOREIGN KEY (coa_template_id) REFERENCES public.coa_template(id) ON DELETE SET NULL;
+
+
+--
+-- Name: ledger ledger_currency_commodity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ledger
+    ADD CONSTRAINT ledger_currency_commodity_id_fkey FOREIGN KEY (currency_commodity_id) REFERENCES public.commodity(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: ledger ledger_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ledger
+    ADD CONSTRAINT ledger_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES public.ledger_owner(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: payee payee_ledger_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.payee
+    ADD CONSTRAINT payee_ledger_id_fkey FOREIGN KEY (ledger_id) REFERENCES public.ledger(id) ON DELETE CASCADE;
+
+
+--
+-- Name: price price_commodity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.price
+    ADD CONSTRAINT price_commodity_id_fkey FOREIGN KEY (commodity_id) REFERENCES public.commodity(id) ON DELETE CASCADE;
+
+
+--
+-- Name: price price_currency_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.price
+    ADD CONSTRAINT price_currency_id_fkey FOREIGN KEY (currency_id) REFERENCES public.commodity(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: recurrence recurrence_scheduled_transaction_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.recurrence
+    ADD CONSTRAINT recurrence_scheduled_transaction_id_fkey FOREIGN KEY (scheduled_transaction_id) REFERENCES public.scheduled_transaction(id) ON DELETE CASCADE;
+
+
+--
+-- Name: scheduled_split scheduled_split_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.scheduled_split
+    ADD CONSTRAINT scheduled_split_account_id_fkey FOREIGN KEY (account_id) REFERENCES public.account(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: scheduled_split scheduled_split_scheduled_transaction_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.scheduled_split
+    ADD CONSTRAINT scheduled_split_scheduled_transaction_id_fkey FOREIGN KEY (scheduled_transaction_id) REFERENCES public.scheduled_transaction(id) ON DELETE CASCADE;
+
+
+--
+-- Name: scheduled_transaction scheduled_transaction_currency_commodity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.scheduled_transaction
+    ADD CONSTRAINT scheduled_transaction_currency_commodity_id_fkey FOREIGN KEY (currency_commodity_id) REFERENCES public.commodity(id) ON DELETE SET NULL;
+
+
+--
+-- Name: scheduled_transaction scheduled_transaction_ledger_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.scheduled_transaction
+    ADD CONSTRAINT scheduled_transaction_ledger_id_fkey FOREIGN KEY (ledger_id) REFERENCES public.ledger(id) ON DELETE CASCADE;
+
+
+--
+-- Name: scheduled_transaction scheduled_transaction_payee_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.scheduled_transaction
+    ADD CONSTRAINT scheduled_transaction_payee_id_fkey FOREIGN KEY (payee_id) REFERENCES public.payee(id) ON DELETE SET NULL;
+
+
+--
+-- Name: scheduled_transaction scheduled_transaction_template_root_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.scheduled_transaction
+    ADD CONSTRAINT scheduled_transaction_template_root_account_id_fkey FOREIGN KEY (template_root_account_id) REFERENCES public.account(id) ON DELETE SET NULL;
+
+
+--
+-- Name: split split_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.split
+    ADD CONSTRAINT split_account_id_fkey FOREIGN KEY (account_id) REFERENCES public.account(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: split split_transaction_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.split
+    ADD CONSTRAINT split_transaction_id_fkey FOREIGN KEY (transaction_id) REFERENCES public.transaction(id) ON DELETE CASCADE;
+
+
+--
+-- Name: transaction transaction_currency_commodity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transaction
+    ADD CONSTRAINT transaction_currency_commodity_id_fkey FOREIGN KEY (currency_commodity_id) REFERENCES public.commodity(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: transaction transaction_ledger_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transaction
+    ADD CONSTRAINT transaction_ledger_id_fkey FOREIGN KEY (ledger_id) REFERENCES public.ledger(id) ON DELETE CASCADE;
+
+
+--
+-- Name: transaction transaction_payee_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transaction
+    ADD CONSTRAINT transaction_payee_id_fkey FOREIGN KEY (payee_id) REFERENCES public.payee(id) ON DELETE SET NULL;
+
+
+--
+-- Name: account; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public.account ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: ledger; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public.ledger ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: payee; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public.payee ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: account rls_account_owner; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY rls_account_owner ON public.account USING ((ledger_id IN ( SELECT ledger.id
+   FROM public.ledger
+  WHERE (ledger.owner_id = public.mab_current_owner_id())))) WITH CHECK ((ledger_id IN ( SELECT ledger.id
+   FROM public.ledger
+  WHERE (ledger.owner_id = public.mab_current_owner_id()))));
+
+
+--
+-- Name: ledger rls_ledger_owner; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY rls_ledger_owner ON public.ledger USING ((owner_id = public.mab_current_owner_id())) WITH CHECK ((owner_id = public.mab_current_owner_id()));
+
+
+--
+-- Name: payee rls_payee_owner; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY rls_payee_owner ON public.payee USING ((ledger_id IN ( SELECT ledger.id
+   FROM public.ledger
+  WHERE (ledger.owner_id = public.mab_current_owner_id())))) WITH CHECK ((ledger_id IN ( SELECT ledger.id
+   FROM public.ledger
+  WHERE (ledger.owner_id = public.mab_current_owner_id()))));
+
+
+--
+-- Name: scheduled_transaction rls_scheduled_transaction_owner; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY rls_scheduled_transaction_owner ON public.scheduled_transaction USING ((ledger_id IN ( SELECT ledger.id
+   FROM public.ledger
+  WHERE (ledger.owner_id = public.mab_current_owner_id())))) WITH CHECK ((ledger_id IN ( SELECT ledger.id
+   FROM public.ledger
+  WHERE (ledger.owner_id = public.mab_current_owner_id()))));
+
+
+--
+-- Name: split rls_split_owner; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY rls_split_owner ON public.split USING ((account_id IN ( SELECT a.id
+   FROM (public.account a
+     JOIN public.ledger l ON ((l.id = a.ledger_id)))
+  WHERE (l.owner_id = public.mab_current_owner_id())))) WITH CHECK ((account_id IN ( SELECT a.id
+   FROM (public.account a
+     JOIN public.ledger l ON ((l.id = a.ledger_id)))
+  WHERE (l.owner_id = public.mab_current_owner_id()))));
+
+
+--
+-- Name: transaction rls_transaction_owner; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY rls_transaction_owner ON public.transaction USING ((ledger_id IN ( SELECT ledger.id
+   FROM public.ledger
+  WHERE (ledger.owner_id = public.mab_current_owner_id())))) WITH CHECK ((ledger_id IN ( SELECT ledger.id
+   FROM public.ledger
+  WHERE (ledger.owner_id = public.mab_current_owner_id()))));
+
+
+--
+-- Name: scheduled_transaction; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public.scheduled_transaction ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: split; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public.split ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: transaction; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public.transaction ENABLE ROW LEVEL SECURITY;
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict GcdGcCgMRMMWPgzrJNt2x6Eq6zFo3AQNMEV69pVysNGkaiS6AaX2PhhNby0P8b9
+
