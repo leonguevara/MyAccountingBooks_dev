@@ -26,7 +26,7 @@ WITH seed(namespace, mnemonic, full_name, fraction) AS (
 INSERT INTO commodity (mnemonic, namespace, full_name, fraction, is_active, created_at, updated_at, revision, deleted_at)
 SELECT s.mnemonic, s.namespace, s.full_name, s.fraction, TRUE, now(), now(), 0, NULL
 FROM seed s
-ON CONFLICT (namespace, mnemonic)
+ON CONFLICT (namespace, mnemonic) WHERE deleted_at IS NULL  -- only consider active records for conflict
 DO UPDATE SET
   full_name  = EXCLUDED.full_name,
   fraction   = EXCLUDED.fraction,

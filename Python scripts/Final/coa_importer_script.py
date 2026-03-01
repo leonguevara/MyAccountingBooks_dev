@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-import_coa_template_from_excel.py  (v2)
+coa_importer_script.py  (v2)
 
 Cross-platform importer for COA templates from an Excel file into PostgreSQL.
 
@@ -42,18 +42,18 @@ EXAMPLES
 ─────────────────────────────────────────────────────────────────────────────
 
   # All metadata from Excel:
-  python import_coa_template_from_excel.py \\
+  python coa_importer_script.py \\
     --dsn "host=localhost port=5432 dbname=myaccounting_dev user=postgres password=SECRET" \\
     --excel "/path/to/Personales_2026.xlsx"
 
   # Override version from CLI:
-  python import_coa_template_from_excel.py \\
+  python coa_importer_script.py \\
     --dsn "..." \\
     --excel "/path/to/Personales_2026.xlsx" \\
     --template-version 2
 
   # Use a non-default Meta sheet name and a specific node sheet:
-  python import_coa_template_from_excel.py \\
+  python coa_importer_script.py \\
     --dsn "..." \\
     --excel "/path/to/Personales_2026.xlsx" \\
     --meta-sheet "Metadata" \\
