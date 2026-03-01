@@ -1,4 +1,6 @@
-# ER Diagram (auto-generated)
+# ER Diagram
+
+Generated from schema dump `myaccounting_dev_schema_clean_v20260301.psql`.
 
 ```mermaid
 erDiagram
@@ -49,6 +51,17 @@ erDiagram
      bigint revision
      timestamptz deleted_at
   }
+  public_audit_log {
+     bigint id PK
+     timestamptz occurred_at
+     text table_name
+     text operation
+     uuid row_id
+     uuid owner_id
+     jsonb old_data
+     jsonb new_data
+     text app_user
+  }
   public_coa_template {
      uuid id PK
      text code
@@ -61,6 +74,7 @@ erDiagram
      bool is_active
      timestamptz created_at
      timestamptz updated_at
+     timestamptz deleted_at
   }
   public_coa_template_node {
      uuid id PK
@@ -99,8 +113,7 @@ erDiagram
      uuid id PK
      uuid owner_id FK
      text name
-     text currency_code
-     smallint precision
+     smallint decimal_places
      text template
      bool is_active
      timestamptz closed_at
@@ -224,26 +237,29 @@ erDiagram
      timestamptz created_at
      timestamptz enter_date
      bool is_voided
+     timestamptz voided_at
      text memo
      text num
      timestamptz post_date
      smallint status
      uuid currency_commodity_id FK
      uuid payee_id FK
+     uuid reversed_by_tx_id FK
      timestamptz updated_at
      bigint revision
      timestamptz deleted_at
   }
+
   public_account }o--|| public_account_type : "account_type_id->id"
   public_account }o--|| public_commodity : "commodity_id->id"
   public_account }o--|| public_ledger : "ledger_id->id"
-  public_account }o--|| public_account : "parent_id->id"
+  public_account }o--o| public_account : "parent_id->id"
   public_auth_identity }o--|| public_ledger_owner : "ledger_owner_id->id"
-  public_coa_template_node }o--|| public_coa_template_node : "template_id, parent_code->template_id, code"
+  public_coa_template_node }o--|| public_coa_template_node : "template_id,parent_code->template_id,code"
   public_coa_template_node }o--|| public_account_type : "account_type_code->code"
   public_coa_template_node }o--|| public_coa_template : "template_id->id"
-  public_ledger }o--|| public_account : "root_account_id->id"
-  public_ledger }o--|| public_coa_template : "coa_template_id->id"
+  public_ledger }o--o| public_account : "root_account_id->id"
+  public_ledger }o--o| public_coa_template : "coa_template_id->id"
   public_ledger }o--|| public_commodity : "currency_commodity_id->id"
   public_ledger }o--|| public_ledger_owner : "owner_id->id"
   public_payee }o--|| public_ledger : "ledger_id->id"
@@ -252,13 +268,23 @@ erDiagram
   public_recurrence }o--|| public_scheduled_transaction : "scheduled_transaction_id->id"
   public_scheduled_split }o--|| public_account : "account_id->id"
   public_scheduled_split }o--|| public_scheduled_transaction : "scheduled_transaction_id->id"
-  public_scheduled_transaction }o--|| public_commodity : "currency_commodity_id->id"
+  public_scheduled_transaction }o--o| public_commodity : "currency_commodity_id->id"
   public_scheduled_transaction }o--|| public_ledger : "ledger_id->id"
-  public_scheduled_transaction }o--|| public_payee : "payee_id->id"
-  public_scheduled_transaction }o--|| public_account : "template_root_account_id->id"
+  public_scheduled_transaction }o--o| public_payee : "payee_id->id"
+  public_scheduled_transaction }o--o| public_account : "template_root_account_id->id"
   public_split }o--|| public_account : "account_id->id"
   public_split }o--|| public_transaction : "transaction_id->id"
   public_transaction }o--|| public_commodity : "currency_commodity_id->id"
   public_transaction }o--|| public_ledger : "ledger_id->id"
-  public_transaction }o--|| public_payee : "payee_id->id"
+  public_transaction }o--o| public_payee : "payee_id->id"
+  public_transaction }o--o| public_transaction : "reversed_by_tx_id->id"
 ```
+
+---
+
+## Notes
+
+- `split.amount` is a **generated stored column** (`ABS(value_num) / NULLIF(value_denom, 0)`). It is never inserted directly.
+- `ledger.root_account_id` and `transaction.reversed_by_tx_id` are deferred FKs (added via `ALTER TABLE` after initial table creation to resolve circular dependencies).
+- `coa_template_node.account_type_code` is a text FK referencing `account_type.code` (not `id`), with `ON UPDATE CASCADE` so renames propagate automatically.
+- `audit_log.id` uses `GENERATED ALWAYS AS IDENTITY` (not UUID) for monotonic ordering of audit events.
