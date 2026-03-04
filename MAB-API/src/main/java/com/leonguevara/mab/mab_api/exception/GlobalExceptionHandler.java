@@ -54,7 +54,8 @@ public class GlobalExceptionHandler {
      * @param ex The ApiException that was thrown.
      * @return   A ResponseEntity with a JSON body and the correct HTTP status.
      */
-    @ExceptionHandler(ApiException.class)
+    @SuppressWarnings("null")
+@ExceptionHandler(ApiException.class)
     public ResponseEntity<Map<String, Object>> handleApiException(ApiException ex) {
         return ResponseEntity
                 .status(ex.getStatus())

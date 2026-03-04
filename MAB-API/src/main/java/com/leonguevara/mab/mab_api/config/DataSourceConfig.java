@@ -67,6 +67,7 @@ public class DataSourceConfig {
      * @param dataSource The HikariCP connection pool (auto-configured by Spring Boot).
      * @return           A NamedParameterJdbcTemplate wrapping the data source.
      */
+    @SuppressWarnings("null")
     @Bean
     public NamedParameterJdbcTemplate namedParameterJdbcTemplate(DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
@@ -88,6 +89,7 @@ public class DataSourceConfig {
      * @param transactionManager The Spring-managed JDBC transaction manager.
      * @return                   A TransactionTemplate instance.
      */
+    @SuppressWarnings("null")
     @Bean
     public TransactionTemplate transactionTemplate(
             PlatformTransactionManager transactionManager) {

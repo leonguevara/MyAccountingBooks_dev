@@ -102,9 +102,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(
-            HttpServletRequest  request,
-            HttpServletResponse response,
-            FilterChain         chain)
+            @SuppressWarnings("null") HttpServletRequest  request,
+            @SuppressWarnings("null") HttpServletResponse response,
+            @SuppressWarnings("null") FilterChain         chain)
             throws ServletException, IOException {
 
         // Read the Authorization header value (may be null if absent).
