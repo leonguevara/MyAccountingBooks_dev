@@ -14,6 +14,10 @@
 //            - JwtAuthFilter is registered BEFORE Spring's default
 //              username/password filter.
 // ============================================================
+// Last edited: 2026-03-04
+// Author: León Felipe Guevara Chávez
+// Developed with AI assistance.
+// ============================================================
 
 package com.leonguevara.mab.mab_api.config;
 

@@ -21,6 +21,10 @@
 //          database call in a BEGIN/COMMIT/ROLLBACK block with
 //          the SET LOCAL app.current_owner_id statement.
 // ============================================================
+// Last edited: 2026-03-04
+// Author: León Felipe Guevara Chávez
+// Developed with AI assistance.
+// ============================================================
 
 package com.leonguevara.mab.mab_api.config;
 

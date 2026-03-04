@@ -7,6 +7,10 @@
 //          subsequent request as:
 //            Authorization: Bearer <token>
 // ============================================================
+// Last edited: 2026-03-04
+// Author: León Felipe Guevara Chávez
+// Developed with AI assistance.
+// ============================================================
 
 package com.leonguevara.mab.mab_api.dto.response;
 

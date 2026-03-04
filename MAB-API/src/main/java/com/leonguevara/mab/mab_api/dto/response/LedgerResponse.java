@@ -6,6 +6,10 @@
 //          Maps columns from the v_ledger view in PostgreSQL,
 //          which joins ledger + commodity to include currencyCode.
 // ============================================================
+// Last edited: 2026-03-04
+// Author: León Felipe Guevara Chávez
+// Developed with AI assistance.
+// ============================================================
 
 package com.leonguevara.mab.mab_api.dto.response;
 

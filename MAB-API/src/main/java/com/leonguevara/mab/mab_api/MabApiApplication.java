@@ -11,6 +11,10 @@
 //            - @ComponentScan      : scans all classes in this package
 //              and sub-packages for Spring-managed components
 // ============================================================
+// Last edited: 2026-03-04
+// Author: León Felipe Guevara Chávez
+// Developed with AI assistance.
+// ============================================================
 
 package com.leonguevara.mab.mab_api;
 

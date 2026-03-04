@@ -11,6 +11,10 @@
 //          GlobalExceptionHandler can return the correct
 //          HTTP response without extra logic.
 // ============================================================
+// Last edited: 2026-03-04
+// Author: León Felipe Guevara Chávez
+// Developed with AI assistance.
+// ============================================================
 
 package com.leonguevara.mab.mab_api.exception;
 
