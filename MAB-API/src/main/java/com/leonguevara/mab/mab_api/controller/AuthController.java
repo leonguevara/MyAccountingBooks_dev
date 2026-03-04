@@ -12,6 +12,7 @@ package com.leonguevara.mab.mab_api.controller;
 import com.leonguevara.mab.mab_api.dto.request.LoginRequest;
 import com.leonguevara.mab.mab_api.dto.response.TokenResponse;
 import com.leonguevara.mab.mab_api.service.AuthService;
+import com.leonguevara.mab.mab_api.exception.ApiException;
 
 // @RestController: marks this as a REST API controller.
 import org.springframework.web.bind.annotation.RestController;
