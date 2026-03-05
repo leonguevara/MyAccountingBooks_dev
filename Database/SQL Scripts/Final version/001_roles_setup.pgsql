@@ -191,6 +191,10 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
     GRANT USAGE ON SEQUENCES TO mab_app;
 
+-- Add after the existing mab_app grants in Section 4:
+GRANT SELECT ON public.v_ledger                TO mab_app;
+GRANT SELECT ON public.v_ledger_owner_redacted TO mab_app;
+GRANT SELECT ON public.v_role_password_age     TO mab_app;
 
 -- =============================================================================
 -- SECTION 5 · mab_readonly privileges
