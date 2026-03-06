@@ -18,12 +18,14 @@
 //          @RestControllerAdvice: intercepts exceptions from
 //          ALL @RestController classes and routes them here.
 // ============================================================
-// Last edited: 2026-03-04
+// Last edited: 2026-03-06
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
 
 package com.leonguevara.mab.mab_api.exception;
+
+// import org.springframework.dao.DataIntegrityViolationException;
 
 // @RestControllerAdvice: combines @ControllerAdvice + @ResponseBody.
 //   Intercepts exceptions from all controllers and serializes
@@ -47,7 +49,7 @@ public class GlobalExceptionHandler {
 
     /**
      * Handles all ApiException instances thrown by service classes.
-     *
+     * <p>
      * Returns a structured JSON response with the status code
      * and message that was set when the exception was created.
      *
@@ -55,7 +57,7 @@ public class GlobalExceptionHandler {
      * @return   A ResponseEntity with a JSON body and the correct HTTP status.
      */
     @SuppressWarnings("null")
-@ExceptionHandler(ApiException.class)
+    @ExceptionHandler(ApiException.class)
     public ResponseEntity<Map<String, Object>> handleApiException(ApiException ex) {
         return ResponseEntity
                 .status(ex.getStatus())
@@ -71,7 +73,7 @@ public class GlobalExceptionHandler {
 
     /**
      * Catch-all handler for any unexpected exception not explicitly handled above.
-     *
+     * <p>
      * Prevents raw stack traces from leaking to clients.
      * Logs as a 500 Internal Server Error.
      *
@@ -88,6 +90,49 @@ public class GlobalExceptionHandler {
                         // In production, replace ex.getMessage() with a generic
                         // message and log the real error server-side only.
                         "message", ex.getMessage()
+                ));
+    }
+
+    /**
+     * Handles database-level validation errors thrown by PostgreSQL functions.
+     * <p>
+     * mab_post_transaction() raises exceptions via mab__assert() when:
+     *   - Splits are unbalanced
+     *   - Accounts don't belong to the ledger
+     *   - Placeholder accounts are targeted
+     *   - value_denom is inconsistent across splits
+     * <p>
+     * These are business rule violations → HTTP 400 Bad Request.
+     *
+     * @param ex The DataIntegrityViolationException wrapping the PSQLException.
+     * @return   HTTP 400 with the PostgreSQL error message as the response body.
+     */
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleDataIntegrity(
+            org.springframework.dao.DataIntegrityViolationException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                        "status",  400,
+                        "error",   "BAD_REQUEST",
+                        "message", ex.getMostSpecificCause().getMessage()
+                ));
+    }
+
+    /**
+     * Handles UncategorizedSQLException — thrown when PostgreSQL RAISE EXCEPTION
+     * is used inside a stored function (as mab__assert does).
+     * Spring wraps these as UncategorizedSQLException, not DataIntegrityViolationException.
+     */
+    @ExceptionHandler(org.springframework.jdbc.UncategorizedSQLException.class)
+    public ResponseEntity<Map<String, Object>> handleSqlException(
+            org.springframework.jdbc.UncategorizedSQLException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                        "status",  400,
+                        "error",   "BAD_REQUEST",
+                        "message", ex.getMostSpecificCause().getMessage()
                 ));
     }
 }

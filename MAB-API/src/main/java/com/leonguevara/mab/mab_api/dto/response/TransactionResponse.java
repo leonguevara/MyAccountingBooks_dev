@@ -3,9 +3,16 @@
 // Package: com.leonguevara.mab.mab_api.dto.response
 //
 // Purpose: JSON representation of a posted transaction,
-//          including its split lines.
+//          returned after a successful POST /transactions call.
+//
+//          Includes the transaction header fields and the
+//          full list of splits that were created.
+//          The split.amount field is NOT included in the response
+//          because it is a generated presentation column in the
+//          DB — clients should compute display amounts from
+//          valueNum / valueDenom themselves.
 // ============================================================
-// Last edited: 2026-03-04
+// Last edited: 2026-03-06
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -17,38 +24,61 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Response body representing a posted double-entry transaction.
+ * Response body for a successfully posted transaction.
+ * <p>
+ * Returned JSON example:
+ * {
+ *   "id":                   "uuid",
+ *   "ledgerId":             "uuid",
+ *   "currencyCommodityId":  "uuid",
+ *   "postDate":             "2026-03-05T12:00:00-06:00",
+ *   "enterDate":            "2026-03-05T12:00:00-06:00",
+ *   "memo":                 "Office supplies",
+ *   "num":                  "TXN-001",
+ *   "isVoided":             false,
+ *   "splits": [
+ *     {"id": "uuid", "accountId": "uuid", "side": 0, "valueNum": 50000, "valueDenom": 100},
+ *     {"id": "uuid", "accountId": "uuid", "side": 1, "valueNum": 50000, "valueDenom": 100}
+ *   ]
+ * }
  *
- * @param id           UUID of the transaction.
- * @param ledgerId     UUID of the ledger it belongs to.
- * @param memo         Optional narrative description.
- * @param postDate     The date/time the transaction was posted.
- * @param isVoided     True if this transaction has been voided.
- * @param splits       The individual debit/credit lines.
+ * @param id                  UUID of the created transaction.
+ * @param ledgerId            UUID of the ledger it was posted to.
+ * @param currencyCommodityId UUID of the transaction currency commodity.
+ * @param postDate            Effective date of the transaction.
+ * @param enterDate           Date the transaction was entered into the system.
+ * @param memo                Transaction-level narrative. Might be null.
+ * @param num                 Reference number (invoice, check, etc.). Might be null.
+ * @param isVoided            Always false on creation. Becomes true after void.
+ * @param splits              The split lines that were created.
  */
 public record TransactionResponse(
         UUID           id,
         UUID           ledgerId,
-        String         memo,
+        UUID           currencyCommodityId,
         OffsetDateTime postDate,
+        OffsetDateTime enterDate,
+        String         memo,
+        String         num,
         boolean        isVoided,
         List<SplitResponse> splits
 ) {
-
     /**
-     * Nested record representing a single split line in the response.
+     * A single split line in the transaction response.
      *
-     * @param id         UUID of the split.
-     * @param accountId  UUID of the account this split posts to.
-     * @param side       0 = DEBIT, 1 = CREDIT.
-     * @param valueNum   Numerator of the rational amount.
-     * @param valueDenom Denominator of the rational amount.
+     * @param id           UUID of the split row.
+     * @param accountId    UUID of the account this split posts to.
+     * @param side         0 = DEBIT, 1 = CREDIT.
+     * @param valueNum     Rational numerator of the monetary amount.
+     * @param valueDenom   Rational denominator. Same for all splits in transaction.
+     * @param memo         Per-split narrative. Might be null.
      */
     public record SplitResponse(
-            UUID id,
-            UUID accountId,
-            int  side,
-            long valueNum,
-            int  valueDenom
+            UUID   id,
+            UUID   accountId,
+            int    side,
+            long   valueNum,
+            int    valueDenom,
+            String memo
     ) {}
 }
