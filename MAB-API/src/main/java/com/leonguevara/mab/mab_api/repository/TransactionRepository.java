@@ -37,6 +37,8 @@ import com.leonguevara.mab.mab_api.config.TenantContext;
 import com.leonguevara.mab.mab_api.dto.request.PostTransactionRequest;
 import com.leonguevara.mab.mab_api.dto.response.TransactionResponse;
 import com.leonguevara.mab.mab_api.exception.ApiException;
+import com.leonguevara.mab.mab_api.dto.request.ReverseTransactionRequest;
+import com.leonguevara.mab.mab_api.dto.request.VoidTransactionRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.RowMapper;
@@ -112,8 +114,7 @@ public class TransactionRepository {
      * @throws ApiException HTTP 400 if the DB function rejects the transaction
      *                      (unbalanced splits, wrong ledger, placeholder account, etc.)
      */
-    @SuppressWarnings("null")
-public TransactionResponse post(UUID ownerID,
+    public TransactionResponse post(UUID ownerID,
                                     PostTransactionRequest request) {
 
         return TenantContext.withOwner(ownerID, jdbc, tx, template -> {
@@ -165,8 +166,10 @@ public TransactionResponse post(UUID ownerID,
                         "Transaction function returned no ID");
             }
 
+            return fetchTransaction(template, txId);
+
             // ── Step 3: Fetch the transaction header ─────────────────────────
-            String txSql = """
+            /*String txSql = """
                     SELECT id, ledger_id, currency_commodity_id,
                            post_date, enter_date, memo, num, is_voided
                       FROM public.transaction
@@ -174,12 +177,12 @@ public TransactionResponse post(UUID ownerID,
                     """;
 
             MapSqlParameterSource txParams =
-                    new MapSqlParameterSource("txId", txId);
+                    new MapSqlParameterSource("txId", txId);*/
 
             // queryForObject: safe here — we just created this exact row.
             // It seems that patameer rn is never used, so I'm replacing it with the
             // underscore character.
-            TransactionResponse header = template.queryForObject(txSql, txParams,
+            /*TransactionResponse header = template.queryForObject(txSql, txParams,
                     (rs, _) -> new TransactionResponse(
                             rs.getObject("id",                   UUID.class),
                             rs.getObject("ledger_id",            UUID.class),
@@ -195,10 +198,10 @@ public TransactionResponse post(UUID ownerID,
                             rs.getString("num"),
                             rs.getBoolean("is_voided"),
                             List.of() // splits populated in step 4
-                    ));
+                    ));*/
 
             // ── Step 4: Fetch the split lines ────────────────────────────────
-            String splitSql = """
+            /*String splitSql = """
                     SELECT id, account_id, side, value_num, value_denom, memo
                       FROM public.split
                      WHERE transaction_id = :txId
@@ -207,11 +210,11 @@ public TransactionResponse post(UUID ownerID,
                     """;
 
             List<TransactionResponse.SplitResponse> splits =
-                    template.query(splitSql, txParams, SPLIT_MAPPER);
+                    template.query(splitSql, txParams, SPLIT_MAPPER);*/
 
             // ── Step 5: Assemble final response ──────────────────────────────
             // Records are immutable — create a new instance with the splits.
-            assert header != null;  // To avoid the NullPointerException.
+            /*assert header != null;  // To avoid the NullPointerException.
             return new TransactionResponse(
                     header.id(),
                     header.ledgerId(),
@@ -222,8 +225,234 @@ public TransactionResponse post(UUID ownerID,
                     header.num(),
                     header.isVoided(),
                     splits
-            );
+            );*/
         });
+    }
+
+    /**
+     * Reverses a transaction by calling mab_reverse_transaction().
+     * <p>
+     * Flow:
+     *   1. Verify the target transaction belongs to this owner (via RLS check).
+     *   2. Call mab_reverse_transaction() — returns the new reversal tx UUID.
+     *   3. Fetch the new reversal transaction header plus splits.
+     *   4. Return a full TransactionResponse for the reversal transaction.
+     * <p>
+     * DB guards (enforced inside the function):
+     *   - Transaction must exist and not be deleted.
+     *   - Transaction must not be voided.
+     *   - Transaction must not have been reversed yet.
+     *     (reversed_by_tx_id IS NULL).
+     *
+     * @param  ownerID  The authenticated owner's UUID (from JWT).
+     * @param  txId     The UUID of the transaction to reverse (from URL path).
+     * @param  request  Optional dates and memo for the reversal.
+     * @return          TransactionResponse for the new reversal transaction.
+     * @throws ApiException HTTP 404 if the transaction doesn't exist or
+     *                      doesn't belong to this owner.
+     * @throws ApiException HTTP 400 if DB guards reject the reversal.
+     */
+    public TransactionResponse reverse(UUID ownerID,
+                                       UUID txId,
+                                       ReverseTransactionRequest request) {
+
+        return TenantContext.withOwner(ownerID, jdbc, tx, template -> {
+
+            // ── Step 1: Ownership check ───────────────────────────────────
+            // RLS scopes the query to the current owner's ledgers.
+            // If the tx belongs to another owner, COUNT returns 0 → 404.
+            verifyTransactionOwnership(template, txId);
+
+            // ── Step 2: Call mab_reverse_transaction() ────────────────────
+            String callSql = """
+                    SELECT public.mab_reverse_transaction(
+                        :txId,
+                        :postDate,
+                        :enterDate,
+                        :memo
+                    )
+                    """;
+
+            MapSqlParameterSource params = new MapSqlParameterSource()
+                    .addValue("txId",      txId)
+                    .addValue("postDate",  request.postDate()  != null
+                            ? Timestamp.from(request.postDate().toInstant())  : null)
+                    .addValue("enterDate", request.enterDate() != null
+                            ? Timestamp.from(request.enterDate().toInstant()) : null)
+                    .addValue("memo",      request.memo());
+
+            UUID reversalTxId = template.queryForObject(callSql, params, UUID.class);
+
+            if (reversalTxId == null) {
+                throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Reverse function returned no ID");
+            }
+
+            // ── Step 3 & 4: Fetch and return the reversal transaction ─────
+            return fetchTransaction(template, reversalTxId);
+        });
+    }
+
+    /**
+     * Voids a transaction by calling mab_void_transaction().
+     * <p>
+     * Voiding does NOT create a new transaction — it marks the existing
+     * transaction as voided in-place (is_voided=true, voided_at=now()).
+     * The memo is updated with "[VOID: reason]" if a reason is provided.
+     * <p>
+     * Flow:
+     *   1. Verify ownership via RLS-scoped count check.
+     *   2. Call mab_void_transaction() — returns void.
+     *   3. Fetch the updated transaction plus splits and return them.
+     * <p>
+     * DB guards:
+     *   - Transaction must exist.
+     *   - Transaction must not already be voided.
+     *
+     * @param  ownerID  The authenticated owner's UUID (from JWT).
+     * @param  txId     The UUID of the transaction to void (from URL path).
+     * @param  request  Optional reason string.
+     * @return          TransactionResponse reflecting the voided state
+     *                  (isVoided will be true).
+     * @throws ApiException HTTP 404 if transaction not found or not owned.
+     * @throws ApiException HTTP 400 if the transaction is already voided.
+     */
+    public TransactionResponse void_(UUID ownerID,
+                                     UUID txId,
+                                     VoidTransactionRequest request) {
+
+        return TenantContext.withOwner(ownerID, jdbc, tx, template -> {
+
+            // ── Step 1: Ownership check ───────────────────────────────────
+            verifyTransactionOwnership(template, txId);
+
+            // ── Step 2: Call mab_void_transaction() ──────────────────────
+            // This function returns void — no UUID is returned.
+            String callSql = """
+                    SELECT public.mab_void_transaction(
+                        :txId,
+                        :reason
+                    )
+                    """;
+
+            MapSqlParameterSource params = new MapSqlParameterSource()
+                    .addValue("txId",   txId)
+                    .addValue("reason", request.reason());
+
+            // queryForObject with Void.class: executes the function,
+            // discards the (void) return value cleanly.
+            // This line fails so I'm commenting it out.
+            // template.queryForObject(callSql, params, Void.class);
+            template.query(callSql, params, rs -> null);
+
+            // ── Step 3: Fetch and return the updated transaction ──────────
+            // The transaction now has is_voided=true and updated memo.
+            return fetchTransaction(template, txId);
+        });
+    }
+
+    // ── Shared private helpers ────────────────────────────────────────────────
+
+    /**
+     * Verifies a transaction exists and belongs to the current RLS owner.
+     * <p>
+     * Joins transaction → ledger, which is RLS-protected.
+     * If the transaction belongs to a different owner, the JOIN
+     * returns zero rows → ApiException 404.
+     *
+     * @param  template The JDBC template (already inside TenantContext).
+     * @param  txId     The transaction UUID to check.
+     * @throws ApiException HTTP 404 if not found or not owned.
+     */
+    private void verifyTransactionOwnership(
+            NamedParameterJdbcTemplate template, UUID txId) {
+
+        String sql = """
+                SELECT COUNT(*)
+                  FROM public.transaction t
+                  JOIN public.ledger      l ON l.id = t.ledger_id
+                 WHERE t.id         = :txId
+                   AND t.deleted_at IS NULL
+                """;
+        // The JOIN on the ledger is RLS-filtered — rows for other owners
+        // are invisible, so the count returns 0 for foreign tx IDs.
+        Integer count = template.queryForObject(
+                sql,
+                new MapSqlParameterSource("txId", txId),
+                Integer.class);
+
+        if (count == null || count == 0) {
+            throw new ApiException(HttpStatus.NOT_FOUND,
+                    "Transaction not found: " + txId);
+        }
+    }
+
+    /**
+     * Fetches a complete TransactionResponse for a given transaction UUID.
+     * <p>
+     * Reused by post(), reverse(), and void_() to avoid duplicating
+     * the header plus splits fetch logic.
+     *
+     * @param  template The JDBC template (already inside TenantContext).
+     * @param  txId     The transaction UUID to fetch.
+     * @return          The fully assembled TransactionResponse.
+     */
+    @SuppressWarnings("null")
+private TransactionResponse fetchTransaction(
+            NamedParameterJdbcTemplate template, UUID txId) {
+
+        String txSql = """
+                SELECT id, ledger_id, currency_commodity_id,
+                       post_date, enter_date, memo, num, is_voided
+                  FROM public.transaction
+                 WHERE id = :txId
+                """;
+
+        MapSqlParameterSource txParams =
+                new MapSqlParameterSource("txId", txId);
+
+        // It seems that parameter rn is never used, so I'm replacing it with the
+        // underscore character.
+        TransactionResponse header = template.queryForObject(txSql, txParams,
+                (rs, _) -> new TransactionResponse(
+                        rs.getObject("id",                    UUID.class),
+                        rs.getObject("ledger_id",             UUID.class),
+                        rs.getObject("currency_commodity_id", UUID.class),
+                        rs.getTimestamp("post_date")
+                                .toInstant()
+                                .atOffset(java.time.ZoneOffset.UTC),
+                        rs.getTimestamp("enter_date")
+                                .toInstant()
+                                .atOffset(java.time.ZoneOffset.UTC),
+                        rs.getString("memo"),
+                        rs.getString("num"),
+                        rs.getBoolean("is_voided"),
+                        List.of()
+                ));
+
+        String splitSql = """
+                SELECT id, account_id, side, value_num, value_denom, memo
+                  FROM public.split
+                 WHERE transaction_id = :txId
+                   AND deleted_at     IS NULL
+                 ORDER BY side ASC, id ASC
+                """;
+
+        List<TransactionResponse.SplitResponse> splits =
+                template.query(splitSql, txParams, SPLIT_MAPPER);
+
+        assert header != null;  // To avoid the NullPointerException.
+        return new TransactionResponse(
+                header.id(),
+                header.ledgerId(),
+                header.currencyCommodityId(),
+                header.postDate(),
+                header.enterDate(),
+                header.memo(),
+                header.num(),
+                header.isVoided(),
+                splits
+        );
     }
 
     // ── Private helpers ───────────────────────────────────────────────────────

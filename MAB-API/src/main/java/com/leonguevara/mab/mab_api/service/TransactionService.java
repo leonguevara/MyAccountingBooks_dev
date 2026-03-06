@@ -22,6 +22,8 @@
 package com.leonguevara.mab.mab_api.service;
 
 import com.leonguevara.mab.mab_api.dto.request.PostTransactionRequest;
+import com.leonguevara.mab.mab_api.dto.request.VoidTransactionRequest;
+import com.leonguevara.mab.mab_api.dto.request.ReverseTransactionRequest;
 import com.leonguevara.mab.mab_api.dto.response.TransactionResponse;
 import com.leonguevara.mab.mab_api.exception.ApiException;
 import com.leonguevara.mab.mab_api.repository.TransactionRepository;
@@ -84,5 +86,31 @@ public class TransactionService {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "Authentication required");
         }
         return ownerID;
+    }
+
+    /**
+     * Reverses a transaction for the authenticated owner.
+     *
+     * @param  txId    The UUID of the transaction to reverse (from URL path).
+     * @param  request Optional dates and memo for the reversal.
+     * @return         TransactionResponse for the new reversal transaction.
+     */
+    public TransactionResponse reverseTransaction(UUID txId,
+                                                  ReverseTransactionRequest request) {
+        UUID ownerID = resolveOwnerID();
+        return transactionRepository.reverse(ownerID, txId, request);
+    }
+
+    /**
+     * Voids a transaction for the authenticated owner.
+     *
+     * @param  txId    The UUID of the transaction to void (from URL path).
+     * @param  request Optional reason string.
+     * @return         TransactionResponse with isVoided = true.
+     */
+    public TransactionResponse voidTransaction(UUID txId,
+                                               VoidTransactionRequest request) {
+        UUID ownerID = resolveOwnerID();
+        return transactionRepository.void_(ownerID, txId, request);
     }
 }
