@@ -25,6 +25,14 @@ import com.leonguevara.mab.mab_api.dto.request.CreateLedgerRequest;
 import com.leonguevara.mab.mab_api.dto.response.LedgerResponse;
 import com.leonguevara.mab.mab_api.service.LedgerService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 // @RestController: marks this as a REST API controller.
 //   All method return values are serialized as JSON automatically.
 import org.springframework.web.bind.annotation.RestController;
@@ -43,7 +51,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 // @Valid: triggers Bean Validation on the @RequestBody.
 //   Returns HTTP 400 automatically if validation fails.
-import jakarta.validation.Valid;
+// import jakarta.validation.Valid;
 
 // ResponseEntity: wraps a response body + HTTP status code together.
 //   Used here to return HTTP 201 Created on successful ledger creation.
@@ -56,55 +64,43 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/ledgers")
+@Tag(name = "Ledgers", description = "Ledger management — create and list ledgers")
+@SecurityRequirement(name = "bearerAuth")
 public class LedgerController {
 
-    // Service layer handles all business logic and DB delegation.
     private final LedgerService ledgerService;
 
-    /**
-     * Constructor injection of LedgerService.
-     *
-     * @param ledgerService The ledger business logic service bean.
-     */
     public LedgerController(LedgerService ledgerService) {
         this.ledgerService = ledgerService;
     }
 
-    /**
-     * GET /ledgers
-     * <p>
-     * Returns all active ledgers belonging to the authenticated owner.
-     * The owner is resolved from the JWT — no query parameter is needed.
-     *
-     * @return HTTP 200 with a JSON array of LedgerResponse objects.
-     *         Returns an empty array [] if the owner has no ledgers yet.
-     */
     @GetMapping
-    public List<LedgerResponse> getAllLedgers() {
+    @Operation(summary = "List ledgers",
+            description = "Returns all active ledgers owned by the authenticated user.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "List of ledgers"),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid token", content = @Content)
+    })
+    public List<LedgerResponse> getLedgers() {
         return ledgerService.getAllLedgers();
     }
 
-    /**
-     * POST /ledgers
-     * <p>
-     * Creates a new ledger for the authenticated owner.
-     * Optionally instantiates a COA template if code and version are provided.
-     * <p>
-     * Returns HTTP 201 Created (not 200) to follow REST conventions
-     * for resource creation.
-     *
-     * @param  request The validated ledger creation parameters.
-     * @return         HTTP 201 with the created LedgerResponse as the JSON body.
-     */
     @PostMapping
+    @Operation(summary = "Create ledger",
+            description = """
+                       Creates a new ledger for the authenticated owner.
+                       Optionally instantiates a Chart of Accounts from a template
+                       by providing `coaTemplateCode` and `coaTemplateVersion`.
+                       """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Ledger created",
+                    content = @Content(schema = @Schema(implementation = LedgerResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request body", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid token", content = @Content)
+    })
     public ResponseEntity<LedgerResponse> createLedger(
-            @Valid @RequestBody CreateLedgerRequest request) {
-
+            @RequestBody CreateLedgerRequest request) {
         LedgerResponse created = ledgerService.createLedger(request);
-
-        // ResponseEntity.status(CREATED).body(...) returns HTTP 201.
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 }

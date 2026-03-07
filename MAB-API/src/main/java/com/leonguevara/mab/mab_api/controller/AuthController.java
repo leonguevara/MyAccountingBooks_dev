@@ -3,10 +3,10 @@
 // Package: com.leonguevara.mab.mab_api.controller
 //
 // Purpose: Handles authentication requests.
-//          Currently implements POST /auth/login.
+//          It currently implements POST /auth/login.
 //          Public route — no JWT required.
 // ============================================================
-// Last edited: 2026-03-04
+// Last edited: 2026-03-07
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -16,7 +16,14 @@ package com.leonguevara.mab.mab_api.controller;
 import com.leonguevara.mab.mab_api.dto.request.LoginRequest;
 import com.leonguevara.mab.mab_api.dto.response.TokenResponse;
 import com.leonguevara.mab.mab_api.service.AuthService;
-import com.leonguevara.mab.mab_api.exception.ApiException;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 // @RestController: marks this as a REST API controller.
 import org.springframework.web.bind.annotation.RestController;
@@ -32,37 +39,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 // @Valid: triggers Bean Validation on the @RequestBody object.
 //   Validation errors return HTTP 400 automatically.
-import jakarta.validation.Valid;
+// import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Auth", description = "Authentication — obtain JWT token")
 public class AuthController {
 
-    // AuthService contains the business logic for authentication.
     private final AuthService authService;
 
-    /**
-     * Constructor injection of AuthService.
-     *
-     * @param authService The authentication service bean.
-     */
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
 
-    /**
-     * POST /auth/login
-     *
-     * Accepts email + password, verifies credentials against
-     * ledger_owner.password_hash in the database, and returns
-     * a signed JWT on success.
-     *
-     * @param  request The login credentials (validated by @Valid).
-     * @return         A TokenResponse containing the JWT and ownerID.
-     * @throws ApiException HTTP 401 if credentials are invalid.
-     */
     @PostMapping("/login")
-    public TokenResponse login(@Valid @RequestBody LoginRequest request) {
+    @Operation(summary = "Login",
+            description = "Authenticates with email and password. Returns a JWT token valid for 24 hours.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Login successful — use the token in all subsequent requests",
+                    content = @Content(schema = @Schema(implementation = TokenResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Invalid credentials", content = @Content)
+    })
+    @SecurityRequirements
+    public TokenResponse login(@RequestBody LoginRequest request) {
         return authService.login(request.email(), request.password());
     }
 }

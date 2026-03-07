@@ -7,12 +7,17 @@
 //          monitoring systems to verify the API is running.
 //          Requires no authentication.
 // ============================================================
-// Last edited: 2026-03-04
+// Last edited: 2026-03-07
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
 
 package com.leonguevara.mab.mab_api.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 // @RestController: combines @Controller + @ResponseBody.
 //   Every method return value is serialized as JSON automatically.
@@ -25,21 +30,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.Map;
 
 @RestController
+@Tag(name = "Health", description = "Service liveness probe")
 public class HealthController {
 
-    /**
-     * Health check endpoint.
-     *
-     * Returns HTTP 200 with a simple JSON body confirming the service is up.
-     * No authentication required (configured as public in SecurityConfig).
-     *
-     * @return JSON: { "status": "ok", "service": "mab-api" }
-     */
     @GetMapping("/health")
+    @Operation(summary = "Health check",
+            description = "Returns OK if the service is running. No authentication required.")
+    @ApiResponse(responseCode = "200", description = "Service is healthy")
+    @SecurityRequirements   // overrides global bearerAuth — no token needed
     public Map<String, String> health() {
-        return Map.of(
-                "status",  "ok",
-                "service", "mab-api"
-        );
+        return Map.of("status", "ok", "service", "mab-api");
     }
 }

@@ -26,7 +26,14 @@ package com.leonguevara.mab.mab_api.controller;
 
 import com.leonguevara.mab.mab_api.dto.response.CommodityResponse;
 import com.leonguevara.mab.mab_api.service.CommodityService;
-import com.leonguevara.mab.mab_api.exception.ApiException;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -35,59 +42,51 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/commodities")
+@Tag(name = "Commodities", description = "Currency and commodity catalog — ISO-4217 and custom entries")
+@SecurityRequirement(name = "bearerAuth")
 public class CommodityController {
 
-    // Service layer for commodity catalog logic.
     private final CommodityService commodityService;
 
-    /**
-     * Constructor injection of CommodityService.
-     *
-     * @param commodityService The commodity catalog service bean.
-     */
     public CommodityController(CommodityService commodityService) {
         this.commodityService = commodityService;
     }
 
-    /**
-     * GET /commodities
-     * GET /commodities?namespace=CURRENCY
-     * <p>
-     * Returns all active commodities. The optional namespace query parameter
-     * narrows results to a single catalog (e.g., CURRENCY, STOCK, FUND).
-     * <p>
-     * Primary use: the client fetches the currency list before creating a ledger
-     * or posting a transaction. The id field from each result is used
-     * as currencyCommodityId in those requests.
-     *
-     * @param  namespace Optional query parameter. Case-insensitive.
-     *                   Valid values: CURRENCY, STOCK, FUND, INDEX, OTHER.
-     *                   Omit this parameter to return all active commodities.
-     * @return           HTTP 200 with a JSON array of CommodityResponse objects.
-     * @throws ApiException HTTP 400 if an invalid namespace value is supplied.
-     */
     @GetMapping
+    @Operation(summary = "List commodities",
+            description = """
+                       Returns all active commodities.
+                       Use the optional `namespace` parameter to filter by category.
+                       
+                       **Primary use case:** fetch `GET /commodities?namespace=CURRENCY`
+                       to populate a currency picker. The `id` from each result is used
+                       as `currencyCommodityId` when creating a ledger or posting a transaction.
+                       
+                       The `fraction` field equals the correct `valueDenom` to use in splits
+                       for that currency. Example: MXN `fraction=100` → use `valueDenom: 100`.
+                       """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "List of active commodities"),
+            @ApiResponse(responseCode = "400", description = "Invalid namespace value", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid token", content = @Content)
+    })
     public List<CommodityResponse> getCommodities(
+            @Parameter(description = "Optional namespace filter. Valid values: CURRENCY, STOCK, FUND, INDEX, OTHER")
             @RequestParam(required = false) String namespace) {
-
         return commodityService.getCommodities(namespace);
     }
 
-    /**
-     * GET /commodities/{id}
-     * <p>
-     * Returns a single active commodity by its UUID.
-     * <p>
-     * Useful for clients that have stored a commodity UUID and need
-     * to resolve its mnemonic, full name, and fraction for display.
-     *
-     * @param  id The UUID of the commodity (from the URL path).
-     * @return    HTTP 200 with a single CommodityResponse.
-     * @throws ApiException HTTP 404 if the commodity doesn't exist or is inactive.
-     */
     @GetMapping("/{id}")
-    public CommodityResponse getCommodityById(@PathVariable UUID id) {
-
+    @Operation(summary = "Get commodity by ID",
+            description = "Returns a single active commodity by its UUID primary key.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Commodity found"),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Commodity not found or inactive", content = @Content)
+    })
+    public CommodityResponse getCommodityById(
+            @Parameter(description = "UUID of the commodity")
+            @PathVariable UUID id) {
         return commodityService.getCommodityById(id);
     }
 }

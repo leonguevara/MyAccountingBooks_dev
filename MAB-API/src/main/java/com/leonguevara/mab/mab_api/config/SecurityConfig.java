@@ -35,6 +35,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 // SessionCreationPolicy.STATELESS: tells Spring Security never to create
 //   or use an HTTP session — required for stateless JWT-based APIs.
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
 // SecurityFilterChain: the resulting bean that Spring Security uses
@@ -42,7 +43,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 // UsernamePasswordAuthenticationFilter: Spring's built-in form-login filter.
-//   We insert our JwtAuthFilter BEFORE this one so JWT authentication
+//   We insert our JwtAuthFilter BEFORE this one, so JWT authentication
 //   runs first on every request.
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -72,7 +73,7 @@ public class SecurityConfig {
 
     /**
      * Defines and builds the HTTP security filter chain.
-     *
+     * <p>
      * This is the central security configuration for the entire API.
      *
      * @param  http The HttpSecurity builder provided by Spring.
@@ -85,7 +86,8 @@ public class SecurityConfig {
                 // Disable CSRF: not needed for stateless REST APIs.
                 // CSRF attacks require browser-managed cookies; our API uses
                 // Authorization headers instead.
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
+                // .csrf(csrf -> csrf.disable())
 
                 // Disable HTTP sessions: every request must carry its own JWT.
                 // Spring will never create a HttpSession or set a JSESSIONID cookie.
@@ -95,7 +97,15 @@ public class SecurityConfig {
                 // Define route-level authorization rules.
                 .authorizeHttpRequests(auth -> auth
                         // Public routes: login and health check require no token.
-                        .requestMatchers("/auth/**", "/health").permitAll()
+                        .requestMatchers(
+                                "/health",
+                                "/auth/login",
+                                // ── Swagger UI / OpenAPI ──────────────────────────────
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs",
+                                "/v3/api-docs/**"
+                        ).permitAll()
                         // All other routes require a valid JWT to be present.
                         .anyRequest().authenticated())
 
@@ -110,7 +120,7 @@ public class SecurityConfig {
 
     /**
      * Provides a BCryptPasswordEncoder bean for password hashing/verification.
-     *
+     * <p>
      * BCrypt automatically handles salting and is the industry standard
      * for storing user passwords. Used by AuthService to verify the
      * password_hash column in the ledger_owner table.

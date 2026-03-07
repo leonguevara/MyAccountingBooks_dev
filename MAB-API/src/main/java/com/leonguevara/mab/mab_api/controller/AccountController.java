@@ -14,7 +14,7 @@
 //          All routes require authentication — enforced globally
 //          by SecurityConfig. No per-method annotations needed.
 // ============================================================
-// Last edited: 2026-03-06
+// Last edited: 2026-03-07
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -23,7 +23,14 @@ package com.leonguevara.mab.mab_api.controller;
 
 import com.leonguevara.mab.mab_api.dto.response.AccountResponse;
 import com.leonguevara.mab.mab_api.service.AccountService;
-import com.leonguevara.mab.mab_api.exception.ApiException;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 // @RestController: REST controller — return values serialized as JSON.
 import org.springframework.web.bind.annotation.RestController;
@@ -42,41 +49,35 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/ledgers")
+@Tag(name = "Accounts", description = "Chart of Accounts — retrieve account tree for a ledger")
+@SecurityRequirement(name = "bearerAuth")
 public class AccountController {
 
-    // Service layer handles all business logic and validation.
     private final AccountService accountService;
 
-    /**
-     * Constructor injection of AccountService.
-     *
-     * @param accountService The account business logic service bean.
-     */
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
 
-    /**
-     * GET /ledgers/{ledgerId}/accounts
-     * <p>
-     * Returns the full Chart of Accounts for the specified ledger
-     * as a flat list. The authenticated owner is resolved from the
-     * JWT — the caller cannot request accounts for a ledger they
-     * do not own.
-     * <p>
-     * Response is a flat JSON array — clients reconstruct the tree
-     * using the parentId field on each account.
-     *
-     * @param  ledgerId The UUID of the ledger (from the URL path).
-     * @return          HTTP 200 with a JSON array of AccountResponse objects.
-     *                  Returns [] if the ledger exists but has no accounts.
-     * @throws ApiException HTTP 404 if ledger not found or not owned by the caller.
-     */
     @GetMapping("/{ledgerId}/accounts")
+    @Operation(summary = "Get Chart of Accounts",
+            description = """
+                       Returns all active accounts for the specified ledger as a **flat list**.
+                       Use the `parentId` field on each account to reconstruct the tree hierarchy
+                       on the client side.
+                       
+                       Accounts are ordered by `code ASC`. Placeholder accounts (grouping nodes
+                       that cannot receive transactions) are included and marked with
+                       `isPlaceholder: true`.
+                       """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Flat list of accounts"),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Ledger not found or not owned by caller", content = @Content)
+    })
     public List<AccountResponse> getAccounts(
+            @Parameter(description = "UUID of the ledger whose accounts to retrieve")
             @PathVariable UUID ledgerId) {
-
-        // Delegate entirely to service — no business logic in the controller.
         return accountService.getAccountsForLedger(ledgerId);
     }
 }
