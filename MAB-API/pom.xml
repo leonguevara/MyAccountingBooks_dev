@@ -28,6 +28,10 @@
 	</scm>
 	<properties>
 		<java.version>23</java.version>
+		<!-- Override Spring Boot's managed jackson version to fix GHSA-72hv-8253-57qq -->
+		<jackson-bom.version>2.19.1</jackson-bom.version>
+		<!-- Override Spring Boot's managed commons-lang3 to fix CVE-2025-48924 -->
+		<commons-lang3.version>3.18.0</commons-lang3.version>
 	</properties>
 	<dependencies>
 		<dependency>
