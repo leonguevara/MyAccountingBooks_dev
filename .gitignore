@@ -1,1 +1,351 @@
+# =============================================================================
+# MyAccountingBooks — Monorepo .gitignore
+# Covers: Swift/Xcode · Python · PostgreSQL · Java/Spring · macOS · JetBrains
+# Structure: backend/ · clients/macos/ · clients/ios/ · clients/android/
+# =============================================================================
+
+
+# =============================================================================
+# SECTION 1 — macOS SYSTEM FILES
+# =============================================================================
+
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.AppleDouble
+.LSOverride
+Icon?
+
+# macOS directory attributes
+**/.DS_Store
+
+
+# =============================================================================
+# SECTION 2 — XCODE & SWIFT (clients/macos · clients/ios · clients/watchos)
+# =============================================================================
+
+# Build output
+build/
+DerivedData/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+# User-specific Xcode settings
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.moved-aside
+
+# Xcode schemes (keep shared, ignore personal)
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+!*.xcodeproj/project.xcworkspace/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+Package.resolved          # commit this if you want reproducible builds; ignore if not
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Crashlytics / Firebase
+Crashlytics/
+Fabric/
+GoogleService-Info.plist   # NEVER commit — contains API keys
+
+# Code signing (never commit private keys)
+*.p12
+*.cer
+*.mobileprovision
+*.provisionprofile
+AuthKey_*.p8               # App Store Connect API keys
+
+# Simulator data
+*.siminfo
+
+# Test results
+TestResults/
+*.xcresult/
+
+
+# =============================================================================
+# SECTION 3 — PYTHON (backend/Python scripts)
+# =============================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.env/
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+*.whl
+MANIFEST
+.eggs/
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+*.cover
+nosetests.xml
+coverage.xml
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Linting / formatting
+.ruff_cache/
+
+
+# =============================================================================
+# SECTION 4 — POSTGRESQL & DATABASE
+# =============================================================================
+
+# PostgreSQL local data directory (if running locally in repo)
+pgdata/
+postgres-data/
+*.dump
+*.backup
+
+# SQL editor temp files (DBeaver, DataGrip)
+*.sql.bak
+*.sql~
+.dbeaver/
+.datagrip/
+
+# pg_dump output (keep schema dumps that you explicitly commit; ignore ad-hoc ones)
+*_dump_*.sql
+*_backup_*.sql
+*.pg_dump
+
+# psql history
+.psql_history
+
+
+# =============================================================================
+# SECTION 5 — ENVIRONMENT & SECRETS (CRITICAL — never commit)
+# =============================================================================
+
+.env
+.env.*
+!.env.example          # keep the example template committed
+.envrc                 # direnv
+*.env
+secrets/
+secrets.json
+secrets.yaml
+secrets.yml
+config/secrets.yml
+credentials.json
+service-account.json
+
+# JWT / API keys
+*.pem
+*.key
+*.crt
+*.pfx
+jwt_secret*
+api_key*
+
+
+# =============================================================================
+# SECTION 6 — JAVA / SPRING BOOT (backend API — future)
+# =============================================================================
+
+# Compiled output
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# Build tools
+target/
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Spring Boot
+application-local.properties
+application-local.yml
+application-dev.properties   # if it contains secrets; keep generic one
+
+# Lombok
+lombok.config                # keep if it contains project config
+
+
+# =============================================================================
+# SECTION 7 — ANDROID / KOTLIN (clients/android — future)
+# =============================================================================
+
+*.apk
+*.aab
+*.ap_
+*.dex
+bin/
+gen/
+out/
+release/
+local.properties           # contains SDK path — machine-specific
+.cxx/
+.externalNativeBuild/
+google-services.json       # NEVER commit — contains Firebase config
+keystore/
+*.jks
+*.keystore
+
+
+# =============================================================================
+# SECTION 8 — IDES & EDITORS
+# =============================================================================
+
+# JetBrains (IntelliJ, DataGrip, AppCode, PyCharm, Android Studio)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+
+# VSCode
+.vscode/
+*.code-workspace
+.history/
+
+# Vim / Emacs / Nano
+*.swp
+*.swo
+*~
+\#*\#
+.\#*
+*.orig
+
+
+# =============================================================================
+# SECTION 9 — EXCEL & OFFICE FILES (data pipeline inputs)
+# =============================================================================
+
+# Ignore auto-generated Excel imports (large binary blobs, reproducible)
+iso4217_current_list_one.xlsx
+iso4217_*.xlsx
+iso4217_*.xls
+
+# Keep COA template Excel files (they are source of truth for account templates)
+# !Personales_2026.xlsx      ← uncomment to force-track specific templates
+
+# Lock/temp files from Excel
+~$*.xlsx
+~$*.xls
+~$*.xlsm
+~$*.docx
+
+
+# =============================================================================
+# SECTION 10 — LOGS & TEMP FILES
+# =============================================================================
+
+*.log
+*.log.*
+logs/
+tmp/
+temp/
+.tmp/
+*.tmp
+*.temp
+*.pid
+*.seed
+*.pid.lock
+
+# Import pipeline output logs
+import_*.log
+migration_*.log
+
+
+# =============================================================================
+# SECTION 11 — CI/CD & DOCKER (future)
+# =============================================================================
+
+# Docker
+.docker/
+docker-compose.override.yml   # local overrides; keep base docker-compose.yml
+
+# GitHub Actions local runner cache
+.act/
+
+# Coverage / test artifacts from CI
+coverage/
+test-results/
+*.sarif
+
+
+# =============================================================================
+# SECTION 12 — MISCELLANEOUS
+# =============================================================================
+
+# Node (if any tooling uses it)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.npm/
+.yarn/
+
+# Terraform (if infrastructure-as-code is added)
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+*.7z
