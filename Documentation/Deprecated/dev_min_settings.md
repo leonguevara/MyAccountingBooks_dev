@@ -19,7 +19,7 @@ shared_buffers = 256MB
 work_mem = 16MB
 maintenance_work_mem = 256MB
 max_connections = 100
-``` 
+```
 
 Restart:
 

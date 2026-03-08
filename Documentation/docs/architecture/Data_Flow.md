@@ -1,9 +1,9 @@
 # Data Flow Diagram
 
-```mermaid
+``` mermaid
 flowchart TD
   subgraph Clients
-    UI["Client UI\nmacOS / iOS / Android / Windows"]
+    UI["Client UI\nmacOS / iOS / Android / Web"]
   end
 
   subgraph Import["Import Pipeline (offline)"]
@@ -13,8 +13,12 @@ flowchart TD
     PY_COA["coa_importer_script.py"]
   end
 
-  subgraph API["Backend / API Layer"]
-    REST["REST Endpoints\n(Java / Spring — future)"]
+  subgraph API["Backend API — Spring Boot 3.x / Java 23"]
+    JwtFilter["JwtAuthFilter\n(validates Bearer token)"]
+    Controllers["Controllers\nAuth · Health · Ledger · Account\nCommodity · Transaction"]
+    Services["Services\nBusiness logic · ownerID resolution"]
+    TenantCtx["TenantContext\nSET LOCAL app.current_owner_id"]
+    Repos["Repositories\nNamedParameterJdbcTemplate"]
   end
 
   subgraph DB["PostgreSQL"]
@@ -26,34 +30,32 @@ flowchart TD
     tx["transaction"]
     split["split"]
     audit["audit_log"]
-    price["price"]
   end
 
   XLS_ISO --> PY_ISO --> commodity
   XLS_COA --> PY_COA --> coa_template
-  account_type -.->|"account_type_code FK"| coa_template
 
-  coa_template -->|"instantiate_coa_template_to_ledger()"| account
-  commodity -->|currency reference| ledger
-  ledger --> account
-  account --> split
+  UI -->|"HTTP + Bearer JWT"| JwtFilter
+  JwtFilter --> Controllers
+  Controllers --> Services
+  Services --> TenantCtx
+  TenantCtx -->|"BEGIN · SET LOCAL · query · COMMIT"| Repos
+  Repos -->|"mab_post_transaction()"| tx
+  Repos -->|"create_ledger_with_optional_template()"| ledger
+  Repos -->|"SELECT"| account
+  Repos -->|"SELECT"| commodity
   tx --> split
   split -.->|"trg_audit"| audit
   tx -.->|"trg_audit"| audit
   ledger -.->|"trg_audit"| audit
   account -.->|"trg_audit"| audit
-
-  UI -->|HTTP/JSON| REST
-  REST -->|"mab_post_transaction()"| DB
-  REST -->|"mab_reverse_transaction()"| DB
-  REST -->|"create_ledger_with_optional_template()"| DB
 ```
 
 ---
 
 ## Import Pipeline Detail
 
-```mermaid
+``` mermaid
 flowchart LR
   subgraph ISO4217
     A["download_iso4217_current_to_excel.py\nFetches SIX list-one.xls"]
@@ -63,7 +65,7 @@ flowchart LR
 
   subgraph COA
     C["COA Template Excel\n(Meta sheet + Nodes sheet)"]
-    D["coa_importer_script.py\nv2: reads metadata from Meta sheet\nUpserts coa_template + coa_template_node"]
+    D["coa_importer_script.py v2\nReads metadata from Meta sheet\nUpserts coa_template + coa_template_node"]
     C --> D
   end
 
@@ -75,18 +77,40 @@ flowchart LR
 
 ## Ledger Creation + Template Instantiation
 
-```mermaid
+``` mermaid
 flowchart TD
-  A["create_ledger_with_optional_template()"]
-  B["Validate owner\nResolve currency commodity\nResolve COA template"]
-  C["INSERT ledger"]
-  D{"Template provided?"}
-  E["instantiate_coa_template_to_ledger()"]
-  F["INSERT accounts (ordered by level)\nResolve parent_id via temp mapping table\nResolve account_type_id via account_type_code"]
-  G["UPDATE ledger.root_account_id"]
-  H["Return ledger_id, root_account_id"]
+  A["POST /ledgers\n(LedgerController)"]
+  B["LedgerService\nResolve ownerID from JWT"]
+  C["TenantContext.withOwner()"]
+  D["LedgerRepository\ncreate_ledger_with_optional_template()"]
+  E{"Template provided?"}
+  F["instantiate_coa_template_to_ledger()"]
+  G["INSERT accounts (ordered by level)\nResolve parent_id via temp mapping table"]
+  H["UPDATE ledger.root_account_id"]
+  I["Return LedgerResponse"]
 
-  A --> B --> C --> D
-  D -- Yes --> E --> F --> G --> H
-  D -- No --> H
+  A --> B --> C --> D --> E
+  E -- Yes --> F --> G --> H --> I
+  E -- No --> I
+```
+
+---
+
+## Transaction Posting Flow
+
+``` mermaid
+flowchart TD
+  A["POST /transactions\n(TransactionController)"]
+  B["TransactionService\nResolve ownerID from JWT"]
+  C["TenantContext.withOwner()"]
+  D["TransactionRepository\nBuild splits JSONB via Jackson"]
+  E["mab_post_transaction()\n(PostgreSQL function)"]
+  F["pg_advisory_xact_lock\n(per-ledger concurrency control)"]
+  G["Validate accounts · balance check · memo rule"]
+  H["INSERT transaction + splits"]
+  I["trg_audit fires → audit_log"]
+  J["Fetch full TransactionResponse"]
+  K["Return HTTP 201"]
+
+  A --> B --> C --> D --> E --> F --> G --> H --> I --> J --> K
 ```

@@ -1,3 +1,5 @@
+# Python importers
+
 Done — I updated **both attached `.pgsql` pipelines** to use **dynamic `\copy` via `\gexec`**, and I also generated **Python importers** for both workflows (ISO4217 → `commodity`, and COA template JSON → `coa_template` / `coa_template_node`).
 
 ## 1) Updated SQL scripts (dynamic `\copy` with `\gexec`)
@@ -28,7 +30,7 @@ Done — I updated **both attached `.pgsql` pipelines** to use **dynamic `\copy`
 
 [Download import_iso4217_to_commodity.py](sandbox:/mnt/data/import_iso4217_to_commodity.py)
 
-**Run example**
+**Run example**:
 
 ```bash
 pip install psycopg[binary]
@@ -50,7 +52,7 @@ python import_iso4217_to_commodity.py \
 
 [Download import_coa_template_from_json.py](sandbox:/mnt/data/import_coa_template_from_json.py)
 
-**Run example**
+**Run example**:
 
 ```bash
 pip install psycopg[binary]

@@ -30,7 +30,7 @@ CoreData serves as a **local cache / offline persistence layer** only.
 
 The schema is SaaS-ready from day one:
 
-```
+``` diagram
 ledger_owner  1──N  ledger  1──N  account
 ```
 
@@ -41,51 +41,66 @@ Each owner holds multiple ledgers. Each ledger is logically isolated via Row-Lev
 ## Core Entities
 
 ### `ledger_owner`
+
 Owner of one or more ledgers (individual or organization). Supports multiple authentication providers via `auth_identity`.
 
 ### `auth_identity`
+
 Multiple login providers per `ledger_owner` (email/password, Google, Apple, GitHub). Implements account-linking without duplicating ownership.
 
 ### `ledger`
+
 Top-level container for an accounting book. Binds an owner, a base currency commodity, a root account, and an optional COA template.
 
 Key design decisions:
+
 - `currency_commodity_id` is `NOT NULL` — a ledger always has a base currency.
 - `root_account_id` is a deferred FK (circular dependency with `account`).
 - `decimal_places` replaced `precision` (renamed in v3 to avoid SQL reserved word conflicts).
 - `currency_code` was removed from `ledger`; it is now derived via the `v_ledger` view.
 
 ### `account`
+
 Hierarchical chart of accounts within a ledger. Self-referential via `parent_id`. Supports soft-delete (`deleted_at`), placeholders (`is_placeholder`), and hidden accounts (`is_hidden`).
 
 ### `commodity`
+
 Currencies, crypto, and other tradeable assets. Uses a `namespace` field (`CURRENCY`, `CRYPTO`, etc.) to separate asset classes. Uniqueness is enforced via a **partial unique index** on `(namespace, mnemonic) WHERE deleted_at IS NULL`.
 
 ### `account_type`
+
 Catalog of account types (e.g. `CASH`, `AP`, `SALES`, `MEM_DEBIT`). Defines `kind`, `normal_balance`, and `sort_order`. Referenced by both `coa_template_node` and `account` to classify accounts for reporting and posting logic.
 
 ### `coa_template` / `coa_template_node`
+
 Reusable, versioned account trees importable from Excel. A template is instantiated atomically into a ledger via `instantiate_coa_template_to_ledger()`. Each non-placeholder node must carry `account_type_code` (FK to `account_type.code`) so that instantiation can always populate `account.account_type_id`.
 
 ### `transaction`
+
 Financial transaction header. Contains `post_date`, `enter_date`, `memo`, `currency_commodity_id`, optional `payee_id`, and soft-delete / void / reversal tracking fields.
 
 ### `split`
+
 Line items implementing double-entry. Each split references an `account` and a `transaction`. The `amount` column is a **generated stored column** (`ABS(value_num) / value_denom`), always consistent with the rational values.
 
 ### `price`
+
 Historical commodity prices in a reference currency. Used for multi-currency valuation.
 
 ### `payee`
+
 Payees scoped to a ledger. Used on `transaction` headers.
 
 ### `scheduled_transaction` / `scheduled_split` / `recurrence`
+
 Future and recurring transaction templates with recurrence patterns.
 
 ### `audit_log`
+
 Append-only compliance trail for all INSERT / UPDATE / DELETE operations on core financial tables. Populated exclusively by `mab_audit_trigger()` (`SECURITY DEFINER`). No application role may UPDATE or DELETE rows.
 
 ### `enum_label`
+
 Localized labels for enum values (e.g. `AccountKind`, `AccountRole`) by locale.
 
 ---
@@ -94,11 +109,11 @@ Localized labels for enum values (e.g. `AccountKind`, `AccountRole`) by locale.
 
 A key conceptual design decision clarifies three distinct dimensions of account classification:
 
-| Dimension    | Meaning                    | Example              |
-|--------------|----------------------------|----------------------|
-| `kind`       | Accounting nature          | Asset (1)            |
-| `account_type` | Functional classification | Checking Account (`BANK`) |
-| `role`       | Operational usage          | Control / Tax / Memo |
+| Dimension      | Meaning                    | Example                   |
+|----------------|----------------------------|---------------------------|
+| `kind`         | Accounting nature          | Asset (1)                 |
+| `account_type` | Functional classification  | Checking Account (`BANK`) |
+| `role`         | Operational usage          | Control / Tax / Memo.     |
 
 This enables correct reporting, regulatory mapping (SAT), flexible UI rendering, and future extension without schema changes.
 
@@ -108,7 +123,7 @@ This enables correct reporting, regulatory mapping (SAT), flexible UI rendering,
 
 All monetary values use **rational arithmetic**:
 
-```
+``` math
 value_num / value_denom
 quantity_num / quantity_denom
 ```
@@ -146,15 +161,16 @@ RLS is enabled and forced on all tenant-scoped tables:
 
 | Table                   | Policy                                                        |
 |-------------------------|---------------------------------------------------------------|
-| `ledger`                | `owner_id = mab_current_owner_id()`                          |
-| `account`               | `ledger_id` in owner's ledgers                               |
-| `transaction`           | `ledger_id` in owner's ledgers                               |
-| `split`                 | `account_id` in owner's accounts                             |
-| `payee`                 | `ledger_id` in owner's ledgers                               |
-| `scheduled_transaction` | `ledger_id` in owner's ledgers                               |
+| `ledger`                | `owner_id = mab_current_owner_id()`                           |
+| `account`               | `ledger_id` in owner's ledgers                                |
+| `transaction`           | `ledger_id` in owner's ledgers                                |
+| `split`                 | `account_id` in owner's accounts                              |
+| `payee`                 | `ledger_id` in owner's ledgers                                |
+| `scheduled_transaction` | `ledger_id` in owner's ledgers                                |
 
 Session identity is set via:
-```sql
+
+``` sql
 SET LOCAL app.current_owner_id = '<owner-uuid>';
 ```
 
@@ -163,9 +179,9 @@ SET LOCAL app.current_owner_id = '<owner-uuid>';
 | Role           | Purpose                                         | RLS bypass |
 |----------------|-------------------------------------------------|------------|
 | `mab_owner`    | Migration runner, DDL                           | Yes        |
-| `mab_app`      | Runtime application, DML only                  | No         |
-| `mab_readonly` | Reporting / BI, SELECT only                    | No         |
-| `mab_auditor`  | SELECT on `audit_log` only                     | No         |
+| `mab_app`      | Runtime application, DML only                   | No         |
+| `mab_readonly` | Reporting / BI, SELECT only                     | No         |
+| `mab_auditor`  | SELECT on `audit_log` only                      | No         |
 
 `mab_readonly` cannot access `ledger_owner.password_hash` or `auth_identity` directly — only through `v_ledger_owner_redacted`.
 
@@ -189,8 +205,8 @@ SET LOCAL app.current_owner_id = '<owner-uuid>';
 
 ## Current System Status
 
-| Area                  | Status        |
-|-----------------------|---------------|
+| Area                  | Status         |
+|-----------------------|----------------|
 | Data Model            | ✅ Stable      |
 | COA Templates         | ✅ Operational |
 | Excel Import Pipeline | ✅ Working     |
@@ -200,4 +216,4 @@ SET LOCAL app.current_owner_id = '<owner-uuid>';
 | Ledger Instantiation  | ✅ SQL-Based   |
 | DDL Bootstrap         | ✅ Complete    |
 | Posting Engine        | ✅ Implemented |
-| Backend API           | 🔲 Future      |
+| Backend API           | ✅ Implemented |
