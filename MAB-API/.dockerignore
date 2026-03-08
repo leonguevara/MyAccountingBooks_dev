@@ -1,0 +1,21 @@
+  # ── Build artifacts ───────────────────────────────────────────────────────────
+  target/
+
+  # ── IDE and OS files ──────────────────────────────────────────────────────────
+  .idea/
+  *.iml
+  .DS_Store
+  *.swp
+
+# ── Git ───────────────────────────────────────────────────────────────────────
+  .git/
+  .gitignore
+
+  # ── Docker files themselves (no need to copy into image) ─────────────────────
+  Dockerfile
+  docker-compose.yml
+  .dockerignore
+
+  # ── Documentation and non-build assets ───────────────────────────────────────
+  Documentation/
+  *.md

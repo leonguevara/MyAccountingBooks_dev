@@ -1,0 +1,82 @@
+# ============================================================
+# docker-compose.yml — MyAccountingBooks local stack
+#
+# Services:
+#   postgres  — PostgreSQL 18 with persistent volume
+#   mab-api   — Spring Boot API (built from Dockerfile)
+#
+# Usage:
+#   First run (build image):  docker-compose up --build
+#   Subsequent runs:          docker-compose up
+#   Stop:                     docker-compose down
+#   Stop + wipe DB volume:    docker-compose down -v
+#
+# IMPORTANT — the database is NOT auto-seeded:
+#   The postgres service starts empty on first run.
+#   You must apply schema + seed data manually (see below).
+# ============================================================
+
+services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:18
+    container_name: mab-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB:       myaccounting_dev
+      POSTGRES_USER:     postgres
+      POSTGRES_PASSWORD: postgres_dev_password
+
+    ports:
+      # Expose 5433 on the host to avoid conflicting with your local
+      # PostgreSQL instance running on 5432.
+      - "5433:5432"
+
+    volumes:
+      # Named volume: data persists across docker-compose down/up.
+      # Use 'docker-compose down -v' to wipe and start fresh.
+      # PostgreSQL 18+ requires mount at /var/lib/postgresql (not /data subfolder)
+      - mab_postgres_data:/var/lib/postgresql
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d myaccounting_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Spring Boot API ─────────────────────────────────────────────────────────
+  mab-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mab-api
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      # Activates application-docker.properties (points to postgres service).
+      SPRING_PROFILES_ACTIVE: docker
+
+      # Override JWT secret for this local stack.
+      # Replace it with a strong secret for staging/production.
+      JWT_SECRET: change_me_in_production_use_a_256_bit_key
+
+      # Explicit datasource override — redundant with the docker profile
+      # but useful as a visible reference for ops.
+      SPRING_DATASOURCE_URL:      jdbc:postgresql://postgres:5432/myaccounting_dev
+      SPRING_DATASOURCE_USERNAME: mab_app
+      SPRING_DATASOURCE_PASSWORD: dev_password
+
+    depends_on:
+      postgres:
+        # Wait until PostgreSQL passes its health check before starting the API.
+        condition: service_healthy
+
+# ── Named volumes ───────────────────────────────────────────────────────────
+volumes:
+  mab_postgres_data:
+    driver: local
