@@ -9,6 +9,14 @@
 
 import Foundation
 
+/// A ledger model used throughout the app and decoded from API responses.
+///
+/// Conformances:
+/// - `Codable`: Enables JSON encoding/decoding.
+/// - `Identifiable`: Supports SwiftUI list identity via `id`.
+/// - `Hashable`: Required for selection and tagging in SwiftUI lists and sets; identity is based on `id`.
+/// - `Equatable`: Equality is defined by `id`, matching the hashing behavior.
+
 /// Represents a ledger returned by the backend API.
 ///
 /// Conforms to `Identifiable` for convenient use in SwiftUI lists, and `Codable`
@@ -30,7 +38,7 @@ import Foundation
 /// ```swift
 /// let ledger: LedgerResponse = try JSONDecoder().decode(LedgerResponse.self, from: data)
 /// ```
-struct LedgerResponse: Codable, Identifiable {
+struct LedgerResponse: Codable, Identifiable, Hashable, Equatable {
     /// The unique identifier of the ledger.
     let id: UUID
     /// The human-readable name of the ledger.
@@ -39,6 +47,21 @@ struct LedgerResponse: Codable, Identifiable {
     let currencyCode: String
     /// The number of decimal places used for monetary amounts.
     let decimalPlaces: Int
+    
+    /// Hashes the essential components of this value by feeding them into the given hasher.
+    ///
+    /// Identity is defined by the ledger's unique `id`, which allows this type to be used in
+    /// hashed collections and supports selection in `List` with `selection:`.
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    /// Returns a Boolean value indicating whether two ledgers are considered equal.
+    ///
+    /// Equality is based solely on the unique `id`, matching the hashing behavior.
+    static func == (lhs: LedgerResponse, rhs: LedgerResponse) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 /// The payload for creating a new ledger via the API.
@@ -84,3 +107,4 @@ struct CreateLedgerRequest: Codable {
     /// Optional: The version of the chart-of-accounts template.
     var coaTemplateVersion: String?
 }
+
