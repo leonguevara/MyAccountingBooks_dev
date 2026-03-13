@@ -12,21 +12,21 @@ import SwiftUI
 /// The main application shell displaying primary sections and a detail area.
 ///
 /// Uses `NavigationSplitView` with a sidebar that lists ledgers and binds the
-/// selection to `selectedLedger`. When a ledger is selected, a temporary detail
-/// placeholder is shown until the account tree is implemented. Provides a toolbar
-/// action to sign out via `AuthService`.
+/// selection to `selectedLedger`. When a ledger is selected, the accounts tree
+/// for that ledger is displayed in the detail pane. Provides a toolbar action
+/// to sign out via `AuthService`.
 struct ContentView: View {
     /// The currently selected ledger from the sidebar; drives the detail content.
     @State private var selectedLedger: LedgerResponse?
     @Environment(AuthService.self) private var auth
 
     var body: some View {
-        /// Sidebar displaying ledgers and a detail area that reacts to selection.
+        /// Sidebar displaying ledgers and a detail area that shows the selected ledger's accounts tree.
         NavigationSplitView {
             LedgerListView(selectedLedger: $selectedLedger)
         } detail: {
             if let ledger = selectedLedger {
-                LedgerDetailPlaceholder(ledger: ledger)
+                AccountTreeView(ledger: ledger)
             } else {
                 noSelectionState
             }
@@ -81,3 +81,4 @@ private struct LedgerDetailPlaceholder: View {
         .navigationTitle(ledger.name)
     }
 }
+
