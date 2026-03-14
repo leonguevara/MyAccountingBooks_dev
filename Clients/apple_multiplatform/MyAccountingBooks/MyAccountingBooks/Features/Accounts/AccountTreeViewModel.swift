@@ -38,6 +38,7 @@ final class AccountTreeViewModel {
     var errorMessage: String?
     /// The current search query used to filter the account tree.
     var searchText = ""
+    private var loadedLedgerID: UUID?
 
     // MARK: - Dependencies
 
@@ -57,11 +58,13 @@ final class AccountTreeViewModel {
     /// ```
     @MainActor
     func loadAccounts(ledgerID: UUID, token: String) async {
+        guard loadedLedgerID != ledgerID else { return }   // ← prevent duplicate loads
         isLoading = true
         errorMessage = nil
         do {
             let flat = try await service.fetchAccounts(ledgerID: ledgerID, token: token)
             roots = AccountTreeBuilder.build(from: flat)
+            loadedLedgerID = ledgerID      // ← mark as loaded
         } catch {
             errorMessage = error.localizedDescription
         }

@@ -23,7 +23,7 @@
 //
 //          4. TenantContext scopes all queries via RLS.
 // ============================================================
-// Last edited: 2026-03-06
+// Last edited: 2026-03-14
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -51,6 +51,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 //   for passing to PostgreSQL timestamptz parameters.
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Repository
@@ -88,6 +89,7 @@ public class TransactionRepository {
     private static final RowMapper<TransactionResponse.SplitResponse> SPLIT_MAPPER =
             (rs, _) -> new TransactionResponse.SplitResponse(
                     rs.getObject("id",         UUID.class),
+                    rs.getObject("transaction_id", UUID.class),
                     rs.getObject("account_id", UUID.class),
                     rs.getInt("side"),
                     rs.getLong("value_num"),
@@ -351,6 +353,70 @@ public class TransactionRepository {
         });
     }
 
+    // ── Fetch transactions by ledger ─────────────────────────────────────────────
+
+        public List<TransactionResponse> findByLedgerId(UUID ledgerId) {
+
+        // 1) Fetch transaction headers
+        final String txSql = """
+                SELECT
+                t.id,
+                t.ledger_id,
+                t.currency_commodity_id,
+                t.post_date,
+                t.enter_date,
+                t.memo,
+                t.num,
+                t.is_voided
+                FROM public.transaction t
+                WHERE t.ledger_id  = :ledgerId
+                AND t.deleted_at IS NULL
+                ORDER BY t.post_date DESC, t.enter_date DESC
+                """;
+
+        List<TransactionResponse> transactions = jdbc.query(
+                txSql,
+                new MapSqlParameterSource("ledgerId", ledgerId),
+                transactionRowMapper()
+        );
+
+        if (transactions.isEmpty()) return transactions;
+
+        // 2) Fetch all splits for these transactions in one query
+        List<UUID> txIds = transactions.stream()
+                .map(TransactionResponse::getId)
+                .toList();
+
+        final String splitSql = """
+                SELECT
+                s.id,
+                s.transaction_id,
+                s.account_id,
+                s.side,
+                s.value_num,
+                s.value_denom,
+                s.memo
+                FROM public.split s
+                WHERE s.transaction_id = ANY(:txIds)
+                AND s.deleted_at     IS NULL
+                ORDER BY s.transaction_id, s.side
+                """;
+
+        Map<UUID, List<SplitResponse>> splitsByTx = jdbc.query(
+                splitSql,
+                new MapSqlParameterSource("txIds", txIds.toArray(new UUID[0])),
+                splitRowMapper()
+        ).stream().collect(
+                java.util.stream.Collectors.groupingBy(SplitResponse::getTransactionId)
+        );
+
+        // 3) Attach splits to their transactions
+        return transactions.stream()
+                .map(tx -> tx.withSplits(
+                splitsByTx.getOrDefault(tx.getId(), List.of())
+                ))
+                .toList();
+        }
     // ── Shared private helpers ────────────────────────────────────────────────
 
     /**
@@ -398,7 +464,7 @@ public class TransactionRepository {
      * @return          The fully assembled TransactionResponse.
      */
     @SuppressWarnings("null")
-private TransactionResponse fetchTransaction(
+    private TransactionResponse fetchTransaction(
             NamedParameterJdbcTemplate template, UUID txId) {
 
         String txSql = """

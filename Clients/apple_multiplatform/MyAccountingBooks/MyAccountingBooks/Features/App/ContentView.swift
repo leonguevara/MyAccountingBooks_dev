@@ -16,17 +16,33 @@ import SwiftUI
 /// for that ledger is displayed in the detail pane. Provides a toolbar action
 /// to sign out via `AuthService`.
 struct ContentView: View {
+    @Environment(AuthService.self) private var auth
     /// The currently selected ledger from the sidebar; drives the detail content.
     @State private var selectedLedger: LedgerResponse?
-    @Environment(AuthService.self) private var auth
+    @State private var selectedTransaction: TransactionResponse?
+    @State private var columnVisibility = NavigationSplitViewVisibility.all
 
     var body: some View {
         /// Sidebar displaying ledgers and a detail area that shows the selected ledger's accounts tree.
-        NavigationSplitView {
-            LedgerListView(selectedLedger: $selectedLedger)
+        NavigationSplitView(columnVisibility: $columnVisibility) {
+                // Column 1 — Ledger list
+                LedgerListView(selectedLedger: $selectedLedger)
+            } content: {
+                
+                // Column 2 — Transaction list (or account tree)
+                if let ledger = selectedLedger {
+                    TransactionListView(
+                        ledger: ledger,
+                        selectedTransaction: $selectedTransaction
+                    )
+                } else {
+                    noLedgerSelected
+                }
         } detail: {
-            if let ledger = selectedLedger {
-                AccountTreeView(ledger: ledger)
+            // Column 3 — Transaction detail
+            if let tx = selectedTransaction,
+               let ledger = selectedLedger {
+                TransactionDetailView(transaction: tx, ledger: ledger)
             } else {
                 noSelectionState
             }
@@ -40,16 +56,30 @@ struct ContentView: View {
     }
     
     // MARK: - Subviews
+    
+    private var noLedgerSelected: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "book.closed")
+                .font(.system(size: 48))
+                .foregroundStyle(.secondary)
+            Text("Select a Ledger")
+                .font(.headline)
+            Text("Choose a ledger from the sidebar.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
 
     /// Placeholder content shown when no ledger is selected.
     private var noSelectionState: some View {
         VStack(spacing: 12) {
-            Image(systemName: "book.closed")
+            Image(systemName: "arrow.left.arrow.right")
                 .font(.system(size: 52))
                 .foregroundStyle(.secondary)
-            Text("Select a Ledger")
+            Text("Select a Transaction")
                 .font(.headline)
-            Text("Choose a ledger from the sidebar to view its accounts and transactions.")
+            Text("Choose a transaction to view its splits.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)

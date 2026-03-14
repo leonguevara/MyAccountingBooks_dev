@@ -1,4 +1,5 @@
 //
+//  Core/Models/Transaction.swift
 //  Transaction.swift
 //  MyAccountingBooks
 //
@@ -6,7 +7,6 @@
 //  Developed with AI assistance.
 //
 
-// Core/Models/Transaction.swift
 import Foundation
 
 /// Represents a transaction returned by the backend API.
@@ -52,7 +52,7 @@ import Foundation
 /// ```swift
 /// let tx: TransactionResponse = try JSONDecoder().decode(TransactionResponse.self, from: data)
 /// ```
-struct TransactionResponse: Codable, Identifiable {
+struct TransactionResponse: Codable, Identifiable, Hashable {
     /// The unique identifier of the transaction.
     let id: UUID
     /// The identifier of the ledger this transaction belongs to.
@@ -71,6 +71,20 @@ struct TransactionResponse: Codable, Identifiable {
     let isVoided: Bool
     /// The collection of splits that make up this transaction.
     let splits: [SplitResponse]
+    
+    // MARK: - Derived
+
+    /// Total debit side of the transaction (should equal total credit).
+    var totalAmount: Decimal {
+        splits
+            .filter { $0.side == 0 }
+            .reduce(.zero) { $0 + $1.amount }
+    }
+
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
+    static func == (lhs: TransactionResponse, rhs: TransactionResponse) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 /// Represents a single split (posting) within a transaction.
@@ -93,7 +107,7 @@ struct TransactionResponse: Codable, Identifiable {
 /// ```swift
 /// let split: SplitResponse = try JSONDecoder().decode(SplitResponse.self, from: data)
 /// ```
-struct SplitResponse: Codable, Identifiable {
+struct SplitResponse: Codable, Identifiable, Hashable {
     /// The unique identifier of the split.
     let id: UUID
     /// The account to which this split is posted.
@@ -106,4 +120,49 @@ struct SplitResponse: Codable, Identifiable {
     let valueDenom: Int
     /// Optional memo/description for this split.
     let memo: String?
+    
+    // MARK: - Rational Arithmetic
+
+    /// Converts rational valueNum/valueDenom to a displayable Decimal.
+    /// Uses Decimal to avoid floating-point rounding errors.
+    var amount: Decimal {
+        guard valueDenom != 0 else { return .zero }
+        return Decimal(valueNum) / Decimal(valueDenom)
+    }
+
+    /// Signed amount: positive for debits, negative for credits.
+    var signedAmount: Decimal {
+        side == 0 ? amount : -amount
+    }
+
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
+    static func == (lhs: SplitResponse, rhs: SplitResponse) -> Bool {
+        lhs.id == rhs.id
+    }
 }
+
+// MARK: - Formatting Helpers
+
+enum AmountFormatter {
+
+    /// Formats a Decimal amount as a currency string.
+    /// - Parameters:
+    ///   - amount: The decimal amount to format.
+    ///   - currencyCode: ISO 4217 code, e.g. "MXN", "USD".
+    ///   - decimalPlaces: Number of decimal places from the ledger.
+    static func format(
+        _ amount: Decimal,
+        currencyCode: String,
+        decimalPlaces: Int
+    ) -> String {
+        var formatter = Decimal.FormatStyle.Currency(code: currencyCode)
+        formatter = formatter.precision(.fractionLength(decimalPlaces))
+        return amount.formatted(formatter)
+    }
+
+    /// Short date string for list display.
+    static func shortDate(_ date: Date) -> String {
+        date.formatted(.dateTime.day().month(.abbreviated).year())
+    }
+}
+

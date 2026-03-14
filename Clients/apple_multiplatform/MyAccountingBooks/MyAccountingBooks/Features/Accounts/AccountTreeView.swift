@@ -47,6 +47,8 @@ struct AccountTreeView: View {
         .searchable(text: $viewModel.searchText, prompt: "Search accounts…")
         .task(id: ledger.id) {
             guard let token = auth.token else { return }
+            // Small yield to avoid racing with other concurrent tasks
+            await Task.yield()
             await viewModel.loadAccounts(ledgerID: ledger.id, token: token)
         }
         .alert(

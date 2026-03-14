@@ -12,7 +12,7 @@
 //          DB — clients should compute display amounts from
 //          valueNum / valueDenom themselves.
 // ============================================================
-// Last edited: 2026-03-06
+// Last edited: 2026-03-14
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -75,10 +75,25 @@ public record TransactionResponse(
      */
     public record SplitResponse(
             UUID   id,
+            UUID   transactionId,
             UUID   accountId,
             int    side,
             long   valueNum,
             int    valueDenom,
             String memo
     ) {}
+
+    public TransactionResponse withSplits(List<SplitResponse> splits) {
+        return new TransactionResponse(
+                this.id(),
+                this.ledgerId(),
+                this.currencyCommodityId(),
+                this.postDate(),
+                this.enterDate(),
+                this.memo(),
+                this.num(),
+                this.isVoided(),
+                splits
+    );
+}
 }

@@ -33,6 +33,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -112,5 +113,11 @@ public class TransactionService {
                                                VoidTransactionRequest request) {
         UUID ownerID = resolveOwnerID();
         return transactionRepository.void_(ownerID, txId, request);
+    }
+
+    public List<TransactionResponse> getTransactionsForLedger(UUID ledgerId, UUID ownerID) {
+        return TenantContext.withOwner(ownerID, jdbc, tx, () ->
+            transactionRepository.findByLedgerId(ledgerId)
+        );
     }
 }

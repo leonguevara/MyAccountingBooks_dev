@@ -21,8 +21,10 @@
 
 package com.leonguevara.mab.mab_api.controller;
 
+import com.leonguevara.mab.mab_api.service.TransactionService;
 import com.leonguevara.mab.mab_api.dto.request.CreateLedgerRequest;
 import com.leonguevara.mab.mab_api.dto.response.LedgerResponse;
+import com.leonguevara.mab.mab_api.dto.response.TransactionResponse;
 import com.leonguevara.mab.mab_api.service.LedgerService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,7 +62,9 @@ import org.springframework.http.ResponseEntity;
 // HttpStatus: HTTP status code constants.
 import org.springframework.http.HttpStatus;
 
+import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/ledgers")
@@ -72,6 +76,11 @@ public class LedgerController {
 
     public LedgerController(LedgerService ledgerService) {
         this.ledgerService = ledgerService;
+    }
+
+    public LedgerController(LedgerService ledgerService, TransactionService transactionService) {
+        this.ledgerService = ledgerService;
+        this.transactionService = transactionService;
     }
 
     @GetMapping
@@ -103,4 +112,25 @@ public class LedgerController {
         LedgerResponse created = ledgerService.createLedger(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
+
+    // Add this endpoint
+        @GetMapping("/{ledgerId}/transactions")
+        @Operation(summary = "List transactions",
+                description = "Returns all non-deleted transactions for the specified ledger, ordered by post date descending.")
+        @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Transaction list"),
+        @ApiResponse(responseCode = "401", description = "Missing or invalid token"),
+        @ApiResponse(responseCode = "404", description = "Ledger not found or not owned by caller")
+        })
+        public ResponseEntity<List<TransactionResponse>> getTransactions(
+                @PathVariable UUID ledgerId) {
+
+        UUID ownerID = SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal() instanceof UserPrincipal p
+                ? p.ownerID() : null;
+
+        return ResponseEntity.ok(
+                transactionService.getTransactionsForLedger(ledgerId, ownerID)
+        );
+        }
 }
