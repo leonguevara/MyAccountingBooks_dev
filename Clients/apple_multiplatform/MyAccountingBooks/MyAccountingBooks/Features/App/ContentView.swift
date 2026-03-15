@@ -9,21 +9,24 @@
 
 import SwiftUI
 
-/// The main application shell displaying primary sections and a detail area.
+/// The main application shell displaying a three-column layout (ledgers, transactions, detail).
 ///
-/// Uses `NavigationSplitView` with a sidebar that lists ledgers and binds the
-/// selection to `selectedLedger`. When a ledger is selected, the accounts tree
-/// for that ledger is displayed in the detail pane. Provides a toolbar action
-/// to sign out via `AuthService`.
+/// Uses `NavigationSplitView` with:
+/// - Sidebar (Column 1): A list of ledgers with selection bound to `selectedLedger`.
+/// - Content (Column 2): A transaction list for the selected ledger with selection bound to `selectedTransaction`.
+/// - Detail (Column 3): A transaction detail view for the selected transaction.
+/// Includes a toolbar action to sign out via `AuthService`.
 struct ContentView: View {
     @Environment(AuthService.self) private var auth
-    /// The currently selected ledger from the sidebar; drives the detail content.
+    /// The currently selected ledger from the sidebar; drives the transaction list.
     @State private var selectedLedger: LedgerResponse?
+    /// The currently selected transaction; drives the detail view.
     @State private var selectedTransaction: TransactionResponse?
+    /// Controls the visibility of the split view columns.
     @State private var columnVisibility = NavigationSplitViewVisibility.all
 
     var body: some View {
-        /// Sidebar displaying ledgers and a detail area that shows the selected ledger's accounts tree.
+        /// Three-column split: Ledgers (sidebar), Transactions (content), Transaction Detail (detail).
         NavigationSplitView(columnVisibility: $columnVisibility) {
                 // Column 1 — Ledger list
                 LedgerListView(selectedLedger: $selectedLedger)
@@ -71,7 +74,7 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    /// Placeholder content shown when no ledger is selected.
+    /// Placeholder content shown when no transaction is selected.
     private var noSelectionState: some View {
         VStack(spacing: 12) {
             Image(systemName: "arrow.left.arrow.right")

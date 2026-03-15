@@ -81,7 +81,9 @@ struct TransactionResponse: Codable, Identifiable, Hashable {
             .reduce(.zero) { $0 + $1.amount }
     }
 
+    /// Hashes the transaction by its unique `id` to support hashed collections and selection.
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
+    /// Transactions are considered equal when their `id` values match.
     static func == (lhs: TransactionResponse, rhs: TransactionResponse) -> Bool {
         lhs.id == rhs.id
     }
@@ -135,7 +137,10 @@ struct SplitResponse: Codable, Identifiable, Hashable {
         side == 0 ? amount : -amount
     }
 
+    /// Hashes the split by its unique `id` to support hashed collections and selection.
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
+    
+    /// Splits are considered equal when their `id` values match.
     static func == (lhs: SplitResponse, rhs: SplitResponse) -> Bool {
         lhs.id == rhs.id
     }

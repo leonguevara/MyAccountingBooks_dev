@@ -353,70 +353,100 @@ public class TransactionRepository {
         });
     }
 
-    // ── Fetch transactions by ledger ─────────────────────────────────────────────
+        // ── Fetch transactions by ledger ─────────────────────────────────────────
 
-        public List<TransactionResponse> findByLedgerId(UUID ledgerId) {
+        /**
+         * Fetches all non-deleted transactions for a ledger with their splits.
+         * Wrapped in TenantContext so RLS is active for all queries.
+         *
+         * @param ownerID  The authenticated owner UUID (from JWT via service).
+         * @param ledgerId The ledger to fetch transactions for.
+         * @return         List of TransactionResponse with nested splits,
+         *                 ordered by post_date DESC.
+         */
+        public List<TransactionResponse> findByLedgerId(UUID ownerID, UUID ledgerId) {
 
-        // 1) Fetch transaction headers
-        final String txSql = """
-                SELECT
-                t.id,
-                t.ledger_id,
-                t.currency_commodity_id,
-                t.post_date,
-                t.enter_date,
-                t.memo,
-                t.num,
-                t.is_voided
-                FROM public.transaction t
-                WHERE t.ledger_id  = :ledgerId
-                AND t.deleted_at IS NULL
-                ORDER BY t.post_date DESC, t.enter_date DESC
-                """;
+        return TenantContext.withOwner(ownerID, jdbc, tx, template -> {
 
-        List<TransactionResponse> transactions = jdbc.query(
-                txSql,
-                new MapSqlParameterSource("ledgerId", ledgerId),
-                transactionRowMapper()
-        );
+                // ── Step 1: Fetch transaction headers ────────────────────────────
+                final String txSql = """
+                        SELECT
+                        t.id,
+                        t.ledger_id,
+                        t.currency_commodity_id,
+                        t.post_date,
+                        t.enter_date,
+                        t.memo,
+                        t.num,
+                        t.is_voided
+                        FROM public.transaction t
+                        WHERE t.ledger_id  = :ledgerId
+                        AND t.deleted_at IS NULL
+                        ORDER BY t.post_date DESC, t.enter_date DESC
+                        """;
 
-        if (transactions.isEmpty()) return transactions;
+                List<TransactionResponse> transactions = template.query(
+                        txSql,
+                        new MapSqlParameterSource("ledgerId", ledgerId),
+                        (rs, _) -> new TransactionResponse(
+                                rs.getObject("id",                    UUID.class),
+                                rs.getObject("ledger_id",             UUID.class),
+                                rs.getObject("currency_commodity_id", UUID.class),
+                                rs.getTimestamp("post_date")
+                                        .toInstant()
+                                        .atOffset(java.time.ZoneOffset.UTC),
+                                rs.getTimestamp("enter_date")
+                                        .toInstant()
+                                        .atOffset(java.time.ZoneOffset.UTC),
+                                rs.getString("memo"),
+                                rs.getString("num"),
+                                rs.getBoolean("is_voided"),
+                                List.of()   // splits attached in step 3
+                        )
+                );
 
-        // 2) Fetch all splits for these transactions in one query
-        List<UUID> txIds = transactions.stream()
-                .map(TransactionResponse::getId)
-                .toList();
+                if (transactions.isEmpty()) return transactions;
 
-        final String splitSql = """
-                SELECT
-                s.id,
-                s.transaction_id,
-                s.account_id,
-                s.side,
-                s.value_num,
-                s.value_denom,
-                s.memo
-                FROM public.split s
-                WHERE s.transaction_id = ANY(:txIds)
-                AND s.deleted_at     IS NULL
-                ORDER BY s.transaction_id, s.side
-                """;
+                // ── Step 2: Fetch all splits in one query ────────────────────────
+                List<UUID> txIds = transactions.stream()
+                        .map(TransactionResponse::id)
+                        .toList();
 
-        Map<UUID, List<SplitResponse>> splitsByTx = jdbc.query(
-                splitSql,
-                new MapSqlParameterSource("txIds", txIds.toArray(new UUID[0])),
-                splitRowMapper()
-        ).stream().collect(
-                java.util.stream.Collectors.groupingBy(SplitResponse::getTransactionId)
-        );
+                final String splitSql = """
+                        SELECT
+                        s.id,
+                        s.transaction_id,
+                        s.account_id,
+                        s.side,
+                        s.value_num,
+                        s.value_denom,
+                        s.memo
+                        FROM public.split s
+                        WHERE s.transaction_id = ANY(:txIds)
+                        AND s.deleted_at     IS NULL
+                        ORDER BY s.transaction_id, s.side
+                        """;
 
-        // 3) Attach splits to their transactions
-        return transactions.stream()
-                .map(tx -> tx.withSplits(
-                splitsByTx.getOrDefault(tx.getId(), List.of())
-                ))
-                .toList();
+                Map<UUID, List<TransactionResponse.SplitResponse>> splitsByTx =
+                        template.query(
+                                splitSql,
+                                new MapSqlParameterSource("txIds", txIds.toArray(new UUID[0])),
+                                SPLIT_MAPPER
+                        )
+                        .stream()
+                        .collect(java.util.stream.Collectors.groupingBy(
+                                TransactionResponse.SplitResponse::transactionId
+                        ));
+
+                // ── Step 3: Attach splits to their transactions ──────────────────
+                return transactions.stream()
+                        .map(t -> t.withSplits(
+                                splitsByTx.getOrDefault(t.id(), List.of())
+                        ))
+                        .toList();
+        });
         }
+
     // ── Shared private helpers ────────────────────────────────────────────────
 
     /**
@@ -497,7 +527,7 @@ public class TransactionRepository {
                 ));
 
         String splitSql = """
-                SELECT id, account_id, side, value_num, value_denom, memo
+                SELECT id, transaction_id, account_id, side, value_num, value_denom, memo
                   FROM public.split
                  WHERE transaction_id = :txId
                    AND deleted_at     IS NULL

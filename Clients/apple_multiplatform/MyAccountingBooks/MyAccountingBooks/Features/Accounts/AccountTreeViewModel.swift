@@ -25,6 +25,9 @@ import Foundation
 /// }
 /// .searchable(text: $vm.searchText)
 /// ```
+///
+/// Notes:
+/// - Prevents duplicate loads by tracking the last loaded `ledgerID`.
 @Observable
 final class AccountTreeViewModel {
 
@@ -56,6 +59,9 @@ final class AccountTreeViewModel {
     /// ```swift
     /// if let token = auth.token { await vm.loadAccounts(ledgerID: ledger.id, token: token) }
     /// ```
+    ///
+    /// This method avoids redundant network calls by skipping when the provided `ledgerID`
+    /// matches the most recently loaded ledger.
     @MainActor
     func loadAccounts(ledgerID: UUID, token: String) async {
         guard loadedLedgerID != ledgerID else { return }   // ← prevent duplicate loads

@@ -14,7 +14,7 @@
 //          The service layer does not re-implement balance
 //          checks or split validation.
 // ============================================================
-// Last edited: 2026-03-06
+// Last edited: 2026-03-14
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -115,9 +115,14 @@ public class TransactionService {
         return transactionRepository.void_(ownerID, txId, request);
     }
 
-    public List<TransactionResponse> getTransactionsForLedger(UUID ledgerId, UUID ownerID) {
-        return TenantContext.withOwner(ownerID, jdbc, tx, () ->
-            transactionRepository.findByLedgerId(ledgerId)
-        );
+    /**
+     * Returns all transactions for the given ledger owned by the authenticated user.
+     *
+     * @param  ledgerId The UUID of the ledger to fetch transactions for.
+     * @return          List of TransactionResponse, ordered by post date descending.
+     */
+    public List<TransactionResponse> getTransactionsForLedger(UUID ledgerId) {
+        UUID ownerID = resolveOwnerID();
+        return transactionRepository.findByLedgerId(ownerID, ledgerId);
     }
 }

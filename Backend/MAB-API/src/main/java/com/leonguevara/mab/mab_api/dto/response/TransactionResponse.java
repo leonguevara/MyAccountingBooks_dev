@@ -66,12 +66,13 @@ public record TransactionResponse(
     /**
      * A single split line in the transaction response.
      *
-     * @param id           UUID of the split row.
-     * @param accountId    UUID of the account this split posts to.
-     * @param side         0 = DEBIT, 1 = CREDIT.
-     * @param valueNum     Rational numerator of the monetary amount.
-     * @param valueDenom   Rational denominator. Same for all splits in transaction.
-     * @param memo         Per-split narrative. Might be null.
+     * @param id                UUID of the split row.
+     * @param transactionId     UUID of the parent transaction.
+     * @param accountId         UUID of the account this split posts to.
+     * @param side              0 = DEBIT, 1 = CREDIT.
+     * @param valueNum          Rational numerator of the monetary amount.
+     * @param valueDenom        Rational denominator. Same for all splits in transaction.
+     * @param memo              Per-split narrative. Might be null.
      */
     public record SplitResponse(
             UUID   id,
@@ -94,6 +95,6 @@ public record TransactionResponse(
                 this.num(),
                 this.isVoided(),
                 splits
-    );
-}
+        );
+    }
 }
