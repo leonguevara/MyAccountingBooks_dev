@@ -9,57 +9,53 @@
 
 import SwiftUI
 
-/// The main application shell displaying a three-column layout (ledgers, transactions, detail).
+/// The main application shell displaying a split layout (ledgers → account tree).
 ///
 /// Uses `NavigationSplitView` with:
 /// - Sidebar (Column 1): A list of ledgers with selection bound to `selectedLedger`.
-/// - Content (Column 2): A transaction list for the selected ledger with selection bound to `selectedTransaction`.
-/// - Detail (Column 3): A transaction detail view for the selected transaction.
-/// Includes a toolbar action to sign out via `AuthService`.
+/// - Detail (Column 2): An account tree (`AccountTreeView`) for the selected ledger.
+///
+/// Notes:
+/// - Account register windows are opened independently from `AccountTreeView` (double-click on a leaf node).
+/// - The previous transactions/transaction-detail flow is no longer presented here.
 struct ContentView: View {
     @Environment(AuthService.self) private var auth
     /// The currently selected ledger from the sidebar; drives the transaction list.
     @State private var selectedLedger: LedgerResponse?
-    /// The currently selected transaction; drives the detail view.
+    /// UNUSED in current layout: transaction selection is not presented in this view.
     @State private var selectedTransaction: TransactionResponse?
     /// Controls the visibility of the split view columns.
     @State private var columnVisibility = NavigationSplitViewVisibility.all
 
     var body: some View {
-        /// Three-column split: Ledgers (sidebar), Transactions (content), Transaction Detail (detail).
+        /// Two-column split: Ledgers (sidebar) and Account Tree (detail).
         NavigationSplitView(columnVisibility: $columnVisibility) {
-                // Column 1 — Ledger list
-                LedgerListView(selectedLedger: $selectedLedger)
-            } content: {
-                
-                // Column 2 — Transaction list (or account tree)
-                if let ledger = selectedLedger {
-                    TransactionListView(
-                        ledger: ledger,
-                        selectedTransaction: $selectedTransaction
-                    )
-                } else {
-                    noLedgerSelected
-                }
+
+            // ── Column 1 — Ledger list ────────────────────────────────────
+            LedgerListView(selectedLedger: $selectedLedger)
+
         } detail: {
-            // Column 3 — Transaction detail
-            if let tx = selectedTransaction,
-               let ledger = selectedLedger {
-                TransactionDetailView(transaction: tx, ledger: ledger)
+
+            // ── Column 2 — Account tree for selected ledger ───────────────
+            if let ledger = selectedLedger {
+                AccountTreeView(ledger: ledger)
             } else {
                 noSelectionState
             }
         }
-        /// Top-level toolbar providing a sign-out button.
         .toolbar {
             ToolbarItem(placement: .destructiveAction) {
                 Button("Sign Out") { auth.logout() }
             }
         }
+        .onChange(of: selectedLedger) {
+            // Nothing to reset — register windows are independent
+        }
     }
     
     // MARK: - Subviews
     
+    // UNUSED: This helper is not referenced in the current layout.
     private var noLedgerSelected: some View {
         VStack(spacing: 12) {
             Image(systemName: "book.closed")
@@ -74,7 +70,7 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    /// Placeholder content shown when no transaction is selected.
+    /// Placeholder content shown when no ledger is selected.
     private var noSelectionState: some View {
         VStack(spacing: 12) {
             Image(systemName: "arrow.left.arrow.right")
@@ -92,8 +88,7 @@ struct ContentView: View {
     }
 }
 
-// MARK: - Ledger Detail Placeholder
-
+// UNUSED: This placeholder is not used in the current layout (account tree is shown instead).
 /// Temporary placeholder that displays basic info for the selected ledger.
 private struct LedgerDetailPlaceholder: View {
     let ledger: LedgerResponse

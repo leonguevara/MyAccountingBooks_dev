@@ -4,6 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-12.
+//  Last modified by León Felipe Guevara Chávez on 2026-03-16.
 //  Developed with AI assistance
 //
 
@@ -20,6 +21,9 @@ import SwiftUI
 /// AccountTreeView(ledger: someLedger)
 ///     .environment(AuthService())
 /// ```
+///
+/// Notes:
+/// - Double-clicking a non-placeholder leaf account opens its register in a new window.
 struct AccountTreeView: View {
 
     /// The ledger whose accounts are displayed.
@@ -65,6 +69,9 @@ struct AccountTreeView: View {
     }
 
     // MARK: - Subviews
+    
+    /// Tracks the account node that should open its register window (set on double-click).
+    @State private var registerOpenFor: AccountNode?
 
     /// The hierarchical account list with selection and disclosure support.
     private var accountTree: some View {
@@ -76,8 +83,21 @@ struct AccountTreeView: View {
         ) { node in
             AccountRowView(node: node)
                 .tag(node)
+                /// Double-click handler: open the account register for leaf (non-placeholder) nodes.
+                .simultaneousGesture(
+                    TapGesture(count: 2).onEnded {
+                        guard !node.isPlaceholder && node.isLeaf else { return }
+                        registerOpenFor = node
+                    }
+                )
         }
         .listStyle(.sidebar)
+        // Open a new window for each account register
+        .onChange(of: registerOpenFor) { _, newNode in
+            guard let node = newNode else { return }
+            openRegisterWindow(for: node)
+            registerOpenFor = nil
+        }
     }
 
     /// Placeholder content shown when there are no accounts or no search results.
@@ -101,6 +121,18 @@ struct AccountTreeView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    // MARK: - Window opener
+    /// Environment action used to open a dedicated register window.
+    @Environment(\.openWindow) private var openWindow
+
+    /// Opens a new register window for the provided account node using a window value payload.
+    private func openRegisterWindow(for node: AccountNode) {
+        openWindow(value: AccountRegisterWindowPayload(
+            ledger: ledger,
+            account: node
+        ))
     }
 }
 
