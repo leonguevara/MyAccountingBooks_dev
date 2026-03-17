@@ -6,7 +6,7 @@
 //          Maps columns from the v_ledger view in PostgreSQL,
 //          which joins ledger + commodity to include currencyCode.
 // ============================================================
-// Last edited: 2026-03-04
+// Last edited: 2026-03-16
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -23,18 +23,22 @@ import java.util.UUID;
  *   "id":           "uuid",
  *   "name":         "My Business Books",
  *   "currencyCode": "MXN",
- *   "decimalPlaces": 2
+ *   "decimalPlaces": 2,
+ *   "currencyCommodityId": "uuid"
  * }
  *
- * @param id            The ledger's UUID primary key.
- * @param name          Display name of the ledger.
- * @param currencyCode  ISO 4217 currency code (e.g. "MXN", "USD").
- *                      Derived from commodity.mnemonic via v_ledger view.
- * @param decimalPlaces Number of decimal places for display (e.g. 2 for cents).
+ * @param id                      The ledger's UUID primary key.
+ * @param name                    Display name of the ledger.
+ * @param currencyCode            ISO 4217 currency code (e.g. "MXN", "USD").
+ *                                Derived from commodity.mnemonic via v_ledger view.
+ * @param decimalPlaces           Number of decimal places for display (e.g. 2 for cents).
+ *                                Derived from commodity.fraction.
+ * @param currencyCommodityId The UUID of the ledger's currency commodity.
  */
 public record LedgerResponse(
         UUID   id,
         String name,
         String currencyCode,
-        int    decimalPlaces
+        int    decimalPlaces,
+        UUID   currencyCommodityId
 ) {}

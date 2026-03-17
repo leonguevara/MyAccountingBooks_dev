@@ -82,7 +82,8 @@ public class LedgerRepository {
                     rs.getString("name"),
                     // currency_code: derived from commodity.mnemonic via v_ledger view.
                     rs.getString("currency_code"),
-                    rs.getInt("decimal_places")
+                    rs.getInt("decimal_places"),
+                    rs.getObject("currency_commodity_id", UUID.class)
             );
 
     /**
@@ -103,7 +104,7 @@ public List<LedgerResponse> findAllByOwner(UUID ownerID) {
         return TenantContext.withOwner(ownerID, jdbc, tx, template -> {
 
             String sql = """
-                    SELECT id, name, currency_code, decimal_places
+                    SELECT id, name, currency_code, decimal_places, currency_commodity_id
                       FROM public.v_ledger
                      WHERE deleted_at IS NULL
                        AND is_active  = true
@@ -179,7 +180,7 @@ public LedgerResponse create(UUID ownerID,
             // Fetch the full ledger from v_ledger using the returned ID.
             // This gives us currency_code without writing an extra join here.
             String fetchSql = """
-                    SELECT id, name, currency_code, decimal_places
+                    SELECT id, name, currency_code, decimal_places, currency_commodity_id
                       FROM public.v_ledger
                      WHERE id = :ledgerId
                     """;

@@ -20,6 +20,7 @@ import SwiftUI
 /// AccountRegisterView(ledger: ledger, account: accountNode)
 ///     .environment(AuthService())
 /// ```
+
 struct AccountRegisterView: View {
 
     /// The ledger that provides currency/decimal context for amounts.
@@ -31,6 +32,7 @@ struct AccountRegisterView: View {
     @Environment(AuthService.self) private var auth
     /// View model that loads rows and manages selection/sheet state.
     @State private var viewModel = AccountRegisterViewModel()
+    @State private var allAccountRoots: [AccountNode] = []
 
     var body: some View {
         /// Switches between loading, empty, and populated register states.
@@ -51,7 +53,23 @@ struct AccountRegisterView: View {
         .toolbar { toolbarContent }
         .task {
             guard let token = auth.token else { return }
-            await viewModel.load(ledger: ledger, account: account, token: token)
+             
+            // Load transactions and account tree concurrently
+            async let txLoad: () = viewModel.load(
+                ledger: ledger,
+                account: account,
+                token: token
+            )
+            async let accountLoad = AccountService.shared.fetchAccounts(
+                ledgerID: ledger.id,
+                token: token
+            )
+ 
+            // Await both — transactions first so the register renders quickly
+            await txLoad
+            if let flat = try? await accountLoad {
+                allAccountRoots = AccountTreeBuilder.build(from: flat)
+            }
         }
         .alert(
             "Error",
@@ -66,9 +84,19 @@ struct AccountRegisterView: View {
         }
         // Transaction detail sheet
         .sheet(isPresented: $viewModel.showTransactionDetail) {
-            if let tx = viewModel.selectedTransaction {
-                TransactionDetailSheet(transaction: tx, ledger: ledger)
-            }
+            PostTransactionView(
+                ledger: ledger,
+                allAccounts: allAccountRoots,
+                onSuccess: {
+                    guard let token = auth.token else { return }
+                    await viewModel.load(
+                        ledger: ledger,
+                        account: account,
+                        token: token
+                    )
+                }
+            )
+            .environment(auth)
         }
     }
 

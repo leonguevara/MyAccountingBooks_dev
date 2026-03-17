@@ -29,7 +29,8 @@ import Foundation
 ///   "id": "4E0B6C9E-2B6B-4C2E-9B8B-3E7B1A2D8F10",
 ///   "name": "Household",
 ///   "currencyCode": "USD",
-///   "decimalPlaces": 2
+///   "decimalPlaces": 2,
+///   "currencyCommodityId": "F0BD9093-F03C-4FD6-87A9-4F8920EF372B",
 /// }
 /// ```
 ///
@@ -47,6 +48,8 @@ struct LedgerResponse: Codable, Identifiable, Hashable, Equatable {
     let currencyCode: String
     /// The number of decimal places used for monetary amounts.
     let decimalPlaces: Int
+    /// The unique identifier of the currency
+    let currencyCommodityId: UUID?
     
     /// Hashes the essential components of this value by feeding them into the given hasher.
     ///
