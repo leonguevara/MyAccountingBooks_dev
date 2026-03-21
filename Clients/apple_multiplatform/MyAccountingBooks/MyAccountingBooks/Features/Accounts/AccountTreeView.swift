@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-12.
-//  Last modified by León Felipe Guevara Chávez on 2026-03-16.
+//  Last modified by León Felipe Guevara Chávez on 2026-03-21.
 //  Developed with AI assistance
 //
 
@@ -16,6 +16,11 @@ import SwiftUI
 /// `List(children:selection:)` to render a collapsible tree. Requires an
 /// `AuthService` in the environment to obtain the token.
 ///
+/// Each row shows the account name, optional code, type label, and — for
+/// non-root accounts — the current balance fetched alongside the account tree.
+/// Balances for placeholder (parent) accounts are automatically rolled up from
+/// their descendants by the view model.
+///
 /// Usage:
 /// ```swift
 /// AccountTreeView(ledger: someLedger)
@@ -23,7 +28,8 @@ import SwiftUI
 /// ```
 ///
 /// Notes:
-/// - Double-clicking a non-placeholder leaf account opens its register in a new window.
+/// - Double-clicking a **non-placeholder leaf** account opens its register in a new window.
+///   Placeholder accounts and parent nodes are intentionally excluded from this action.
 struct AccountTreeView: View {
 
     /// The ledger whose accounts are displayed.
@@ -81,11 +87,13 @@ struct AccountTreeView: View {
             children: \.optionalChildren,
             selection: $selectedAccount
         ) { node in
-            AccountRowView(node: node)
+            AccountRowView(node: node, balance: viewModel.balances[node.id])
                 .tag(node)
                 /// Double-click handler: open the account register for leaf (non-placeholder) nodes.
                 .simultaneousGesture(
                     TapGesture(count: 2).onEnded {
+                        // Only open the register for real leaf accounts; placeholder
+                        // and parent nodes do not have a transaction register.
                         guard !node.isPlaceholder && node.isLeaf else { return }
                         registerOpenFor = node
                     }
@@ -139,8 +147,19 @@ struct AccountTreeView: View {
 // MARK: - Account Row
 
 /// A single row representing an account node with visual indicators.
+///
+/// Displays a color-coded kind dot, the optional account code, account name,
+/// type label, and — when available — the account's current balance. The
+/// balance is only shown for non-root accounts (those with a parent).
+/// Negative balances are rendered in red; zero and positive balances use the
+/// primary label color.
 private struct AccountRowView: View {
     let node: AccountNode
+    /// The pre-fetched balance for this account, or `nil` if unavailable.
+    ///
+    /// Supplied by `AccountTreeViewModel.balances` which includes both
+    /// API-provided leaf balances and rolled-up parent balances.
+    let balance: AccountBalanceResponse?
 
     var body: some View {
         HStack(spacing: 10) {
@@ -169,6 +188,16 @@ private struct AccountRowView: View {
 
             Spacer()
 
+            // Show balance for non-root accounts only; root accounts aggregate
+            // the entire ledger and are omitted to reduce visual noise.
+            if let balance, node.account.parentId != nil {
+                Text(formattedBalance(balance))
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(
+                        balance.balanceNum >= 0 ? Color.primary : Color.red
+                    )
+            }
+
             if node.isHidden {
                 Image(systemName: "eye.slash")
                     .font(.caption)
@@ -176,6 +205,23 @@ private struct AccountRowView: View {
             }
         }
         .padding(.vertical, 2)
+    }
+
+    /// Formats a balance response as a locale-aware numeric string without a
+    /// currency symbol, using the precision implied by `balanceDenom`.
+    ///
+    /// - Parameter b: The balance response to format.
+    /// - Returns: A decimal string (e.g. `"1,250.00"`) with the appropriate
+    ///   number of fraction digits derived from the denominator.
+    private func formattedBalance(_ b: AccountBalanceResponse) -> String {
+        let denom = b.balanceDenom
+        let decimalPlaces = denom == 1 ? 0
+                          : denom == 10 ? 1
+                          : denom == 100 ? 2
+                          : denom == 1000 ? 3 : 2
+        return Decimal.FormatStyle.Currency(code: "")
+            .precision(.fractionLength(decimalPlaces))
+            .format(b.balance)
     }
 
     /// Color coding by account kind (asset, liability, equity, income, expense).
