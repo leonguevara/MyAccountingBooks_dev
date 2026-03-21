@@ -6,8 +6,9 @@
 //          Routes: GET /ledgers
 //                  POST /ledgers
 //                  GET /ledgers/{ledgerId}/transactions
+//                  GET /ledgers/{ledgerId}/balances
 // ============================================================
-// Last edited: 2026-03-14
+// Last edited: 2026-03-21
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -19,6 +20,8 @@ import com.leonguevara.mab.mab_api.dto.response.LedgerResponse;
 import com.leonguevara.mab.mab_api.dto.response.TransactionResponse;
 import com.leonguevara.mab.mab_api.service.LedgerService;
 import com.leonguevara.mab.mab_api.service.TransactionService;
+import com.leonguevara.mab.mab_api.dto.response.AccountBalanceResponse;
+import com.leonguevara.mab.mab_api.service.AccountBalanceService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -44,8 +47,9 @@ import java.util.UUID;
 /**
  * REST controller for ledger operations.
  *
- * <p>Exposes endpoints to list ledgers, create a ledger, and retrieve
- * transactions for a specific ledger owned by the authenticated user.</p>
+ * <p>Exposes endpoints to list ledgers, create a ledger, retrieve
+ * transactions, and retrieve account balances for a specific ledger
+ * owned by the authenticated user.</p>
  */
 @RestController
 @RequestMapping("/ledgers")
@@ -56,19 +60,25 @@ public class LedgerController {
         /** Service that handles ledger read/write operations. */
     private final LedgerService ledgerService;
 
-        /** Service that provides transaction queries for a ledger. */
-        private final TransactionService transactionService;
+    /** Service that provides transaction queries for a ledger. */
+    private final TransactionService transactionService;
 
-        /**
-         * Creates a LedgerController with required services.
-         *
-         * @param ledgerService service for ledger operations
-         * @param transactionService service for transaction retrieval
-         */
+    /** Service that computes account balances for a ledger. */
+    private final AccountBalanceService accountBalanceService;
+
+    /**
+     * Creates a LedgerController with required services.
+     *
+     * @param ledgerService service for ledger operations
+     * @param transactionService service for transaction retrieval
+     * @param accountBalanceService service for account balance computation
+     */
     public LedgerController(LedgerService ledgerService,
-                            TransactionService transactionService) {
+                            TransactionService transactionService,
+                            AccountBalanceService accountBalanceService) {
         this.ledgerService = ledgerService;
         this.transactionService = transactionService;
+        this.accountBalanceService  = accountBalanceService;
     }
 
     // ── GET /ledgers ─────────────────────────────────────────────────────────
@@ -148,5 +158,38 @@ public class LedgerController {
         return ResponseEntity.ok(
             transactionService.getTransactionsForLedger(ledgerId)
         );
+    }
+
+    // ── GET /ledgers/{ledgerId}/balances ──────────────────────────────────
+
+    /**
+     * Returns account balances for all accounts in the ledger.
+     *
+     * <p>Balances are computed using rational arithmetic (balanceNum / balanceDenom).
+     * Voided transactions are excluded. Accounts with no transactions are included
+     * with balanceNum = 0.</p>
+     *
+     * @param ledgerId target ledger identifier
+     * @return balance list wrapped in HTTP 200 response
+     */
+    @GetMapping("/{ledgerId}/balances")
+    @Operation(summary = "Get account balances",
+            description = """
+                Returns the signed balance for every account in the ledger
+                using rational arithmetic (balanceNum / balanceDenom).
+                Voided transactions are excluded.
+                Accounts with no transactions are included with balanceNum = 0.
+                """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Balance list"),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid token",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Ledger not found",
+                    content = @Content)
+    })
+    public ResponseEntity<List<AccountBalanceResponse>> getBalances(
+            @Parameter(description = "UUID of the ledger")
+            @PathVariable UUID ledgerId) {
+        return ResponseEntity.ok(accountBalanceService.getBalances(ledgerId));
     }
 }
