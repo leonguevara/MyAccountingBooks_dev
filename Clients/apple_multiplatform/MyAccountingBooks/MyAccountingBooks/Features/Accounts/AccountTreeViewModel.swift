@@ -4,45 +4,55 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-12.
-//  Last modified by León Felipe Guevara Chávez on 2026-03-21.
+//  Last modified by León Felipe Guevara Chávez on 2026-03-22.
 //  Developed with AI assistance.
 //
 
 import Foundation
 
 /**
- View model managing state and business logic for the account tree screen with balances.
- 
- `AccountTreeViewModel` orchestrates loading accounts and balances, building hierarchical
- structures, computing rolled-up balances for parent accounts, and providing search/filter
- capabilities for the account tree display.
- 
- # Features
- - **Account Tree Loading**: Fetches accounts and builds hierarchical structure
- - **Balance Integration**: Loads balances and maps them to accounts
- - **Balance Rollup**: Automatically computes parent account balances from children
- - **Search/Filter**: Provides filtered tree view based on search query
- - **Duplicate Prevention**: Avoids redundant loads when ledger hasn't changed
- - **Error Handling**: Captures and exposes error messages for UI display
- 
- # Balance Rollup Algorithm
- 
- The view model automatically computes balances for placeholder (parent) accounts:
- 1. Leaf accounts use balances from the API
- 2. Parent accounts sum all descendant balances recursively
- 3. Rolled-up balances are stored in the `balances` map for display
- 
- This ensures parent accounts show their total including all child accounts,
- providing accurate subtotals for account categories.
- 
+ View model managing state and business logic for the account tree screen.
+
+ `AccountTreeViewModel` orchestrates the complete lifecycle of the chart of accounts:
+ fetching accounts and balances concurrently, assembling the hierarchy, rolling up
+ balances to placeholder parent accounts, building GnuCash-style full-path strings
+ for account pickers, and providing real-time search/filter capabilities.
+
+ # Responsibilities
+
+ - **Account tree loading**: Fetches a flat account list and builds the hierarchy via
+   `AccountTreeBuilder.build(from:)`.
+ - **Balance integration**: Fetches leaf balances and maps them to accounts via `BalanceMap`.
+ - **Balance rollup**: Recursively computes subtotal balances for placeholder parent
+   accounts so that every node in the tree has a displayable balance.
+ - **Account path map**: Builds a `[UUID: String]` dictionary of GnuCash-style colon-
+   separated paths (e.g., `"Assets:Current Assets:Cash:Checking"`) for use in account
+   pickers and search results.
+ - **Search / filter**: Returns a search-filtered subtree that preserves parent nodes
+   as containers for matching descendants.
+ - **Duplicate prevention**: Skips redundant network loads when the same ledger is
+   already loaded.
+ - **Error handling**: Captures failures in `errorMessage` for display as an alert.
+
+ # Loading Workflow
+
+ ```
+ loadAccounts(ledgerID:token:)
+   ├─ async let fetchAccounts  ──► AccountService.fetchAccounts
+   ├─ async let fetchBalances  ──► AccountService.fetchBalances
+   ├─ AccountTreeBuilder.build(from:)          → roots
+   ├─ AccountTreeBuilder.buildPathMap(from:)   → accountPaths
+   └─ rollUpBalances(_:)                       → balances (updated in-place)
+ ```
+
  # Usage Example
- 
+
  ```swift
  @State private var viewModel = AccountTreeViewModel()
  @Environment(AuthService.self) private var auth
- 
+
  var body: some View {
-     List(viewModel.filteredRoots, children: \.children) { node in
+     List(viewModel.filteredRoots, children: \.optionalChildren) { node in
          HStack {
              Text(node.name)
              Spacer()
@@ -63,16 +73,22 @@ import Foundation
      }
  }
  ```
- 
- # State Management
- 
- - `roots`: Top-level account nodes in the hierarchy
- - `balances`: Map of account IDs to balance responses (includes rolled-up values)
- - `searchText`: Current search query for filtering
- - `filteredRoots`: Computed property returning search-filtered results
- 
- - Important: Balances are automatically rolled up to parent accounts after loading.
- - Note: Uses task ID to reload when ledger changes but prevents duplicate loads for same ledger.
+
+ # State Summary
+
+ | Property        | Type             | Description                                        |
+ |-----------------|------------------|----------------------------------------------------|
+ | `roots`         | `[AccountNode]`  | Top-level nodes with full subtree populated        |
+ | `balances`      | `BalanceMap`     | API balances + rolled-up parent balances           |
+ | `accountPaths`  | `[UUID: String]` | GnuCash-style full path per account (for pickers)  |
+ | `searchText`    | `String`         | Current filter query; drives `filteredRoots`       |
+ | `isLoading`     | `Bool`           | `true` while network operations are in flight      |
+ | `errorMessage`  | `String?`        | Set on failure; `nil` when no error is present     |
+
+ - Important: All UI-state mutations occur on `@MainActor`. `loadAccounts` must be
+   called from a `@MainActor` context (e.g., a SwiftUI `.task` modifier).
+ - Note: Uses `loadedLedgerID` to prevent duplicate loads when the same ledger is
+   already in memory. A new ledger ID always triggers a full reload.
  - SeeAlso: `AccountTreeBuilder`, `AccountService`, `BalanceMap`, `AccountNode`
  */
 @Observable
@@ -82,154 +98,178 @@ final class AccountTreeViewModel {
 
     /// Root nodes of the account tree hierarchy.
     ///
-    /// Contains top-level accounts with all children populated recursively.
-    /// Updated after successful account loading and tree building.
+    /// Contains top-level accounts with all children populated recursively by
+    /// `AccountTreeBuilder.build(from:)`. Updated after every successful load.
     var roots: [AccountNode] = []
-    
+
     /// Indicates whether a network operation is currently in progress.
     ///
-    /// Set to `true` during account/balance loading, `false` when complete or on error.
+    /// Set to `true` at the start of `loadAccounts` and reset to `false` when
+    /// the operation completes, whether successfully or with an error.
     var isLoading = false
-    
+
     /// An optional error message to display when operations fail.
     ///
-    /// Set when network requests fail or tree building encounters issues.
+    /// Set to the localized description of any thrown error during loading.
+    /// Cleared to `nil` at the start of each new load attempt.
     var errorMessage: String?
-    
+
     /// The current search query used to filter the account tree.
     ///
-    /// When non-empty, `filteredRoots` returns a filtered view of the tree.
-    /// Cleared to empty string to show full tree.
+    /// When non-empty, `filteredRoots` returns a filtered subtree. Setting this
+    /// to an empty string restores the full unfiltered tree.
     var searchText = ""
-    
-    /// Tracks the last successfully loaded ledger ID to prevent duplicate loads.
+
+    /// Tracks the ledger ID of the most recently completed load to prevent duplicate requests.
     ///
-    /// When `loadAccounts` is called with the same ledger ID, the load is skipped.
+    /// `loadAccounts` compares the incoming `ledgerID` against this value and skips
+    /// the network round-trip if they match. Cleared implicitly when a new ledger is loaded.
     private var loadedLedgerID: UUID?
-    
+
     /// Map of account IDs to their balance responses, including rolled-up parent balances.
     ///
-    /// This map contains:
-    /// - **Leaf accounts**: Balances from the API
-    /// - **Parent accounts**: Computed rollup of all descendant balances
+    /// After loading, this map contains two kinds of entries:
+    /// - **Leaf accounts**: `AccountBalanceResponse` values sourced directly from the API.
+    /// - **Parent accounts**: Synthetic `AccountBalanceResponse` values whose `balanceNum`
+    ///   is the recursive sum of all descendant `balanceNum` values.
     ///
-    /// Access balances using account ID for O(1) lookup:
+    /// Look up a balance by account ID for O(1) access:
     /// ```swift
-    /// if let balance = viewModel.balances[accountID]?.balance {
-    ///     // Display balance
-    /// }
+    /// let balance = viewModel.balances[node.id]?.balance ?? .zero
     /// ```
+    ///
+    /// - Note: Accounts absent from the map have no recorded balance and should be
+    ///   treated as zero.
     var balances: BalanceMap = [:]
+
+    /// GnuCash-style colon-separated full paths for every non-root account.
+    ///
+    /// Keys are account UUIDs; values are path strings assembled from the account's
+    /// ancestor chain, e.g., `"Assets:Current Assets:Cash:Checking"`.
+    ///
+    /// Populated by `AccountTreeBuilder.buildPathMap(from:)` immediately after the
+    /// tree is built. Used by account pickers in `PostTransactionView` to display
+    /// unambiguous account labels instead of bare account names.
+    ///
+    /// ```swift
+    /// let label = viewModel.accountPaths[account.id] ?? account.name
+    /// ```
+    ///
+    /// - Note: The structural root account is excluded from the map; its immediate
+    ///   children begin paths at depth 1.
+    /// - SeeAlso: `AccountTreeBuilder.buildPathMap(from:)`
+    var accountPaths: [UUID: String] = [:]
 
     // MARK: - Dependencies
 
     /// Service used to fetch accounts and balances from the backend.
     ///
-    /// Provides methods for retrieving both account structure and balance data.
+    /// Provides `fetchAccounts(ledgerID:token:)` and `fetchBalances(ledgerID:token:)`.
     private let service = AccountService.shared
 
     // MARK: - Load
 
     /**
-     Loads accounts and balances for the given ledger, builds the tree, and computes rolled-up balances.
-     
-     This method orchestrates the complete loading workflow:
-     1. **Duplicate prevention**: Skips if ledger was already loaded
-     2. **Concurrent fetch**: Loads accounts and balances simultaneously for performance
-     3. **Tree building**: Constructs hierarchy from flat account list
-     4. **Balance rollup**: Computes parent account balances from children
-     5. **State update**: Updates `roots` and `balances` for display
-     
+     Loads accounts and balances for the given ledger, builds the tree, computes
+     rolled-up balances, and populates the GnuCash-style path map.
+
+     This method orchestrates the complete loading workflow in five steps:
+
+     1. **Duplicate prevention** — Returns immediately if `ledgerID` matches the
+        last successfully loaded ledger.
+     2. **Concurrent fetch** — Accounts and balances are requested in parallel via
+        `async let` to minimize total latency.
+     3. **Tree building** — `AccountTreeBuilder.build(from:)` converts the flat
+        account array into a recursive `[AccountNode]` hierarchy stored in `roots`.
+     4. **Path map** — `AccountTreeBuilder.buildPathMap(from:)` derives colon-
+        separated full-path strings for every account and stores them in `accountPaths`.
+     5. **Balance rollup** — `rollUpBalances(_:)` propagates leaf balances upward,
+        inserting synthetic `AccountBalanceResponse` entries for all placeholder
+        parent accounts.
+
+     # Concurrent Loading
+
+     ```swift
+     async let flatAccounts = AccountService.shared.fetchAccounts(ledgerID:token:)
+     async let balanceMap   = AccountService.shared.fetchBalances(ledgerID:token:)
+     // Both requests are in-flight simultaneously
+     roots    = AccountTreeBuilder.build(from: try await flatAccounts)
+     balances = try await balanceMap
+     ```
+
+     # Balance Rollup
+
+     After the tree is built, parent account balances are computed bottom-up:
+
+     ```
+     Assets ($10,000)              ← Rolled up
+     ├─ Cash ($3,000)              ← Rolled up
+     │  ├─ Checking ($2,000)      ← From API
+     │  └─ Savings ($1,000)       ← From API
+     └─ Investments ($7,000)      ← From API
+     ```
+
+     # Error Handling
+
+     On any thrown error:
+     - `errorMessage` is set to `error.localizedDescription`.
+     - `isLoading` is reset to `false`.
+     - `roots`, `balances`, and `accountPaths` retain their previous values.
+
      - Parameters:
        - ledgerID: The unique identifier of the ledger whose accounts to load.
-       - token: A bearer authentication token for authorizing the requests.
-     
-     - Throws: Does not throw - errors are captured in `errorMessage` property.
-     
-     # Concurrent Loading
-     
-     Accounts and balances are fetched concurrently using async let:
-     ```swift
-     async let flatAccounts = AccountService.shared.fetchAccounts(...)
-     async let balanceMap = AccountService.shared.fetchBalances(...)
-     ```
-     
-     This reduces total load time compared to sequential fetching.
-     
-     # Balance Rollup
-     
-     After loading, the method automatically computes balances for parent accounts:
-     - **Leaf accounts**: Use balances directly from API
-     - **Parent accounts**: Sum all descendant account balances recursively
-     
-     Example hierarchy with rollup:
-     ```
-     Assets ($10,000)                     ← Rolled up from children
-     ├─ Cash ($3,000)                    ← Rolled up from children
-     │  ├─ Checking ($2,000)            ← From API
-     │  └─ Savings ($1,000)             ← From API
-     └─ Investments ($7,000)            ← From API
-     ```
-     
-     # Duplicate Prevention
-     
-     The method tracks the last loaded ledger ID. If called again with the same ID,
-     the load is skipped to avoid redundant network requests. This is safe when used
-     with `.task(id: ledger.id)` which re-triggers only on ledger changes.
-     
-     # Usage Example
-     
-     ```swift
-     .task(id: selectedLedger.id) {
-         guard let token = auth.token else { return }
-         await viewModel.loadAccounts(ledgerID: selectedLedger.id, token: token)
-     }
-     ```
-     
-     # Error Handling
-     
-     On failure:
-     - `errorMessage` is set with error description
-     - `isLoading` returns to `false`
-     - Existing `roots` and `balances` remain unchanged
-     
-     - Important: Must be called from a `@MainActor` context for UI updates.
-     - Note: Balance rollup is automatic - parent balances are computed from children.
-     - SeeAlso: `rollUpBalances(_:)`, `AccountService.fetchAccounts(ledgerID:token:)`, `AccountService.fetchBalances(ledgerID:token:)`
+       - token: A valid bearer authentication token for authorizing both requests.
+     - Important: Must be called from a `@MainActor` context. In SwiftUI, use
+       `.task(id: ledger.id)` to automatically re-trigger on ledger changes.
+     - Note: Balance rollup and path map generation are automatic — the caller does not
+       need to invoke `rollUpBalances` or `buildPathMap` separately.
+     - SeeAlso: `rollUpBalances(_:)`, `AccountService.fetchAccounts(ledgerID:token:)`,
+       `AccountService.fetchBalances(ledgerID:token:)`, `AccountTreeBuilder.buildPathMap(from:)`
      */
     @MainActor
     func loadAccounts(ledgerID: UUID, token: String) async {
-        guard loadedLedgerID != ledgerID else { return }   // ← prevent duplicate loads
+        guard loadedLedgerID != ledgerID else { return }
         isLoading = true
         errorMessage = nil
         do {
-            // Load accounts and balances concurrently
             async let flatAccounts = AccountService.shared.fetchAccounts(
                 ledgerID: ledgerID, token: token
             )
             async let balanceMap = AccountService.shared.fetchBalances(
                 ledgerID: ledgerID, token: token
             )
-            roots    = AccountTreeBuilder.build(from: try await flatAccounts)
-            balances = try await balanceMap
+            roots        = AccountTreeBuilder.build(from: try await flatAccounts)
+            accountPaths = AccountTreeBuilder.buildPathMap(from: roots)
+            balances     = try await balanceMap
 
-            // Roll up balances to placeholder parents
             rollUpBalances(roots)
+            loadedLedgerID = ledgerID
         } catch {
             errorMessage = error.localizedDescription
         }
         isLoading = false
     }
-    
+
     // MARK: - Balance Rollup
 
-    /// Entry point: rolls up all balances from leaves to placeholder parents.
-    /// Called once after both accounts and balances are loaded.
+    /**
+     Entry point for the balance rollup pass.
+
+     Iterates over the top-level nodes and delegates to `computeSubtreeBalance(_:)`
+     for any node that has children. Leaf nodes at the root level already have API-
+     provided entries in `balances` and are left unchanged.
+
+     Called once by `loadAccounts` after both `roots` and `balances` are populated.
+
+     - Parameter nodes: The root-level `AccountNode` array to process.
+     - Note: Mutates `balances` in-place by inserting synthetic `AccountBalanceResponse`
+       entries for every parent account in the tree.
+     - SeeAlso: `computeSubtreeBalance(_:)`, `firstDenom(in:)`
+     */
     private func rollUpBalances(_ nodes: [AccountNode]) {
         for node in nodes {
             guard !node.children.isEmpty else { continue }
             let rolled = computeSubtreeBalance(node)
-            // Derive denom from the first descendant that has a balance
             let denom = firstDenom(in: node.children) ?? 100
             balances[node.id] = AccountBalanceResponse(
                 accountId:    node.id,
@@ -239,22 +279,34 @@ final class AccountTreeViewModel {
         }
     }
 
-    /// Recursively computes the net balanceNum for a node's entire subtree.
-    /// For leaf nodes: returns the value from the API balance map (or 0).
-    /// For parent nodes: sums all children recursively, then stores result.
+    /**
+     Recursively computes the net `balanceNum` for a node's entire subtree and
+     stores a synthetic `AccountBalanceResponse` for every parent node visited.
+
+     - **Leaf nodes**: Return the `balanceNum` from `balances`, or `0` if absent.
+     - **Parent nodes**: Sum all children recursively, store the result in `balances`,
+       then return the sum to the caller.
+
+     The denominator for synthetic entries is taken from the first descendant that
+     already has a balance entry, ensuring unit consistency within a subtree.
+
+     - Parameter node: The node whose subtree balance to compute.
+     - Returns: The net `balanceNum` for `node` and all its descendants.
+     - Note: Marked `@discardableResult` because callers at the root level
+       (`rollUpBalances`) only need the side-effect of populating `balances`,
+       not the return value.
+     - SeeAlso: `rollUpBalances(_:)`, `firstDenom(in:)`
+     */
     @discardableResult
     private func computeSubtreeBalance(_ node: AccountNode) -> Int {
         if node.children.isEmpty {
-            // Leaf: use the API-provided balance directly
             return balances[node.id]?.balanceNum ?? 0
         }
 
-        // Parent: sum all children
         let childSum = node.children.reduce(0) { sum, child in
             sum + computeSubtreeBalance(child)
         }
 
-        // Store rolled-up balance for this parent node
         let denom = firstDenom(in: node.children) ?? 100
         balances[node.id] = AccountBalanceResponse(
             accountId:    node.id,
@@ -265,7 +317,18 @@ final class AccountTreeViewModel {
         return childSum
     }
 
-    /// Finds the first available balanceDenom from a set of nodes (depth-first).
+    /**
+     Returns the `balanceDenom` of the first node (depth-first) in `nodes` that has
+     an entry in `balances`.
+
+     Used to assign a consistent denominator to synthetic parent balance entries when
+     building rolled-up values. If no descendant has a balance yet, the caller falls
+     back to `100` (the standard 2-decimal-place currency denominator).
+
+     - Parameter nodes: The sibling nodes to search, each with their own subtree.
+     - Returns: The denominator from the first matched balance, or `nil` if none found.
+     - SeeAlso: `computeSubtreeBalance(_:)`
+     */
     private func firstDenom(in nodes: [AccountNode]) -> Int? {
         for node in nodes {
             if let b = balances[node.id] { return b.balanceDenom }
@@ -276,7 +339,24 @@ final class AccountTreeViewModel {
 
     // MARK: - Filtered Roots
 
-    /// Returns filtered roots when `searchText` has content; otherwise returns `roots`.
+    /**
+     Returns the account tree filtered by `searchText`, or the full `roots` array
+     when `searchText` is blank.
+
+     Filtering is case-insensitive and matches against `name`, `code`, and
+     `accountTypeCode`. Parent nodes that do not match the query themselves are
+     preserved as lightweight proxy containers when any of their descendants match.
+
+     ```swift
+     List(viewModel.filteredRoots, children: \.optionalChildren) { node in
+         Text(node.name)
+     }
+     .searchable(text: $viewModel.searchText)
+     ```
+
+     - Note: Whitespace-only queries are treated as empty and return the full tree.
+     - SeeAlso: `filterNodes(_:query:)`
+     */
     var filteredRoots: [AccountNode] {
         guard !searchText.trimmingCharacters(in: .whitespaces).isEmpty else {
             return roots
@@ -286,8 +366,26 @@ final class AccountTreeViewModel {
 
     // MARK: - Private Helpers
 
-    /// Recursively filters the account tree, preserving full subtrees for matching nodes
-    /// and including proxy nodes for parents of matching descendants.
+    /**
+     Recursively filters `nodes` against `query`, preserving full subtrees for
+     matching nodes and inserting proxy containers for parents of matching descendants.
+
+     Matching is evaluated on three fields (all lowercased before comparison):
+     - `node.name`
+     - `node.code`
+     - `node.accountTypeCode`
+
+     When a node matches, it is included with **all** of its original children intact
+     so the user sees the full context of a matching account. When a node does not
+     match but has matching descendants, a proxy `AccountNode` is created with only
+     the filtered children, acting as a structural breadcrumb in the result tree.
+
+     - Parameters:
+       - nodes: The sibling nodes at the current recursion depth.
+       - query: The lowercased search string to match against.
+     - Returns: A filtered array of `AccountNode` values containing only relevant nodes.
+     - SeeAlso: `filteredRoots`
+     */
     private func filterNodes(_ nodes: [AccountNode], query: String) -> [AccountNode] {
         var results: [AccountNode] = []
         for node in nodes {
@@ -298,10 +396,8 @@ final class AccountTreeViewModel {
             let filteredChildren = filterNodes(node.children, query: query)
 
             if matchesSelf {
-                // Include node with all its children intact
                 results.append(node)
             } else if !filteredChildren.isEmpty {
-                // Include node as a container for matching children
                 let proxy = AccountNode(account: node.account, children: filteredChildren)
                 results.append(proxy)
             }
@@ -309,4 +405,3 @@ final class AccountTreeViewModel {
         return results
     }
 }
-

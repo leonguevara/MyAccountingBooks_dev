@@ -4,75 +4,120 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-16.
+//  Last modified by León Felipe Guevara Chávez on 2026-03-22.
 //  Developed with AI assistance.
 //
 
 import SwiftUI
 
 /**
- A SwiftUI view that presents a comprehensive form for creating multi-split accounting transactions.
- 
- This view provides a complete interface for entering transaction details including date, memo,
- reference number, and multiple split lines. Each split line contains an account selection,
- optional memo, and either a debit or credit amount. The view enforces double-entry bookkeeping
- rules by requiring that total debits equal total credits before submission.
- 
+ Form view for creating a new multi-split double-entry accounting transaction.
+
+ `PostTransactionView` provides a complete data-entry interface for posting a transaction
+ to a ledger. It enforces double-entry bookkeeping rules throughout: the form cannot be
+ submitted until total debits equal total credits across all split lines.
+
  # Features
- - Transaction header with date, description (memo), and reference number
- - Dynamic split line management (add/remove lines)
- - Account picker with search functionality for each split
- - Real-time balance calculation and validation
- - Auto-balance functionality to automatically balance the last incomplete split
- - Visual balance indicators (balanced checkmark or imbalance warning)
- - Error handling and display
- 
+
+ - **Transaction header**: Date picker, free-text memo, and optional reference number.
+ - **Dynamic split management**: Add or remove split lines freely; minimum of 2 enforced.
+ - **Account picker**: Per-split expandable dropdown with real-time search, GnuCash-style
+   full-path labels (e.g., `"Assets:Current Assets:Cash:Checking"`), and kind-color dots.
+ - **Balance summary**: Live debit/credit totals with a green "Balanced" badge or a red
+   imbalance amount.
+ - **Auto-balance**: One-tap button fills the last split line with the amount needed to
+   bring the transaction into balance.
+ - **Submission guard**: The "Post" button is disabled until `viewModel.canSubmit` is `true`
+   (balanced, all splits complete, not already submitting).
+ - **Error display**: Inline red caption below the form when `viewModel.errorMessage` is set.
+
+ # Account Labels (GnuCash-style paths)
+
+ `accountPaths` is a `[UUID: String]` dictionary built by `AccountTreeBuilder.buildPathMap(from:)`.
+ It is threaded through to each `SplitLineRow` → `accountPickerButton` and `AccountPickerRow`
+ so that both the collapsed button label and every dropdown row show the full ancestor path
+ rather than a bare account name or truncated code. The leaf name is always visible because
+ long paths are truncated from the leading edge (`.truncationMode(.head)`).
+
+ # Layout
+
+ ```
+ NavigationStack
+ └─ Form (grouped)
+    ├─ Section "Transaction Details"  — date, memo, ref #
+    ├─ Section "Splits"               — column headers + SplitLineRow × n + Add button
+    ├─ Section (balance summary)      — total debits | status | total credits
+    └─ Section (error)                — shown only when errorMessage ≠ nil
+ ```
+
  # Usage Example
+
  ```swift
  PostTransactionView(
      ledger: selectedLedger,
-     allAccounts: accountTree,
+     allAccounts: allAccountRoots,
+     accountPaths: accountPaths,
      onSuccess: {
-         await viewModel.refreshTransactions()
+         guard let token = auth.token else { return }
+         await viewModel.load(ledger: ledger, account: account, token: token)
      }
  )
+ .environment(auth)
  ```
- 
- - Note: This view requires authentication and will use the current user's token for posting.
- - Important: All splits must balance (total debits = total credits) before submission is allowed.
+
+ - Important: All splits must balance (total debits = total credits) before the "Post"
+   button becomes active.
+ - Note: Requires `AuthService` in the SwiftUI environment. The token is read from
+   `auth.token` at the moment the "Post" button is tapped.
+ - SeeAlso: `PostTransactionViewModel`, `SplitLineRow`, `AccountPickerRow`,
+   `AccountTreeBuilder.buildPathMap(from:)`
  */
 struct PostTransactionView: View {
 
     // MARK: - Properties
-    
+
     /// The ledger to which the transaction will be posted.
     ///
-    /// This ledger determines the currency and decimal precision for all amounts in the transaction.
+    /// Determines the currency code and decimal precision used throughout the form for
+    /// amount formatting and for constructing the `PostTransactionRequest` payload.
     let ledger: LedgerResponse
-    
-    /// A flat list of all account nodes available for selection in split line pickers.
+
+    /// The complete account tree (all root nodes) available for selection in split pickers.
     ///
-    /// This list is filtered to only show leaf (non-placeholder) accounts when presented to the user.
+    /// Passed through to `leafAccounts`, which filters out placeholder nodes so that only
+    /// postable accounts are shown in each split line's account picker.
     let allAccounts: [AccountNode]
-    
-    /// An async callback invoked after the transaction is successfully posted to the backend.
+
+    /// GnuCash-style colon-separated full paths for every non-root account in the ledger.
     ///
-    /// Use this callback to refresh data, update UI state, or perform other post-submission actions.
-    /// The view will automatically dismiss after this callback completes.
+    /// Keys are account UUIDs; values are path strings such as
+    /// `"Assets:Current Assets:Cash:Checking"`. Threaded down to each `SplitLineRow`
+    /// so that both the collapsed picker button label and every dropdown row show the full
+    /// ancestor path. When a path is absent (empty map or unknown ID), the fallback is
+    /// `account.name`.
+    ///
+    /// - SeeAlso: `AccountTreeBuilder.buildPathMap(from:)`
+    let accountPaths: [UUID: String]
+
+    /// Async callback invoked immediately after the transaction is successfully posted.
+    ///
+    /// Use this to reload the register, refresh balances, or update any other dependent state.
+    /// The view dismisses itself after this callback returns.
     let onSuccess: () async -> Void
 
     // MARK: - Environment and State
-    
-    /// Authentication service environment dependency to access the user's authentication token.
+
+    /// Authentication service providing the bearer token used to authorize the POST request.
     @Environment(AuthService.self) private var auth
-    
-    /// Environment dismiss action used to close the sheet after successful posting or cancellation.
+
+    /// Environment dismiss action used to close the sheet on cancellation or after successful posting.
     @Environment(\.dismiss) private var dismiss
-    
-    /// The stateful view model managing form data, validation, and submission logic.
+
+    /// View model managing form state, validation, balance computation, and submission.
     @State private var viewModel = PostTransactionViewModel()
 
     // MARK: - Body
-    
+
     var body: some View {
         NavigationStack {
             Form {
@@ -104,12 +149,12 @@ struct PostTransactionView: View {
 
     // MARK: - Header Section
 
-    /// Displays the transaction header section with input fields for essential transaction details.
+    /// Transaction metadata inputs: posting date, memo, and optional reference number.
     ///
-    /// This section includes:
-    /// - **Date picker**: Allows selection of the transaction posting date
-    /// - **Description field**: A text field for the transaction memo/description
-    /// - **Reference number field**: An optional text field for check numbers, invoice numbers, etc.
+    /// - **Date**: `DatePicker` bound to `viewModel.postDate`; defaults to today.
+    /// - **Description**: Free-text memo bound to `viewModel.memo`.
+    /// - **Reference #**: Optional field bound to `viewModel.num` for check numbers,
+    ///   invoice IDs, etc.
     private var headerSection: some View {
         Section("Transaction Details") {
             DatePicker(
@@ -124,21 +169,35 @@ struct PostTransactionView: View {
 
     // MARK: - Splits Section
 
-    /// Displays the split lines section with account picker, amounts, and management controls.
-    ///
-    /// This section is the core of the double-entry transaction interface. It includes:
-    /// - Column headers for Account, Memo, Debit, and Credit
-    /// - Individual split line rows with editable fields
-    /// - Add split line button to insert new lines
-    /// - Auto-balance button in the header to automatically balance the transaction
-    ///
-    /// Each split line allows the user to:
-    /// - Select an account from the filtered leaf accounts
-    /// - Enter an optional memo for the split
-    /// - Enter either a debit or credit amount (not both)
-    /// - Delete the line (if more than 2 lines exist)
-    ///
-    /// The auto-balance feature fills the last incomplete split line to balance the transaction.
+    /**
+     The core double-entry split editor: column headers, per-split rows, and the add-line control.
+
+     Renders `viewModel.splits` as a list of `SplitLineRow` views, each bound via `$line` for
+     two-way editing. `accountPaths` is forwarded to every row so the account picker displays
+     full GnuCash-style paths.
+
+     # Column Layout
+
+     | Column  | Width   | Notes                                    |
+     |---------|---------|------------------------------------------|
+     | Account | Flex    | Expandable picker with path-label search |
+     | Memo    | 140 pt  | Optional per-split annotation            |
+     | Debit   | 110 pt  | Right-aligned; clears Credit on edit     |
+     | Credit  | 110 pt  | Right-aligned; clears Debit on edit      |
+     | (delete)| 32 pt   | Spacer matching `SplitLineRow` button    |
+
+     # Section Header Controls
+
+     - **"Splits" label**: Static section title.
+     - **"Auto-balance" button**: Calls `viewModel.autoBalance()` to fill the last split
+       with the amount needed for balance. Disabled when already balanced.
+
+     # Add Split Line
+
+     A plain-styled button at the bottom of the section calls `viewModel.addSplitLine()`.
+     The delete button on each row is disabled when exactly 2 lines remain (enforcing the
+     double-entry minimum).
+     */
     private var splitsSection: some View {
         Section {
             // Column header
@@ -157,11 +216,12 @@ struct PostTransactionView: View {
             .foregroundStyle(.secondary)
             .padding(.horizontal, 4)
 
-            // Split rows
+            // Split rows — accountPaths threaded to each row for full-path picker labels
             ForEach($viewModel.splits) { $line in
                 SplitLineRow(
                     line: $line,
                     allAccounts: leafAccounts,
+                    accountPaths: accountPaths,
                     onDebitEdited: { viewModel.didEditDebit(for: line.id) },
                     onCreditEdited: { viewModel.didEditCredit(for: line.id) },
                     onDelete: { viewModel.removeSplitLine(id: line.id) },
@@ -195,17 +255,21 @@ struct PostTransactionView: View {
 
     // MARK: - Balance Summary
 
-    /// Displays a real-time balance summary showing total debits, total credits, and balance status.
-    ///
-    /// This section provides immediate visual feedback about the transaction's balance state:
-    /// - **Total Debits**: Sum of all debit amounts across all split lines
-    /// - **Total Credits**: Sum of all credit amounts across all split lines
-    /// - **Balance Status**: Either a green checkmark (balanced) or red imbalance amount
-    ///
-    /// The transaction can only be posted when the balance status shows "Balanced"
-    /// (i.e., total debits equal total credits).
-    ///
-    /// All amounts are formatted according to the ledger's currency code and decimal precision.
+    /**
+     Real-time balance summary showing total debits, balance status, and total credits.
+
+     The three-column layout mirrors a traditional T-account view:
+     - **Left**: Total Debits formatted with the ledger's currency and decimal precision.
+     - **Center**: Either a green "Balanced ✓" label when `viewModel.isBalanced`, or a
+       red imbalance amount (`abs(viewModel.imbalance)`) when not.
+     - **Right**: Total Credits formatted identically to the debit column.
+
+     The "Post" toolbar button reads `viewModel.canSubmit`, which requires `isBalanced`
+     to be `true`, so this section provides the primary visual cue for submission readiness.
+
+     All amounts are formatted via `AmountFormatter` using `ledger.currencyCode` and
+     `ledger.decimalPlaces`.
+     */
     private var balanceSummary: some View {
         Section {
             HStack {
@@ -264,15 +328,15 @@ struct PostTransactionView: View {
 
     // MARK: - Toolbar
 
-    /// Provides toolbar items for transaction form actions: Cancel and Post.
-    ///
-    /// - **Cancel button**: Dismisses the view without posting the transaction
-    /// - **Post button**: Submits the transaction to the backend (disabled if validation fails)
-    ///
-    /// The Post button shows a progress indicator during submission and is disabled when:
-    /// - The transaction is not balanced
-    /// - Required fields are missing
-    /// - A submission is already in progress
+    /**
+     Toolbar items for the post-transaction form: Cancel and Post.
+
+     - **Cancel** (`cancellationAction`): Dismisses the sheet immediately without posting.
+     - **Post** (`confirmationAction`): Calls `viewModel.submit(ledger:token:)` asynchronously.
+       While submitting, the label is replaced with a small `ProgressView`. The button is
+       disabled whenever `viewModel.canSubmit` is `false` (unbalanced, incomplete splits,
+       or a submission is already in flight).
+     */
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
@@ -297,13 +361,26 @@ struct PostTransactionView: View {
 
     // MARK: - Helpers
 
-    /// Returns only leaf (non-placeholder) accounts that can receive transaction splits.
-    ///
-    /// This computed property filters the account tree to exclude placeholder accounts,
-    /// which are used only for organizational hierarchy and cannot have transactions posted to them.
-    /// The filtering is recursive, traversing the entire account tree structure.
-    ///
-    /// - Returns: An array of `AccountNode` objects representing valid accounts for split assignment.
+    /**
+     Recursively collects all postable (non-placeholder) leaf accounts from `allAccounts`.
+
+     Placeholder accounts are structural containers in the chart of accounts and cannot
+     receive transaction splits. This helper traverses the full tree depth-first, including
+     non-placeholder nodes at every level (a non-placeholder parent may still have children).
+
+     ```
+     allAccounts (roots)
+     └─ Assets (placeholder — skipped, recurse)
+        └─ Cash (non-placeholder — included, recurse)
+           └─ Checking (non-placeholder — included, recurse)
+     ```
+
+     The resulting flat array is passed to each `SplitLineRow` as `allAccounts`, driving
+     both the expanded dropdown list and the `filteredAccounts` search.
+
+     - Returns: A flat `[AccountNode]` array of every non-placeholder account in the tree.
+     - SeeAlso: `SplitLineRow`, `AccountNode.isPlaceholder`
+     */
     private var leafAccounts: [AccountNode] {
         func collectLeaves(_ nodes: [AccountNode]) -> [AccountNode] {
             nodes.flatMap { node in
@@ -318,71 +395,91 @@ struct PostTransactionView: View {
 // MARK: - Split Line Row
 
 /**
- A specialized row view for editing a single split line within the transaction.
- 
- This view provides a complete interface for one split line in the double-entry transaction,
- including account selection, memo entry, amount input (debit or credit), and deletion.
- 
- # Features
- - **Account picker**: Dropdown with search functionality to select from available accounts
- - **Memo field**: Optional text field for split-specific notes
- - **Debit/Credit fields**: Numeric input fields (only one should have a value per split)
- - **Delete button**: Removes the split line (disabled if minimum lines would be violated)
- 
+ Editable row representing a single split line within the post-transaction form.
+
+ `SplitLineRow` composes four editing surfaces side by side — account picker, memo field,
+ debit field, and credit field — plus a delete button. It is instantiated once per entry in
+ `PostTransactionViewModel.splits` and bound via `$line` for two-way state propagation.
+
  # Layout
- The row uses a horizontal layout with the following columns:
- - Account picker (expandable, full width)
- - Memo field (130pt fixed width)
- - Debit field (100pt fixed width, right-aligned)
- - Credit field (100pt fixed width, right-aligned)
- - Delete button (24pt fixed width)
- 
- - Note: When a debit amount is entered, the credit field should remain empty and vice versa.
+
+ | Column         | Width   | Notes                                        |
+ |----------------|---------|----------------------------------------------|
+ | Account picker | Flex    | Expandable dropdown with path-label search   |
+ | Memo           | 130 pt  | Optional free-text annotation for the split  |
+ | Debit          | 100 pt  | Right-aligned; triggers `onDebitEdited`      |
+ | Credit         | 100 pt  | Right-aligned; triggers `onCreditEdited`     |
+ | Delete button  | 24 pt   | Disabled when `canDelete` is `false`         |
+
+ # Debit / Credit Mutual Exclusivity
+
+ Editing either amount field triggers its respective callback (`onDebitEdited` /
+ `onCreditEdited`), which the parent view model uses to clear the opposing field —
+ ensuring a split is never simultaneously a debit and a credit.
+
+ # Account Picker
+
+ The picker is a custom expandable button (`accountPickerButton`) that:
+ - When **collapsed**: shows `accountPaths[account.id] ?? account.name` with
+   `.truncationMode(.head)` so the leaf account name is always visible.
+ - When **expanded**: shows a search field and a `LazyVStack` of `AccountPickerRow`
+   views, each displaying its full `accountPaths` path and a kind-color dot.
+
+ - Note: Debit and credit fields are mutually exclusive per split — entering a value in
+   one clears the other via the parent view model callbacks.
+ - SeeAlso: `PostTransactionView`, `PostTransactionViewModel`, `AccountPickerRow`
  */
 private struct SplitLineRow: View {
 
     // MARK: - Properties
-    
-    /// Binding to the split line data model being edited.
+
+    /// Two-way binding to the split line data model.
     ///
-    /// Changes to account selection, memo, or amounts are immediately reflected in the parent view.
+    /// Mutations to `account`, `memo`, `debitAmount`, and `creditAmount` are immediately
+    /// reflected in `PostTransactionViewModel.splits`.
     @Binding var line: SplitLine
-    
-    /// The list of all available accounts for selection in the account picker dropdown.
+
+    /// Flat list of postable (non-placeholder) accounts available in the picker dropdown.
     ///
-    /// This should typically contain only leaf (non-placeholder) accounts.
+    /// Pre-filtered by `PostTransactionView.leafAccounts` before being passed here.
     let allAccounts: [AccountNode]
-    
-    /// Callback invoked when the user edits the debit amount field.
+
+    /// GnuCash-style colon-separated full paths keyed by account UUID.
     ///
-    /// This triggers balance recalculation and may clear the credit field in the view model.
+    /// Forwarded to `accountPickerButton` (collapsed label) and each `AccountPickerRow`
+    /// (dropdown row label). When a path is absent, the fallback is `account.name`.
+    ///
+    /// - SeeAlso: `AccountTreeBuilder.buildPathMap(from:)`
+    let accountPaths: [UUID: String]
+
+    /// Called when the user edits the debit field; triggers credit-field clearing in the view model.
     let onDebitEdited: () -> Void
-    
-    /// Callback invoked when the user edits the credit amount field.
-    ///
-    /// This triggers balance recalculation and may clear the debit field in the view model.
+
+    /// Called when the user edits the credit field; triggers debit-field clearing in the view model.
     let onCreditEdited: () -> Void
-    
-    /// Callback invoked when the user taps the delete button.
+
+    /// Called when the user taps the delete button.
     ///
-    /// The parent view determines whether deletion is allowed based on minimum line requirements.
+    /// The parent enforces a minimum of 2 split lines; deletion is silently ignored when
+    /// only 2 remain.
     let onDelete: () -> Void
-    
-    /// Indicates whether the delete button should be enabled.
+
+    /// Whether the delete button is currently enabled.
     ///
-    /// Typically `false` when only the minimum number of split lines (usually 2) remain.
+    /// `false` when `PostTransactionViewModel.splits.count <= 2`, preventing the user from
+    /// dropping below the double-entry minimum.
     let canDelete: Bool
 
     // MARK: - State
-    
-    /// The current search text for filtering accounts in the picker dropdown.
+
+    /// Current text in the account search field inside the expanded picker dropdown.
     @State private var searchText = ""
-    
-    /// Controls the visibility of the account picker dropdown menu.
+
+    /// Whether the account picker dropdown is currently expanded.
     @State private var isPickerExpanded = false
 
     // MARK: - Body
-    
+
     var body: some View {
         HStack(spacing: 8) {
 
@@ -429,18 +526,29 @@ private struct SplitLineRow: View {
 
     // MARK: - Account Picker Button
 
-    /// Presents a custom account picker button with expandable dropdown and search functionality.
-    ///
-    /// When collapsed, displays either the selected account (with code and name) or a placeholder.
-    /// When expanded, shows a search field and scrollable list of filtered accounts.
-    ///
-    /// The picker includes:
-    /// - A button showing the current account selection or "Select account…" placeholder
-    /// - An expandable dropdown with search field
-    /// - Filtered list of accounts based on search text
-    /// - Visual styling with rounded corners and borders
-    ///
-    /// Search filters accounts by name, code, or account type code (case-insensitive).
+    /**
+     Custom expandable account picker button with full-path labels and inline search.
+
+     # Collapsed State
+
+     Shows a rounded-border button containing:
+     - The selected account's full path from `accountPaths`, or `account.name` as fallback.
+       Long paths are truncated from the **leading edge** (`.truncationMode(.head)`) so the
+       leaf account name at the right end remains visible.
+     - A `"Select account…"` placeholder when no account is selected.
+     - A `chevron.up.chevron.down` indicator on the trailing edge.
+
+     # Expanded State
+
+     A floating `VStack` (`.zIndex(100)`) drops below the button containing:
+     - A search `TextField` that filters `filteredAccounts` in real time.
+     - A `LazyVStack` of `AccountPickerRow` rows, each showing the full path and a
+       kind-color dot. Tapping a row sets `line.account`, collapses the picker, and
+       clears `searchText`.
+
+     - Note: The dropdown uses `.zIndex(100)` to float above sibling rows in the form.
+     - SeeAlso: `AccountPickerRow`, `filteredAccounts`
+     */
     private var accountPickerButton: some View {
         VStack(alignment: .leading, spacing: 0) {
             Button {
@@ -449,18 +557,13 @@ private struct SplitLineRow: View {
             } label: {
                 HStack {
                     if let account = line.account {
-                        VStack(alignment: .leading, spacing: 1) {
-                            HStack(spacing: 4) {
-                                if let code = account.code {
-                                    Text(code)
-                                        .font(.caption2)
-                                        .foregroundStyle(.secondary)
-                                }
-                                Text(account.name)
-                                    .font(.body)
-                                    .foregroundStyle(.primary)
-                            }
-                        }
+                        // Show full GnuCash-style path; truncate from the left so the
+                        // leaf account name at the right end is always readable.
+                        Text(accountPaths[account.id] ?? account.name)
+                            .font(.body)
+                            .foregroundStyle(.primary)
+                            .lineLimit(1)
+                            .truncationMode(.head)
                     } else {
                         Text("Select account…")
                             .foregroundStyle(.secondary)
@@ -496,17 +599,20 @@ private struct SplitLineRow: View {
 
                     Divider()
 
-                    // Filtered account list
+                    // Filtered account list — each row receives its full path for display
                     ScrollView {
                         LazyVStack(spacing: 0) {
                             ForEach(filteredAccounts) { account in
-                                AccountPickerRow(account: account)
-                                    .contentShape(Rectangle())
-                                    .onTapGesture {
-                                        line.account = account
-                                        isPickerExpanded = false
-                                        searchText = ""
-                                    }
+                                AccountPickerRow(
+                                    account: account,
+                                    fullPath: accountPaths[account.id]
+                                )
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    line.account = account
+                                    isPickerExpanded = false
+                                    searchText = ""
+                                }
                                 Divider().padding(.leading, 12)
                             }
                         }
@@ -523,16 +629,16 @@ private struct SplitLineRow: View {
 
     // MARK: - Filtered Accounts
 
-    /// Returns the list of accounts filtered by the current search text.
+    /// Accounts from `allAccounts` that match `searchText`, or all accounts when the query is blank.
     ///
-    /// Searches across multiple account properties:
-    /// - Account name
-    /// - Account code
-    /// - Account type code
+    /// The search is case-insensitive and matches against three fields:
+    /// - `account.name`
+    /// - `account.code`
+    /// - `account.accountTypeCode`
     ///
-    /// The search is case-insensitive. If the search text is empty, returns all accounts.
+    /// Whitespace-only queries are treated as empty, returning the full `allAccounts` list.
     ///
-    /// - Returns: An array of `AccountNode` objects matching the search criteria.
+    /// - Returns: A filtered `[AccountNode]` array for display in the dropdown.
     private var filteredAccounts: [AccountNode] {
         let query = searchText.trimmingCharacters(in: .whitespaces).lowercased()
         guard !query.isEmpty else { return allAccounts }
@@ -547,53 +653,70 @@ private struct SplitLineRow: View {
 // MARK: - Account Picker Row
 
 /**
- A single row in the account picker dropdown list.
- 
- This view displays one account option in the picker with visual indicators and information:
- - **Color indicator**: A small circle colored by account kind (asset, liability, etc.)
- - **Account code**: Optional account code displayed in monospaced font
- - **Account name**: The primary account name
- - **Type code**: Optional account type code shown as tertiary text
- 
- # Color Coding by Account Kind
- - Kind 1 (Asset): Blue
- - Kind 2 (Liability): Red
- - Kind 3 (Equity): Purple
- - Kind 4 (Revenue): Green
- - Kind 5 (Expense): Orange
- - Other: Gray
+ A single row in the `SplitLineRow` account picker dropdown.
+
+ Each row represents one selectable account and displays:
+ - **Kind-color dot**: A 7 pt filled circle whose color encodes the account kind (see below).
+ - **Primary text**: The full GnuCash-style path from `fullPath` (e.g.,
+   `"Assets:Current Assets:Cash:Checking"`), or `account.name` when `fullPath` is `nil`.
+   Long paths are truncated from the leading edge so the leaf name remains visible.
+ - **Type code**: `account.accountTypeCode` shown below the path in tertiary style
+   when present (e.g., `"ASSET"`, `"EXPENSE"`).
+
+ # Kind Color Coding
+
+ | Kind | Account type | Color  |
+ |------|--------------|--------|
+ | 1    | Asset        | Blue   |
+ | 2    | Liability    | Red    |
+ | 3    | Equity       | Purple |
+ | 4    | Revenue      | Green  |
+ | 5    | Expense      | Orange |
+ | else | Other        | Gray   |
+
+ - Note: `fullPath` defaults to `nil`. When absent, the row falls back to `account.name`.
+ - SeeAlso: `SplitLineRow.accountPickerButton`, `AccountTreeBuilder.buildPathMap(from:)`
  */
 private struct AccountPickerRow: View {
-    /// The account node to display in this row.
+
+    /// The account node this row represents.
     let account: AccountNode
 
+    /// The full GnuCash-style colon-separated path for this account, if available.
+    ///
+    /// When non-`nil`, this is shown as the primary label instead of `account.name`.
+    /// Sourced from `accountPaths[account.id]` in the parent `SplitLineRow`.
+    var fullPath: String? = nil
+
     // MARK: - Body
-    
+
     var body: some View {
         HStack(spacing: 8) {
             Circle()
                 .fill(kindColor)
                 .frame(width: 7, height: 7)
 
-            if let code = account.code {
-                Text(code)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
-                    .frame(width: 90, alignment: .leading)
+            VStack(alignment: .leading, spacing: 1) {
+                // Show full path when available; fall back to bare account name.
+                // Truncate from the left so the leaf account name remains readable.
+                if let path = fullPath {
+                    Text(path)
+                        .font(.body)
+                        .lineLimit(1)
+                        .truncationMode(.head)
+                } else {
+                    Text(account.name)
+                        .font(.body)
+                        .lineLimit(1)
+                }
+                if let typeCode = account.accountTypeCode {
+                    Text(typeCode)
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
             }
-
-            Text(account.name)
-                .font(.body)
-                .lineLimit(1)
 
             Spacer()
-
-            if let typeCode = account.accountTypeCode {
-                Text(typeCode)
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
-            }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 7)
@@ -601,18 +724,11 @@ private struct AccountPickerRow: View {
     }
 
     // MARK: - Helpers
-    
-    /// Returns the color associated with the account's kind (type).
+
+    /// Color associated with the account's kind, used for the kind-indicator dot.
     ///
-    /// This provides visual differentiation between different account categories:
-    /// - **Blue**: Assets (kind 1)
-    /// - **Red**: Liabilities (kind 2)
-    /// - **Purple**: Equity (kind 3)
-    /// - **Green**: Revenue (kind 4)
-    /// - **Orange**: Expenses (kind 5)
-    /// - **Gray**: Other or undefined kinds
-    ///
-    /// - Returns: A `Color` representing the account kind.
+    /// Provides at-a-glance visual differentiation between account categories without
+    /// requiring the user to read the type code label.
     private var kindColor: Color {
         switch account.account.kind {
         case 1:  return .blue
@@ -624,4 +740,3 @@ private struct AccountPickerRow: View {
         }
     }
 }
-

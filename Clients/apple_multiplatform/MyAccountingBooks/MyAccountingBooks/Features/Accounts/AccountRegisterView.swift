@@ -4,97 +4,133 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-16.
+//  Last modified by León Felie Guevara Chávez on 2026-03-22
 //  Developed with AI assistance.
 //
 
 import SwiftUI
 
 /**
- A comprehensive account register view displaying transaction history and running balance.
- 
- This view presents a detailed register for a specific account within a ledger, showing all
- transactions that affect the account with signed amounts and a continuously updated running balance.
- The register follows traditional accounting principles with debit/credit amount formatting.
- 
+ Account register displaying transaction history and a continuously updated running balance.
+
+ `AccountRegisterView` presents the full transaction register for a single account within a
+ ledger. It follows traditional double-entry accounting conventions: signed amounts reflect the
+ account's normal balance direction, and a running balance is recomputed after each transaction.
+
  # Features
- - **Transaction List**: Displays all transactions for the account in chronological order
- - **Running Balance**: Shows cumulative balance after each transaction
- - **Signed Amounts**: Amounts are signed according to the account's normal balance
- - **Interactive Rows**: Tap any transaction to view full details
- - **Post Transactions**: Create new transactions via toolbar or empty state button
- - **Voided Indicator**: Visual badge for voided transactions with strikethrough text
- - **Refresh**: Manual refresh button to reload latest transactions
- - **Empty State**: Helpful placeholder when no transactions exist
- 
- # User Interactions
- - **Tapping a row**: Opens transaction detail sheet with all splits and metadata
- - **+ Toolbar button**: Opens post transaction form
- - **Empty state button**: Opens post transaction form when no transactions exist
- - **Refresh button**: Reloads transactions from the backend
- 
+
+ - **Transaction list**: All transactions for the account in chronological order.
+ - **Running balance**: Cumulative balance column updated after every row.
+ - **Signed amounts**: Each amount is signed according to the account's normal balance.
+ - **Interactive rows**: Tap any row to open the full transaction detail sheet.
+ - **Post transactions**: Create new transactions via the `+` toolbar button or the
+   empty-state action button.
+ - **Voided indicator**: Strikethrough text and a red "VOIDED" badge on voided rows.
+ - **Refresh**: Manual reload via the secondary toolbar button.
+ - **Empty state**: Contextual placeholder with a quick-post button when no transactions exist.
+
  # Data Loading
- The view loads two pieces of data concurrently on appear:
- 1. **Transactions** for the current account (loaded first for quick display)
- 2. **Account tree** for the entire chart of accounts (needed for transaction posting)
- 
+
+ On `.task`, transactions and the chart of accounts are fetched concurrently:
+
+ ```
+ async let txLoad     = viewModel.load(ledger:account:token:)
+ async let accountLoad = AccountService.fetchAccounts(ledgerID:token:)
+ ```
+
+ Transactions are awaited first so the register renders immediately; the account tree
+ (needed only for the post-transaction form and the detail sheet) loads in the background.
+ After the account tree resolves, `accountPaths` is built via
+ `AccountTreeBuilder.buildPathMap(from:)` and forwarded to both sheet destinations.
+
+ # Sheet Destinations
+
+ | Trigger              | Sheet                    | Receives `accountPaths`? |
+ |----------------------|--------------------------|--------------------------|
+ | Tap a register row   | `TransactionDetailSheet` | Yes — resolves split UUIDs to names |
+ | Tap `+` / empty CTA  | `PostTransactionView`    | Yes — drives account picker labels  |
+
  # Display Format
- Each register row shows:
- - **Date**: Transaction posting date in short format
- - **Ref #**: Optional reference number (check number, invoice, etc.)
- - **Description**: Transaction memo with voided badge if applicable
- - **Amount**: Signed amount for this account (red if negative)
- - **Balance**: Running balance after this transaction (red if negative)
- 
+
+ Each register row shows five fixed-width columns:
+
+ | Column      | Width  | Alignment |
+ |-------------|--------|-----------|
+ | Date        | 90 pt  | Leading   |
+ | Ref #       | 70 pt  | Leading   |
+ | Description | Flex   | Leading   |
+ | Amount      | 110 pt | Trailing  |
+ | Balance     | 120 pt | Trailing  |
+
  # Usage Example
+
  ```swift
  AccountRegisterView(ledger: selectedLedger, account: accountNode)
      .environment(authService)
  ```
- 
- - Important: Requires `AuthService` in the environment to obtain authentication token.
- - Note: The account tree is loaded asynchronously to populate the account picker in the post transaction form.
- - SeeAlso: `AccountRegisterViewModel`, `TransactionDetailView`, `PostTransactionView`
- */
 
+ - Important: Requires `AuthService` in the SwiftUI environment to obtain a valid
+   bearer token before loading.
+ - Note: The account tree and path map are loaded asynchronously. The post-transaction
+   form and detail sheet remain functional as soon as that background load completes;
+   before it does, `allAccountRoots` and `accountPaths` are empty.
+ - SeeAlso: `AccountRegisterViewModel`, `TransactionDetailSheet`, `PostTransactionView`,
+   `AccountTreeBuilder.buildPathMap(from:)`
+ */
 struct AccountRegisterView: View {
 
     // MARK: - Properties
-    
+
     /// The ledger that provides currency and decimal context for all monetary amounts.
     ///
-    /// This ledger determines how amounts are formatted (currency code, decimal places)
-    /// and provides the context for fetching transactions.
+    /// Determines how amounts are formatted (currency code, decimal places) and supplies
+    /// the `ledgerID` used to fetch both transactions and the account tree.
     let ledger: LedgerResponse
-    
+
     /// The account whose transaction register is being displayed.
     ///
-    /// All transactions shown in the register affect this account. The running balance
-    /// represents the cumulative effect on this specific account.
+    /// All transactions shown affect this account. The running balance represents the
+    /// cumulative effect on this specific account over time.
     let account: AccountNode
 
     // MARK: - Environment and State
-    
-    /// Authentication service used to obtain bearer token for network operations.
-    ///
-    /// Required for loading transactions and accounts from the backend API.
+
+    /// Authentication service used to obtain the bearer token for all network operations.
     @Environment(AuthService.self) private var auth
-    
-    /// View model managing register data, loading state, and sheet presentation.
+
+    /// View model managing register rows, loading state, error state, and sheet triggers.
     ///
-    /// Handles transaction loading, row computation, error state, and controls which
-    /// sheets are currently presented (transaction detail or post transaction form).
+    /// Controls which sheet is currently presented (`showTransactionDetail` or
+    /// `showPostTransaction`) and holds the `selectedTransaction` for the detail sheet.
     @State private var viewModel = AccountRegisterViewModel()
-    
-    /// Complete chart of accounts tree for the ledger.
+
+    /// Complete chart of accounts tree for the ledger, loaded concurrently with transactions.
     ///
-    /// Loaded asynchronously alongside transactions to populate the account picker
-    /// in the post transaction form. Initially empty until accounts are fetched.
+    /// Initially empty. Populated after `AccountService.fetchAccounts` resolves in the
+    /// background `.task`. Passed to `PostTransactionView` as the account picker source.
     @State private var allAccountRoots: [AccountNode] = []
 
+    /// GnuCash-style colon-separated full paths for every non-root account in the ledger.
+    ///
+    /// Keys are account UUIDs; values are path strings such as
+    /// `"Assets:Current Assets:Cash:Checking"`. Built from `allAccountRoots` via
+    /// `AccountTreeBuilder.buildPathMap(from:)` immediately after the account tree loads.
+    ///
+    /// Forwarded to two destinations:
+    /// - `PostTransactionView` — drives account picker row labels.
+    /// - `TransactionDetailSheet` → `TransactionDetailView` — resolves raw `accountId`
+    ///   UUIDs on split lines to human-readable account names.
+    ///
+    /// - Note: Empty until the background account-tree load completes. Both sheet
+    ///   destinations handle an empty map gracefully (falling back to short UUIDs or
+    ///   bare account names).
+    /// - SeeAlso: `AccountTreeBuilder.buildPathMap(from:)`
+    @State private var accountPaths: [UUID: String] = [:]
+
     // MARK: - Body
-    
+
     var body: some View {
-        /// Switches between loading, empty, and populated register states.
+        /// Switches between loading indicator, empty state, and the populated register table.
         Group {
             if viewModel.isLoading {
                 ProgressView("Loading register…")
@@ -115,8 +151,8 @@ struct AccountRegisterView: View {
         // while the account tree loads in the background for the post transaction form.
         .task {
             guard let token = auth.token else { return }
-             
-            // Load transactions and account tree concurrently
+
+            // Both fetches start simultaneously
             async let txLoad: () = viewModel.load(
                 ledger: ledger,
                 account: account,
@@ -126,11 +162,12 @@ struct AccountRegisterView: View {
                 ledgerID: ledger.id,
                 token: token
             )
- 
+
             // Await transactions first so the register renders quickly
             await txLoad
             if let flat = try? await accountLoad {
                 allAccountRoots = AccountTreeBuilder.build(from: flat)
+                accountPaths    = AccountTreeBuilder.buildPathMap(from: allAccountRoots)
             }
         }
         .alert(
@@ -144,17 +181,25 @@ struct AccountRegisterView: View {
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
-        // Transaction detail sheet - shown when user taps a register row
+        // Transaction detail sheet — shown when the user taps a register row.
+        // accountPaths is forwarded so TransactionDetailView can resolve split
+        // accountId UUIDs to human-readable account names.
         .sheet(isPresented: $viewModel.showTransactionDetail) {
             if let tx = viewModel.selectedTransaction {
-                TransactionDetailSheet(transaction: tx, ledger: ledger)
+                TransactionDetailSheet(
+                    transaction: tx,
+                    ledger: ledger,
+                    accountPaths: accountPaths
+                )
             }
         }
-        // Post transaction sheet - shown when user taps + button or empty state button
+        // Post transaction sheet — shown when the user taps + or the empty-state button.
+        // accountPaths drives the account picker label display.
         .sheet(isPresented: $viewModel.showPostTransaction) {
             PostTransactionView(
                 ledger: ledger,
                 allAccounts: allAccountRoots,
+                accountPaths: accountPaths,
                 onSuccess: {
                     guard let token = auth.token else { return }
                     await viewModel.load(
@@ -169,15 +214,17 @@ struct AccountRegisterView: View {
     }
 
     // MARK: - Register Table
-    
-    /// The main register table composed of header, scrollable data rows, and footer.
+
+    /// The main register composed of a sticky header, a scrollable data area, and a footer.
     ///
-    /// Displays all transactions in chronological order with:
-    /// - Column headers showing Date, Ref #, Description, Amount, and Balance
-    /// - Scrollable list of transaction rows with tap gesture support
-    /// - Footer showing current account balance
+    /// Renders `viewModel.rows` in a `LazyVStack` for performance on long registers. Each
+    /// row is tappable: a tap sets `viewModel.selectedTransaction` and raises the detail sheet.
+    /// The selected row is highlighted with a translucent accent background.
     ///
-    /// Each row is tappable to show transaction details and highlights when selected.
+    /// Layout:
+    /// - `RegisterHeaderRow` — fixed column labels.
+    /// - `ScrollView / LazyVStack` — one `RegisterDataRow` per `RegisterRow`, with dividers.
+    /// - `RegisterFooterRow` — current balance from `viewModel.rows.last?.runningBalance`.
     private var registerTable: some View {
         VStack(spacing: 0) {
             // Column headers
@@ -222,12 +269,11 @@ struct AccountRegisterView: View {
     }
 
     // MARK: - Empty State
-    
-    /// Placeholder content shown when the account has no transactions.
+
+    /// Placeholder shown when the account has no recorded transactions.
     ///
-    /// Displays a friendly message with an icon and provides a quick action button
-    /// to post the first transaction for this account. The "Post Transaction" button
-    /// opens the same form as the + toolbar button.
+    /// Presents an icon, a headline, a supporting message, and a "Post Transaction"
+    /// button that triggers the same sheet as the `+` toolbar item.
     private var emptyState: some View {
         VStack(spacing: 16) {
             Image(systemName: "tray")
@@ -247,16 +293,13 @@ struct AccountRegisterView: View {
     }
 
     // MARK: - Toolbar
-    
+
     /// Toolbar actions for posting a new transaction and refreshing the register.
     ///
-    /// **Primary Action:**
-    /// - **+ Button**: Opens the post transaction form with the account tree pre-loaded
-    ///
-    /// **Secondary Action:**
-    /// - **Refresh Button**: Reloads transactions from the backend to show latest data
-    ///
-    /// Both actions require authentication and use the token from `AuthService`.
+    /// - **Primary action (`+`)**: Sets `viewModel.showPostTransaction = true`, which
+    ///   presents `PostTransactionView` with the pre-loaded account tree and path map.
+    /// - **Secondary action (↺ Refresh)**: Re-invokes `viewModel.load` to pull the latest
+    ///   transactions from the backend without reloading the account tree.
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
@@ -288,17 +331,23 @@ struct AccountRegisterView: View {
 // MARK: - Register Header Row
 
 /**
- Column headers for the register table.
- 
- Displays fixed-width column headers for the five register columns:
- - **Date**: Transaction posting date (90pt)
- - **Ref #**: Optional reference/check number (70pt)
- - **Description**: Transaction memo (flexible width)
- - **Amount**: Signed amount for this account (110pt, right-aligned)
- - **Balance**: Running balance after transaction (120pt, right-aligned)
- 
- The header uses a distinct background color and secondary text to differentiate
- it from the data rows below.
+ Fixed column headers for the register table.
+
+ Renders five labels with the same fixed widths used by `RegisterDataRow` to ensure
+ visual alignment across the entire register:
+
+ | Column      | Width  | Alignment |
+ |-------------|--------|-----------|
+ | Date        | 90 pt  | Leading   |
+ | Ref #       | 70 pt  | Leading   |
+ | Description | Flex   | Leading   |
+ | Amount      | 110 pt | Trailing  |
+ | Balance     | 120 pt | Trailing  |
+
+ The header uses `windowBackgroundColor` to visually separate it from the data rows below.
+
+ - Note: `ledger` is accepted as a parameter for future extensibility (e.g., showing
+   the currency symbol in the Amount/Balance headers), but is not currently used.
  */
 private struct RegisterHeaderRow: View {
     let ledger: LedgerResponse
@@ -327,27 +376,35 @@ private struct RegisterHeaderRow: View {
 // MARK: - Register Data Row
 
 /**
- A single register row showing transaction details and running balance.
- 
- Displays a complete transaction entry in the register with:
- - **Date**: Short-formatted posting date
- - **Ref #**: Reference number prefixed with "#" (if present)
- - **Description**: Transaction memo with voided badge overlay (if voided)
- - **Amount**: Signed amount for this account (negative amounts in red)
- - **Balance**: Cumulative balance after this transaction (negative balances in red)
- 
+ A single register row displaying one transaction and its running balance.
+
+ Renders five fixed-width columns aligned with `RegisterHeaderRow`:
+ - **Date**: Short-formatted posting date in monospaced digits.
+ - **Ref #**: Reference number prefixed with `"#"` when present; empty otherwise.
+ - **Description**: Transaction memo, with strikethrough and a red `"VOIDED"` capsule
+   badge for voided transactions.
+ - **Amount**: Signed amount for this account via `row.accountAmount`; negative values
+   are rendered in red.
+ - **Balance**: Running cumulative balance via `row.runningBalance`; negative values
+   are rendered in red.
+
+ Monospaced digits are used for all numeric and date columns to ensure vertical alignment
+ across rows regardless of digit width.
+
  # Visual Indicators
- - **Voided transactions**: Strikethrough text and red "VOIDED" badge
- - **Negative amounts**: Displayed in red color
- - **Negative balances**: Displayed in red color
- 
- The row uses monospaced digits for amounts and dates to ensure proper alignment
- across all rows in the register.
+
+ | Condition           | Visual treatment                              |
+ |---------------------|-----------------------------------------------|
+ | Voided transaction  | Strikethrough memo + red `"VOIDED"` badge     |
+ | Negative amount     | Red foreground on the Amount column           |
+ | Negative balance    | Red foreground on the Balance column          |
+
+ - SeeAlso: `RegisterRow`, `AmountFormatter`
  */
 private struct RegisterDataRow: View {
-    /// The register row data containing transaction and computed amounts.
+    /// The register row data containing the transaction and its computed amounts.
     let row: RegisterRow
-    /// The ledger context for currency formatting.
+    /// The ledger context for currency code and decimal-place formatting.
     let ledger: LedgerResponse
 
     var body: some View {
@@ -402,7 +459,7 @@ private struct RegisterDataRow: View {
         .padding(.vertical, 8)
     }
 
-    /// Formats the signed amount for the current account row.
+    /// Formats `row.accountAmount` using the ledger's currency code and decimal places.
     private var formattedAmount: String {
         AmountFormatter.format(
             row.accountAmount,
@@ -411,7 +468,7 @@ private struct RegisterDataRow: View {
         )
     }
 
-    /// Formats the running balance at this row.
+    /// Formats `row.runningBalance` using the ledger's currency code and decimal places.
     private var formattedBalance: String {
         AmountFormatter.format(
             row.runningBalance,
@@ -420,12 +477,12 @@ private struct RegisterDataRow: View {
         )
     }
 
-    /// Color coding for the signed amount (negative amounts are red).
+    /// Red for negative amounts; primary label color otherwise.
     private var amountColor: Color {
         row.accountAmount >= 0 ? Color.primary : Color.red
     }
 
-    /// Color coding for the running balance (negative balances are red).
+    /// Red for negative balances; primary label color otherwise.
     private var balanceColor: Color {
         row.runningBalance >= 0 ? Color.primary : Color.red
     }
@@ -435,18 +492,22 @@ private struct RegisterDataRow: View {
 
 /**
  Footer row displaying the current account balance.
- 
- Shows the final running balance after all transactions, formatted according to
- the ledger's currency code and decimal places. Negative balances are displayed
- in red to draw attention to potential issues.
- 
- This footer provides a quick reference for the account's current state without
- needing to scroll to the last transaction in a long register.
+
+ Shows the final running balance after all transactions, formatted with the ledger's
+ currency code and decimal places. Negative balances are displayed in red to draw
+ attention to potentially unexpected account states.
+
+ The footer provides an at-a-glance balance summary without requiring the user to
+ scroll to the last row of a long register.
+
+ - Note: The balance value is typically sourced from `viewModel.rows.last?.runningBalance`,
+   falling back to `.zero` when the register is empty.
+ - SeeAlso: `RegisterDataRow`, `AmountFormatter`
  */
 private struct RegisterFooterRow: View {
-    /// The current balance to display (typically from the last register row).
+    /// The balance to display — typically the `runningBalance` of the last register row.
     let balance: Decimal
-    /// The ledger context for currency formatting.
+    /// The ledger context for currency code and decimal-place formatting.
     let ledger: LedgerResponse
 
     var body: some View {
@@ -471,34 +532,61 @@ private struct RegisterFooterRow: View {
 // MARK: - Transaction Detail Sheet
 
 /**
- A sheet presentation of the full transaction details.
- 
- This view wraps `TransactionDetailView` in a navigation stack with a "Done" button
- to dismiss the sheet. It's presented when the user taps on any transaction row
- in the register.
- 
- The sheet displays:
- - Complete transaction metadata (date, reference, memo, status)
- - All split lines with accounts and amounts
- - Debit/credit totals and balance verification
- 
+ Sheet wrapper presenting the full details of a tapped register transaction.
+
+ `TransactionDetailSheet` embeds `TransactionDetailView` inside a `NavigationStack`
+ and adds a "Done" dismiss button in the confirmation-action toolbar slot. It is
+ presented by `AccountRegisterView` whenever the user taps a row in the register.
+
+ The `accountPaths` dictionary is forwarded to `TransactionDetailView` so that raw
+ `accountId` UUIDs on each split line are resolved to human-readable account names
+ (e.g., `"Assets:Current Assets:Cash:Checking"`) rather than truncated UUID strings.
+
+ # Contents
+
+ - Complete transaction metadata: posting date, reference number, memo, voided status.
+ - All split lines with resolved account names, memos, and debit/credit amounts.
+ - Debit and credit column totals with balance verification.
+
  # Usage
- This sheet is automatically presented by `AccountRegisterView` when a transaction
- row is tapped. The dismiss action is handled by the "Done" button in the toolbar.
- 
- - Note: The sheet has a minimum size to ensure all transaction details are readable.
+
+ Presented automatically by `AccountRegisterView`:
+ ```swift
+ .sheet(isPresented: $viewModel.showTransactionDetail) {
+     if let tx = viewModel.selectedTransaction {
+         TransactionDetailSheet(
+             transaction: tx,
+             ledger: ledger,
+             accountPaths: accountPaths
+         )
+     }
+ }
+ ```
+
+ - Note: The sheet enforces a minimum frame of 600 × 480 pt to ensure all columns
+   and metadata are readable without truncation.
+ - SeeAlso: `TransactionDetailView`, `AccountRegisterView`, `AccountTreeBuilder.buildPathMap(from:)`
  */
 struct TransactionDetailSheet: View {
-    /// The transaction to display in detail.
+    /// The transaction whose full detail is being displayed.
     let transaction: TransactionResponse
-    /// The ledger context for currency formatting.
+
+    /// The ledger context for currency code and decimal-place formatting.
     let ledger: LedgerResponse
-    /// Environment dismiss action to close the sheet.
+
+    /// GnuCash-style full paths keyed by account UUID.
+    ///
+    /// Forwarded to `TransactionDetailView` to resolve split `accountId` values to
+    /// human-readable names. Defaults to an empty dictionary; the detail view falls
+    /// back to truncated UUID strings when a path is not found.
+    var accountPaths: [UUID: String] = [:]
+
+    /// Environment dismiss action used by the "Done" toolbar button.
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
-            TransactionDetailView(transaction: transaction, ledger: ledger)
+            TransactionDetailView(transaction: transaction, ledger: ledger, accountPaths: accountPaths)
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Done") { dismiss() }

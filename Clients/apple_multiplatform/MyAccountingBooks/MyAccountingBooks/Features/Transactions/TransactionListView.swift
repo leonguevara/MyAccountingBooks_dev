@@ -4,36 +4,71 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-13.
+//  Last modified by León Felipe Guevara Chávez on 2026-03-22.
 //  Developed with AI assistance.
 //
 
 import SwiftUI
 
-/// Displays a list of transactions for a given ledger with loading, empty, and filtered states.
-///
-/// Binds to a `TransactionListViewModel` to load and filter transactions, supports
-/// selection, search, and toggling visibility of voided transactions. Requires an
-/// `AuthService` in the environment to obtain the token.
-///
-/// Usage:
-/// ```swift
-/// @State private var selectedTx: TransactionResponse?
-/// TransactionListView(ledger: someLedger, selectedTransaction: $selectedTx)
-///     .environment(AuthService())
-/// ```
+/**
+ Displays a month-grouped, searchable list of transactions for a given ledger.
+
+ `TransactionListView` binds to a `TransactionListViewModel` for all data operations
+ and presents three mutually exclusive states driven by loading and filter conditions:
+ a `ProgressView` while the initial fetch is in flight, an empty state when no
+ transactions match the current filters, and the sectioned transaction list otherwise.
+
+ # Features
+
+ - **Month grouping**: Transactions are grouped by `postDate` month via
+   `viewModel.groupedTransactions` and rendered as `List` sections.
+ - **Search**: A `.searchable` modifier filters by memo, reference number, and split
+   memos in real time through `viewModel.filteredTransactions`.
+ - **Voided toggle**: A toolbar `Toggle` controls `viewModel.showVoided`; voided
+   transactions are hidden by default and shown with strikethrough + badge when revealed.
+ - **Selection**: Row selection is bound via `$selectedTransaction` for use by a parent
+   split view or navigation destination.
+ - **Error handling**: Network failures surface as a dismissible alert.
+
+ # Usage Example
+
+ ```swift
+ @State private var selectedTx: TransactionResponse?
+
+ TransactionListView(ledger: someLedger, selectedTransaction: $selectedTx)
+     .environment(authService)
+ ```
+
+ - Important: Requires `AuthService` in the SwiftUI environment to obtain the bearer
+   token before loading.
+ - Note: Uses `.task(id: ledger.id)` so the list reloads automatically whenever the
+   selected ledger changes.
+ - SeeAlso: `TransactionListViewModel`, `TransactionRowView`
+ */
 struct TransactionListView: View {
 
     /// The ledger whose transactions are displayed.
+    ///
+    /// Provides the `ledgerID` for the network fetch and the currency/decimal context
+    /// forwarded to each `TransactionRowView`.
     let ledger: LedgerResponse
-    /// Authentication service used to fetch the token for network operations.
+
+    /// Authentication service providing the bearer token for network operations.
     @Environment(AuthService.self) private var auth
-    /// View model managing loading, filtering, and error state for transactions.
+
+    /// View model managing transaction loading, filtering, grouping, and error state.
     @State private var viewModel = TransactionListViewModel()
-    /// The currently selected transaction in the list, bound from a parent view.
+
+    /// The currently selected transaction, bound from a parent view.
+    ///
+    /// Updated by `List(selection:)` when the user taps a row. A parent split view
+    /// or navigation destination can observe this binding to drive a detail panel.
     @Binding var selectedTransaction: TransactionResponse?
 
+    // MARK: - Body
+
     var body: some View {
-        /// Switches between loading, empty, and populated list states.
+        /// Switches between loading indicator, empty state, and the grouped transaction list.
         Group {
             if viewModel.isLoading && viewModel.transactions.isEmpty {
                 ProgressView("Loading transactions…")
@@ -66,7 +101,12 @@ struct TransactionListView: View {
 
     // MARK: - Subviews
 
-    /// The sectioned list of transactions grouped by month with selection support.
+    /// Month-sectioned transaction list with row selection support.
+    ///
+    /// Iterates `viewModel.groupedTransactions` — a sorted array of `(key: String,
+    /// transactions: [TransactionResponse])` tuples — and renders each group as a
+    /// `Section` whose header is the month label (e.g., `"March 2026"`). Each row is
+    /// a `TransactionRowView` tagged with its `TransactionResponse` for selection binding.
     private var transactionList: some View {
         List(selection: $selectedTransaction) {
             ForEach(viewModel.groupedTransactions, id: \.key) { group in
@@ -84,7 +124,11 @@ struct TransactionListView: View {
         .listStyle(.inset)
     }
 
-    /// Placeholder content shown when there are no transactions or no search results.
+    /// Placeholder shown when no transactions match the current filters.
+    ///
+    /// Displays context-sensitive messaging:
+    /// - When `searchText` is empty: indicates the ledger has no transactions yet.
+    /// - When `searchText` is non-empty: indicates no transactions match the query.
     private var emptyState: some View {
         VStack(spacing: 12) {
             Image(systemName: "arrow.left.arrow.right")
@@ -107,7 +151,11 @@ struct TransactionListView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    /// Toolbar with a toggle to show or hide voided transactions.
+    /// Toolbar toggle controlling visibility of voided transactions.
+    ///
+    /// Bound to `viewModel.showVoided`. When `off` (default), voided transactions are
+    /// excluded from `filteredTransactions`. When `on`, they appear with strikethrough
+    /// text and a red "VOIDED" badge in each `TransactionRowView`.
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
@@ -122,9 +170,34 @@ struct TransactionListView: View {
 
 // MARK: - Transaction Row
 
-/// A single row representing a transaction with date, memo, split summary, amount, and voided badge.
+/**
+ A single list row representing one transaction with date badge, memo, split summary,
+ total amount, and an optional voided indicator.
+
+ # Layout
+
+ ```
+ [Day / Month badge] | [Ref# · Memo]          [Amount]
+                       [Split summary]         [VOIDED badge?]
+ ```
+
+ - **Date badge**: Day number in `title2.bold` and abbreviated month below in `caption2`,
+   both monospaced, in a fixed 36 pt column.
+ - **Memo line**: Optional reference number prefix (`#num`) followed by the transaction
+   memo. Voided transactions render the memo with strikethrough in secondary color.
+ - **Split summary**: Up to two split memos joined by `" · "`. Falls back to a truncated
+   `accountId` UUID when a split has no memo.
+ - **Amount**: `totalAmount` formatted with the ledger's currency code and decimal places.
+   Shown in secondary color for voided transactions.
+ - **Voided badge**: A red capsule with "VOIDED" in `caption2.bold` shown only when
+   `transaction.isVoided` is `true`.
+
+ - SeeAlso: `TransactionListView`, `AmountFormatter`
+ */
 private struct TransactionRowView: View {
+    /// The transaction this row represents.
     let transaction: TransactionResponse
+    /// Ledger context for currency code and decimal-place formatting.
     let ledger: LedgerResponse
 
     var body: some View {
@@ -160,7 +233,7 @@ private struct TransactionRowView: View {
                         .lineLimit(1)
                 }
 
-                // Split summary: show first two account codes/names
+                // Split summary: first two split memos (or short UUID fallback)
                 Text(splitSummary)
                     .font(.caption)
                     .foregroundStyle(.tertiary)
@@ -191,14 +264,17 @@ private struct TransactionRowView: View {
 
     // MARK: - Derived
 
+    /// Day-of-month string extracted from `transaction.postDate` (e.g., `"22"`).
     private var dayString: String {
         transaction.postDate.formatted(.dateTime.day())
     }
 
+    /// Abbreviated month string extracted from `transaction.postDate` (e.g., `"Mar"`).
     private var monthString: String {
         transaction.postDate.formatted(.dateTime.month(.abbreviated))
     }
 
+    /// `totalAmount` formatted with the ledger's currency code and decimal precision.
     private var formattedAmount: String {
         AmountFormatter.format(
             transaction.totalAmount,
@@ -207,18 +283,72 @@ private struct TransactionRowView: View {
         )
     }
 
+    /// Summary string built from the first two split memos, joined by `" · "`.
+    ///
+    /// Falls back to `split.accountId.uuidString.prefix(8) + "…"` for splits that have
+    /// no memo. This is a display-only heuristic; account names are not available in
+    /// `TransactionRowView` (no `accountPaths` map at this level).
     private var splitSummary: String {
-        let codes = transaction.splits.prefix(2).map { $0.memo ?? $0.accountId.uuidString.prefix(8).description }
+        let codes = transaction.splits.prefix(2).map {
+            $0.memo ?? $0.accountId.uuidString.prefix(8).description
+        }
         return codes.joined(separator: " · ")
     }
 }
 
 // MARK: - Transaction Detail View
 
-/// A detail view for a transaction showing header info and a splits table.
+/**
+ Detail view for a single transaction showing metadata, a splits table, and column totals.
+
+ `TransactionDetailView` is displayed inside `TransactionDetailSheet` (from
+ `AccountRegisterView`) when the user taps a register row. It renders two sections:
+
+ - **Header card**: Posting date, total amount, optional reference number, voided warning,
+   and entered date.
+ - **Splits table**: One `SplitRowView` per split with Account, Memo, Debit, and Credit
+   columns, followed by a totals row.
+
+ # Account Name Resolution
+
+ Split lines from the API carry only a raw `accountId` UUID. The optional `accountPaths`
+ dictionary (built by `AccountTreeBuilder.buildPathMap(from:)` in `AccountRegisterView`)
+ maps those UUIDs to human-readable leaf names. When present, `SplitRowView` displays the
+ resolved leaf name; when absent (empty map), it falls back to a truncated UUID string.
+
+ # Usage
+
+ ```swift
+ // With path resolution (from AccountRegisterView → TransactionDetailSheet)
+ TransactionDetailView(
+     transaction: tx,
+     ledger: ledger,
+     accountPaths: accountPaths
+ )
+
+ // Without path resolution (legacy / standalone callers)
+ TransactionDetailView(transaction: tx, ledger: ledger)
+ ```
+
+ - Note: `accountPaths` defaults to an empty dictionary so that all existing call sites
+   that omit the argument continue to compile and render without modification.
+ - SeeAlso: `TransactionDetailSheet`, `SplitRowView`, `AccountTreeBuilder.buildPathMap(from:)`
+ */
 struct TransactionDetailView: View {
+    /// The transaction to display.
     let transaction: TransactionResponse
+
+    /// Ledger context for currency code and decimal-place formatting.
     let ledger: LedgerResponse
+
+    /// GnuCash-style colon-separated full paths keyed by account UUID.
+    ///
+    /// When non-empty, `SplitRowView` uses this map to resolve each split's `accountId`
+    /// to a leaf account name (the last colon-delimited component of the path).
+    /// Defaults to `[:]` so existing callers without a path map compile unmodified.
+    ///
+    /// - SeeAlso: `AccountTreeBuilder.buildPathMap(from:)`, `SplitRowView.resolvedAccountName`
+    var accountPaths: [UUID: String] = [:]
 
     var body: some View {
         ScrollView {
@@ -233,6 +363,10 @@ struct TransactionDetailView: View {
 
     // MARK: - Header
 
+    /// Transaction metadata card: date, total amount, reference number, voided warning,
+    /// and entered date.
+    ///
+    /// Renders inside a rounded-rectangle card with `controlBackgroundColor` fill.
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -281,6 +415,24 @@ struct TransactionDetailView: View {
 
     // MARK: - Splits Table
 
+    /**
+     Splits table: column header row, one `SplitRowView` per split, and a totals row.
+
+     `accountPaths` is forwarded to each `SplitRowView` so split account IDs are
+     resolved to leaf account names wherever the map is available.
+
+     # Column Layout
+
+     | Column  | Width | Alignment |
+     |---------|-------|-----------|
+     | Account | Flex  | Leading   |
+     | Memo    | Flex  | Leading   |
+     | Debit   | 100pt | Trailing  |
+     | Credit  | 100pt | Trailing  |
+
+     The totals row repeats `transaction.totalAmount` in both Debit and Credit columns,
+     reflecting that a balanced transaction has equal total debits and credits.
+     */
     private var splitsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Splits")
@@ -306,10 +458,12 @@ struct TransactionDetailView: View {
 
                 Divider()
 
+                // Data rows — accountPaths forwarded for account name resolution
                 ForEach(transaction.splits) { split in
                     SplitRowView(
                         split: split,
-                        ledger: ledger
+                        ledger: ledger,
+                        accountPaths: accountPaths
                     )
                     Divider()
                 }
@@ -351,18 +505,61 @@ struct TransactionDetailView: View {
 
 // MARK: - Split Row
 
+/**
+ A single row in the `TransactionDetailView` splits table.
+
+ Renders four columns — Account, Memo, Debit, Credit — for one `SplitResponse`.
+ The Account column displays a resolved human-readable name when `accountPaths` is
+ available, falling back gracefully to a truncated UUID string.
+
+ # Account Name Resolution
+
+ The `resolvedAccountName` computed property implements a two-level fallback:
+
+ 1. **Path available**: Extracts the **leaf component** (text after the last `":"`)
+    from the full GnuCash-style path (e.g., `"Checking"` from
+    `"Assets:Current Assets:Cash:Checking"`). Showing only the leaf keeps the narrow
+    Account column readable without truncating meaningful context.
+ 2. **Path unavailable**: Falls back to `split.accountId.uuidString.prefix(8) + "…"`.
+    This preserves backward compatibility with call sites that do not supply a path map.
+
+ Long account names are truncated from the **leading edge** (`.truncationMode(.head)`)
+ so the most specific part of the name remains visible.
+
+ # Debit / Credit Columns
+
+ `split.side` determines which column is populated:
+ - `side == 0`: Debit column shows the formatted amount; Credit is empty.
+ - `side == 1`: Credit column shows the formatted amount; Debit is empty.
+
+ - Note: `accountPaths` defaults to `[:]` so existing callers that omit it
+   continue to compile and render the short-UUID fallback unmodified.
+ - SeeAlso: `TransactionDetailView`, `AccountTreeBuilder.buildPathMap(from:)`
+ */
 private struct SplitRowView: View {
+    /// The split line from the API response.
     let split: SplitResponse
+
+    /// Ledger context for currency code and decimal-place formatting.
     let ledger: LedgerResponse
+
+    /// GnuCash-style colon-separated full paths keyed by account UUID.
+    ///
+    /// When non-empty, `resolvedAccountName` uses this map to display a human-readable
+    /// leaf account name instead of a truncated UUID. Defaults to `[:]` for backward
+    /// compatibility with callers that do not supply a path map.
+    ///
+    /// - SeeAlso: `resolvedAccountName`, `AccountTreeBuilder.buildPathMap(from:)`
+    var accountPaths: [UUID: String] = [:]
 
     var body: some View {
         HStack {
-            // Account ID (short) — replaced by account name in Iteration 4
-            Text(split.accountId.uuidString.prefix(8).description + "…")
+            Text(resolvedAccountName)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .monospacedDigit()
+                .lineLimit(1)
+                .truncationMode(.head)
 
             Text(split.memo ?? "—")
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -386,5 +583,32 @@ private struct SplitRowView: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
     }
-}
 
+    // MARK: - Helpers
+
+    /**
+     Resolves the display name for this split's account using a two-level fallback strategy.
+
+     1. **Path available** (`accountPaths[split.accountId]` is non-`nil`): Returns the
+        **leaf component** — the substring after the final `":"` in the full path.
+        For example, `"Assets:Current Assets:Cash:Checking"` → `"Checking"`.
+        If the path contains no colon (a top-level account), the full path string is
+        returned as-is.
+
+     2. **Path unavailable**: Returns the first 8 characters of the `accountId` UUID
+        followed by `"…"` as a diagnostic fallback (e.g., `"550e8400…"`).
+
+     - Returns: A short, human-readable string suitable for display in the narrow Account
+       column of the splits table.
+     - SeeAlso: `accountPaths`, `AccountTreeBuilder.buildPathMap(from:)`
+     */
+    private var resolvedAccountName: String {
+        if let path = accountPaths[split.accountId] {
+            // Show only the leaf name (last component after the final colon)
+            // to keep the splits table readable within the fixed column width.
+            return path.split(separator: ":").last.map(String.init) ?? path
+        }
+        // Fallback: short UUID prefix when no path map is available.
+        return split.accountId.uuidString.prefix(8).description + "…"
+    }
+}
