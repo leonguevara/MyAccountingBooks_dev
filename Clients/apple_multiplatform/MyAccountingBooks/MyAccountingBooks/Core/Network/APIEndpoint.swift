@@ -40,6 +40,7 @@ import Foundation
  **Transactions:**
  - `transactions(ledgerID:)`: List transactions for a ledger
  - `postTransaction`: Create a new transaction
+ - `patchTransaction(id:)`: Partially update an existing transaction
  - `reverseTransaction(id:)`: Reverse a posted transaction
  - `voidTransaction(id:)`: Void a posted transaction
  
@@ -247,6 +248,39 @@ enum APIEndpoint {
     ///
     /// - Parameter id: The unique identifier of the transaction to void.
     case voidTransaction(id: UUID)
+    
+    /// Partially updates an existing transaction.
+    ///
+    /// **Path:** `PATCH /transactions/{id}`
+    ///
+    /// Allows updating specific fields of a transaction without replacing the entire record.
+    /// Only the fields included in the request body will be modified; all other fields remain unchanged.
+    /// This is useful for editing transaction details like memo, number, date, or individual split lines.
+    ///
+    /// **Request body:** Partial transaction data (e.g., `PatchTransactionRequest`)
+    /// - Only non-nil fields are updated
+    /// - Supports updating transaction-level fields (memo, num, postDate)
+    /// - Supports updating individual splits by splitId
+    ///
+    /// **Response:** The updated transaction object with all fields
+    ///
+    /// **Usage Example:**
+    /// ```swift
+    /// let updates = PatchTransactionRequest(
+    ///     memo: "Updated description",
+    ///     splits: [PatchSplitRequest(splitId: splitID, accountId: newAccountID)]
+    /// )
+    /// let updated: TransactionResponse = try await APIClient.shared.request(
+    ///     .patchTransaction(id: transactionID),
+    ///     method: "PATCH",
+    ///     body: updates,
+    ///     token: authToken
+    /// )
+    /// ```
+    ///
+    /// - Parameter id: The unique identifier of the transaction to update.
+    /// - SeeAlso: `PatchTransactionRequest`, `PatchSplitRequest`
+    case patchTransaction(id: UUID)
 
     // MARK: - Commodities
 
@@ -294,6 +328,8 @@ enum APIEndpoint {
             return Self.baseURL.appendingPathComponent("transactions/\(id)/reverse")
         case .voidTransaction(let id):
             return Self.baseURL.appendingPathComponent("transactions/\(id)/void")
+        case .patchTransaction(let id):
+            return Self.baseURL.appendingPathComponent("transactions/\(id)")
         case .commodities(let ns):
             var components = URLComponents(url: Self.baseURL.appendingPathComponent("commodities"), resolvingAgainstBaseURL: false)!
             if let ns { components.queryItems = [URLQueryItem(name: "namespace", value: ns)] }

@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-16.
-//  Last modified by León Felie Guevara Chávez on 2026-03-22
+//  Last modified by León Felie Guevara Chávez on 2026-03-23
 //  Developed with AI assistance.
 //
 
@@ -23,6 +23,7 @@ import SwiftUI
  - **Running balance**: Cumulative balance column updated after every row.
  - **Signed amounts**: Each amount is signed according to the account's normal balance.
  - **Interactive rows**: Tap any row to open the full transaction detail sheet.
+ - **Edit transactions**: Edit button in transaction detail allows modifying memo, number, date, and split assignments.
  - **Post transactions**: Create new transactions via the `+` toolbar button or the
    empty-state action button.
  - **Voided indicator**: Strikethrough text and a red "VOIDED" badge on voided rows.
@@ -49,6 +50,7 @@ import SwiftUI
  |----------------------|--------------------------|--------------------------|
  | Tap a register row   | `TransactionDetailSheet` | Yes — resolves split UUIDs to names |
  | Tap `+` / empty CTA  | `PostTransactionView`    | Yes — drives account picker labels  |
+ | Tap Edit in detail   | `EditTransactionView`    | Yes — drives account picker labels  |
 
  # Display Format
 
@@ -184,12 +186,23 @@ struct AccountRegisterView: View {
         // Transaction detail sheet — shown when the user taps a register row.
         // accountPaths is forwarded so TransactionDetailView can resolve split
         // accountId UUIDs to human-readable account names.
+        // allAccounts is forwarded to enable the edit transaction form.
+        // onTransactionUpdated reloads the register when edits are saved.
         .sheet(isPresented: $viewModel.showTransactionDetail) {
             if let tx = viewModel.selectedTransaction {
                 TransactionDetailSheet(
                     transaction: tx,
                     ledger: ledger,
-                    accountPaths: accountPaths
+                    accountPaths: accountPaths,
+                    allAccounts: allAccountRoots,
+                    onTransactionUpdated: {
+                        guard let token = auth.token else { return }
+                        await viewModel.load(
+                            ledger: ledger,
+                            account: account,
+                            token: token
+                        )
+                    }
                 )
             }
         }
@@ -534,19 +547,37 @@ private struct RegisterFooterRow: View {
 /**
  Sheet wrapper presenting the full details of a tapped register transaction.
 
- `TransactionDetailSheet` embeds `TransactionDetailView` inside a `NavigationStack`
- and adds a "Done" dismiss button in the confirmation-action toolbar slot. It is
- presented by `AccountRegisterView` whenever the user taps a row in the register.
+ `TransactionDetailSheet` embeds `TransactionDetailView` inside a custom navigation
+ bar and adds both "Edit" and "Done" action buttons. It is presented by
+ `AccountRegisterView` whenever the user taps a row in the register.
 
  The `accountPaths` dictionary is forwarded to `TransactionDetailView` so that raw
  `accountId` UUIDs on each split line are resolved to human-readable account names
  (e.g., `"Assets:Current Assets:Cash:Checking"`) rather than truncated UUID strings.
+
+ # Features
+
+ - **Transaction viewing**: Complete transaction metadata with all split lines
+ - **Transaction editing**: Edit button opens `EditTransactionView` for modifications
+ - **Account resolution**: Uses `accountPaths` to display full hierarchical account names
+ - **Voided transactions**: Hides edit button for voided transactions (immutable)
+ - **Auto-refresh**: Triggers register reload via `onTransactionUpdated` after edits
 
  # Contents
 
  - Complete transaction metadata: posting date, reference number, memo, voided status.
  - All split lines with resolved account names, memos, and debit/credit amounts.
  - Debit and credit column totals with balance verification.
+ - Edit functionality for non-voided transactions (issue #6).
+
+ # Edit Flow
+
+ When the user taps "Edit" (for non-voided transactions):
+ 1. `EditTransactionView` sheet is presented
+ 2. User modifies memo, number, date, or split properties
+ 3. Changes are submitted via PATCH to `/transactions/{id}`
+ 4. On success, `onTransactionUpdated` is called to refresh the register
+ 5. Both edit and detail sheets dismiss automatically
 
  # Usage
 
@@ -557,7 +588,11 @@ private struct RegisterFooterRow: View {
          TransactionDetailSheet(
              transaction: tx,
              ledger: ledger,
-             accountPaths: accountPaths
+             accountPaths: accountPaths,
+             allAccounts: allAccountRoots,
+             onTransactionUpdated: {
+                 await reloadRegister()
+             }
          )
      }
  }
@@ -565,7 +600,10 @@ private struct RegisterFooterRow: View {
 
  - Note: The sheet enforces a minimum frame of 600 × 480 pt to ensure all columns
    and metadata are readable without truncation.
- - SeeAlso: `TransactionDetailView`, `AccountRegisterView`, `AccountTreeBuilder.buildPathMap(from:)`
+ - Important: Voided transactions cannot be edited; the Edit button is hidden when
+   `transaction.isVoided` is `true`.
+ - SeeAlso: `TransactionDetailView`, `EditTransactionView`, `AccountRegisterView`,
+   `AccountTreeBuilder.buildPathMap(from:)`
  */
 struct TransactionDetailSheet: View {
     /// The transaction whose full detail is being displayed.
@@ -580,19 +618,81 @@ struct TransactionDetailSheet: View {
     /// human-readable names. Defaults to an empty dictionary; the detail view falls
     /// back to truncated UUID strings when a path is not found.
     var accountPaths: [UUID: String] = [:]
+    
+    /// Complete chart of accounts hierarchy for the ledger.
+    ///
+    /// Forwarded to `EditTransactionView` to populate account pickers when editing
+    /// split assignments. Added in issue #6 to enable transaction editing.
+    var allAccounts: [AccountNode] = []
+    
+    /// Async closure called after a successful transaction edit.
+    ///
+    /// The calling view (typically `AccountRegisterView`) uses this to reload
+    /// the transaction register and reflect the updated data. Added in issue #6.
+    var onTransactionUpdated: () async -> Void = {}
+    
+    /// Authentication service for obtaining the bearer token when editing transactions.
+    @Environment(AuthService.self) private var auth
 
     /// Environment dismiss action used by the "Done" toolbar button.
     @Environment(\.dismiss) private var dismiss
+    
+    /// Controls presentation of the `EditTransactionView` sheet.
+    ///
+    /// Set to `true` when the user taps "Edit" in the custom navigation bar.
+    @State private var showEdit = false
 
     var body: some View {
-        NavigationStack {
-            TransactionDetailView(transaction: transaction, ledger: ledger, accountPaths: accountPaths)
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Done") { dismiss() }
-                    }
+        VStack(spacing: 0) {
+
+            // ── Navigation bar substitute ─────────────────────────────────
+            // Custom navigation bar with Edit and Done buttons.
+            // Edit button is hidden for voided transactions (they are immutable).
+            // Tapping Edit presents EditTransactionView with the chart of accounts.
+            HStack {
+                Text(transaction.memo ?? "Transaction")
+                    .font(.headline)
+                    .lineLimit(1)
+                Spacer()
+                if !transaction.isVoided {
+                    Button("Edit") { showEdit = true }
+                        .buttonStyle(.bordered)
                 }
+                Button("Done") { dismiss() }
+                    .buttonStyle(.borderedProminent)
+                    .keyboardShortcut(.return)
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 14)
+            .background(Color(nsColor: .windowBackgroundColor))
+
+            Divider()
+
+            // ── Transaction detail body ───────────────────────────────────
+            ScrollView {
+                TransactionDetailView(
+                    transaction: transaction,
+                    ledger: ledger,
+                    accountPaths: accountPaths
+                )
+            }
         }
         .frame(minWidth: 600, minHeight: 480)
+        // Edit transaction sheet — presented when user taps "Edit".
+        // On successful save, calls onTransactionUpdated to refresh the register
+        // and dismisses both the edit sheet and this detail sheet.
+        .sheet(isPresented: $showEdit) {
+            EditTransactionView(
+                transaction: transaction,
+                ledger: ledger,
+                allAccounts: allAccounts,
+                accountPaths: accountPaths,
+                onSuccess: {
+                    await onTransactionUpdated()
+                    dismiss()
+                }
+            )
+            .environment(auth)
+        }
     }
 }
