@@ -6,21 +6,27 @@
 //
 //          Responsibilities:
 //            1. Resolve ownerID from JWT (SecurityContext)
-//            2. Delegate to TransactionRepository for DB call
+//            2. Delegate to TransactionRepository for DB operations
 //            3. Return TransactionResponse to controller
 //
-//          Intentionally thin — all accounting correctness
-//          lives in mab_post_transaction() in the database.
-//          The service layer does not re-implement balance
-//          checks or split validation.
+//          Intentionally thin — accounting correctness lives in:
+//            - Database stored functions (mab_post_transaction,
+//              mab_reverse_transaction, mab_void_transaction)
+//            - Database constraints and RLS policies
+//
+//          The service layer does not re-implement balance checks,
+//          split validation, or ownership verification. It only
+//          extracts the authenticated user and delegates to the
+//          repository layer.
 // ============================================================
-// Last edited: 2026-03-14
+// Last edited: 2026-03-22
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
 
 package com.leonguevara.mab.mab_api.service;
 
+import com.leonguevara.mab.mab_api.dto.request.PatchTransactionRequest;
 import com.leonguevara.mab.mab_api.dto.request.PostTransactionRequest;
 import com.leonguevara.mab.mab_api.dto.request.VoidTransactionRequest;
 import com.leonguevara.mab.mab_api.dto.request.ReverseTransactionRequest;
@@ -124,5 +130,42 @@ public class TransactionService {
     public List<TransactionResponse> getTransactionsForLedger(UUID ledgerId) {
         UUID ownerID = resolveOwnerID();
         return transactionRepository.findByLedgerId(ownerID, ledgerId);
+    }
+
+    /**
+     * Applies a partial update to a transaction header and/or splits.
+     * <p>
+     * Implements JSON Merge Patch semantics (RFC 7396) — only non-null fields
+     * in the request are modified. All fields are optional.
+     * <p>
+     * The repository layer enforces:
+     *   - Transaction ownership via RLS (current owner only)
+     *   - Transaction must not be voided
+     *   - Transaction must not be deleted
+     *   - Split account changes must reference valid, active, non-placeholder
+     *     accounts within the same ledger
+     *   - Atomic updates (all changes succeed or none are applied)
+     * <p>
+     * <b>Cannot modify via this endpoint:</b>
+     * <ul>
+     *   <li>Split amounts (value_num/value_denom) — use reverse + repost instead</li>
+     *   <li>Structural fields (ledgerId, currencyCommodityId)</li>
+     *   <li>Void status — use voidTransaction() instead</li>
+     * </ul>
+     *
+     * @param  txId    UUID of the transaction to update (from URL path).
+     * @param  request Partial update request — null fields are ignored.
+     *                 See {@link PatchTransactionRequest} for available fields.
+     * @return         The fully updated TransactionResponse reflecting all changes.
+     * @throws ApiException HTTP 401 if not authenticated.
+     * @throws ApiException HTTP 404 if transaction not found or not owned by current user.
+     * @throws ApiException HTTP 400 if database constraints reject the update
+     *                      (e.g., invalid accountId, voided transaction).
+     * @see PatchTransactionRequest
+     */
+    public TransactionResponse updateTransaction(UUID txId,
+                                                 PatchTransactionRequest request) {
+        UUID ownerID = resolveOwnerID();
+        return transactionRepository.update(ownerID, txId, request);
     }
 }

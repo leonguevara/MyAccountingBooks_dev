@@ -4,25 +4,29 @@
 //
 // Purpose: REST controller for transaction endpoints.
 //
-//          Iteration 4: POST /transactions
-//          Iteration 5: POST /transactions/{id}/reverse  (next)
-//          Iteration 6: POST /transactions/{id}/void     (next)
+//          Available operations:
+//            - POST   /transactions              — Post new transaction
+//            - POST   /transactions/{id}/reverse — Create reversal
+//            - POST   /transactions/{id}/void    — Void in-place
+//            - PATCH  /transactions/{id}         — Partial update
 //
 //          All routes require authentication — enforced globally
-//          by SecurityConfig.
+//          by SecurityConfig via JWT bearer token.
 //
 //          The controller is intentionally thin:
 //            - Receives + validates HTTP input
 //            - Delegates to TransactionService
-//            - Returns HTTP 201 with the response body
+//            - Returns appropriate HTTP status with response body
+//            - OpenAPI annotations for Swagger documentation
 // ============================================================
-// Last edited: 2026-03-07
+// Last edited: 2026-03-22
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
 
 package com.leonguevara.mab.mab_api.controller;
 
+import com.leonguevara.mab.mab_api.dto.request.PatchTransactionRequest;
 import com.leonguevara.mab.mab_api.dto.request.PostTransactionRequest;
 import com.leonguevara.mab.mab_api.dto.request.ReverseTransactionRequest;
 import com.leonguevara.mab.mab_api.dto.request.VoidTransactionRequest;
@@ -138,5 +142,71 @@ public class TransactionController {
         if (request == null) request = new VoidTransactionRequest(null);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(transactionService.voidTransaction(id, request));
+    }
+
+    @PatchMapping("/{id}")
+    @Operation(summary = "Update transaction (partial)",
+            description = """
+               Partially updates a transaction header and/or its split lines.
+               Follows JSON Merge Patch semantics (RFC 7396) — only non-null fields
+               are modified. All fields are optional; send only what needs to change.
+
+               **Editable fields:**
+               - `memo` — transaction-level description (string, nullable)
+               - `num` — reference/check number (string, nullable)
+               - `postDate` — effective date (ISO 8601 with timezone)
+               - `splits[]` — array of split updates (optional)
+                 - `splitId` — UUID of the split to modify (required per split)
+                 - `memo` — split-level narrative (string, nullable)
+                 - `accountId` — reassign split to different account (UUID)
+
+               **Not editable via this endpoint:**
+               - Split amounts (`valueNum` / `valueDenom`) — use reverse + repost workflow
+               - Structural fields (`ledgerId`, `currencyCommodityId`)
+               - Void status — use POST /transactions/{id}/void instead
+
+               **Constraints:**
+               - Transaction must not be voided
+               - Transaction must not be deleted
+               - When changing `accountId`, target account must be:
+                 - Active (not deleted)
+                 - Non-placeholder (leaf node only)
+                 - Within the same ledger as the transaction
+
+               **Atomicity:** All updates succeed or fail together (single transaction).
+
+               **Example request:**
+               ```json
+               {
+                 "memo": "Updated description",
+                 "postDate": "2026-03-22T10:00:00Z",
+                 "splits": [
+                   {
+                     "splitId": "550e8400-e29b-41d4-a716-446655440001",
+                     "accountId": "660e8400-e29b-41d4-a716-446655440002"
+                   }
+                 ]
+               }
+               ```
+               """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Transaction successfully updated",
+                    content = @Content(schema = @Schema(implementation = TransactionResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Validation failure, transaction is voided, or invalid accountId",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid JWT token",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Transaction not found or not owned by authenticated user",
+                    content = @Content)
+    })
+    public ResponseEntity<TransactionResponse> updateTransaction(
+            @Parameter(description = "UUID of the transaction to update", required = true)
+            @PathVariable UUID id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Partial update payload — only non-null fields are applied",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = PatchTransactionRequest.class)))
+            @RequestBody PatchTransactionRequest request) {
+        return ResponseEntity.ok(transactionService.updateTransaction(id, request));
     }
 }

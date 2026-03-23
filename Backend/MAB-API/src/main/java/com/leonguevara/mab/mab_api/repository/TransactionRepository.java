@@ -6,8 +6,9 @@
 //
 //          Core design:
 //
-//          1. mab_post_transaction() does ALL the work.
-//             This repository's job is purely:
+//          1. mab_post_transaction(), mab_reverse_transaction(),
+//             and mab_void_transaction() do the heavy lifting.
+//             For posting new transactions:
 //               a) Build the splits JSONB string
 //               b) Call the function with named parameters
 //               c) Fetch the created transaction + splits back
@@ -15,15 +16,19 @@
 //          2. Splits are serialized to JSONB using Jackson
 //             ObjectMapper — clean, testable, no string concat.
 //
-//          3. After the function returns a transaction UUID,
+//          3. After stored functions return a transaction UUID,
 //             we do a second query to fetch the full transaction
-//             + splits for the response. This keeps the DB
-//             function focused on writing, and the repository
-//             focused on reading back what was written.
+//             + splits for the response. This keeps DB functions
+//             focused on writing, and the repository focused on
+//             reading back what was written.
 //
-//          4. TenantContext scopes all queries via RLS.
+//          4. PATCH operations (update method) apply changes
+//             directly via UPDATE statements — no stored function.
+//             Only non-null fields are modified (JSON Merge Patch).
+//
+//          5. TenantContext scopes all queries via RLS.
 // ============================================================
-// Last edited: 2026-03-14
+// Last edited: 2026-03-22
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -39,6 +44,7 @@ import com.leonguevara.mab.mab_api.dto.response.TransactionResponse;
 import com.leonguevara.mab.mab_api.exception.ApiException;
 import com.leonguevara.mab.mab_api.dto.request.ReverseTransactionRequest;
 import com.leonguevara.mab.mab_api.dto.request.VoidTransactionRequest;
+import com.leonguevara.mab.mab_api.dto.request.PatchTransactionRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.RowMapper;
@@ -623,5 +629,113 @@ public class TransactionRepository {
             throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Failed to serialize splits to JSON: " + e.getMessage());
         }
+    }
+
+    // ── PATCH transaction ────────────────────────────────────────────────────────
+
+    /**
+     * Applies a partial update to a transaction header and/or its split lines.
+     * <p>
+     * Implements JSON Merge Patch semantics (RFC 7396) — only non-null fields
+     * are updated. All fields in the request are optional.
+     * <p>
+     * Flow:
+     *   1. Verify ownership via RLS-scoped check.
+     *   2. Update transaction header fields (memo, num, postDate) if provided.
+     *   3. Update individual split fields (memo, accountId) per splitId.
+     *   4. Fetch and return the complete updated transaction with all splits.
+     * <p>
+     * All updates execute within a single TenantContext transaction,
+     * so either all changes succeed or none are applied.
+     * <p>
+     * <b>Important constraints:</b>
+     * <ul>
+     *   <li>Transaction must not be voided (is_voided=false)</li>
+     *   <li>Transaction must not be deleted</li>
+     *   <li>Split accountId changes must reference valid, active, non-placeholder
+     *       accounts within the same ledger (enforced by foreign key + CHECK constraints)</li>
+     *   <li>Cannot modify amounts — use reverse + repost workflow instead</li>
+     *   <li>Increments revision and updates updated_at for each modified row</li>
+     * </ul>
+     *
+     * @param  ownerID  The authenticated owner's UUID (from JWT).
+     * @param  txId     UUID of the transaction to update (from URL path).
+     * @param  request  Partial update request — null fields are skipped.
+     *                  See {@link PatchTransactionRequest} for field details.
+     * @return          The fully updated TransactionResponse reflecting all changes.
+     * @throws ApiException HTTP 404 if transaction not found or not owned by this owner.
+     * @throws ApiException HTTP 400 if DB constraints reject the update
+     *                      (e.g., invalid accountId, voided transaction, etc.)
+     * @see PatchTransactionRequest
+     */
+    public TransactionResponse update(UUID ownerID,
+                                      UUID txId,
+                                      PatchTransactionRequest request) {
+
+        return TenantContext.withOwner(ownerID, jdbc, tx, template -> {
+
+            // ── Step 1: Verify ownership ─────────────────────────────────
+            verifyTransactionOwnership(template, txId);
+
+            // ── Step 2: Patch transaction header ─────────────────────────
+            // Build SET clause dynamically — only update provided fields.
+            // Always increment revision and update updated_at.
+            var headerParams = new MapSqlParameterSource("txId", txId);
+            var setClauses   = new java.util.ArrayList<String>();
+
+            if (request.memo() != null) {
+                setClauses.add("memo = :memo");
+                headerParams.addValue("memo", request.memo());
+            }
+            if (request.num() != null) {
+                setClauses.add("num = :num");
+                headerParams.addValue("num", request.num());
+            }
+            if (request.postDate() != null) {
+                setClauses.add("post_date = :postDate");
+                headerParams.addValue("postDate",
+                        Timestamp.from(request.postDate().toInstant()));
+            }
+
+            if (!setClauses.isEmpty()) {
+                setClauses.add("updated_at = now()");
+                setClauses.add("revision = revision + 1");
+                String headerSql = "UPDATE public.transaction SET "
+                        + String.join(", ", setClauses)
+                        + " WHERE id = :txId AND deleted_at IS NULL AND is_voided = false";
+                template.update(headerSql, headerParams);
+            }
+
+            // ── Step 3: Patch split lines ─────────────────────────────────
+            if (request.splits() != null) {
+                for (var splitPatch : request.splits()) {
+                    if (splitPatch.splitId() == null) continue;
+
+                    var splitParams = new MapSqlParameterSource("splitId", splitPatch.splitId());
+                    var splitSet    = new java.util.ArrayList<String>();
+
+                    if (splitPatch.memo() != null) {
+                        splitSet.add("memo = :memo");
+                        splitParams.addValue("memo", splitPatch.memo());
+                    }
+                    if (splitPatch.accountId() != null) {
+                        splitSet.add("account_id = :accountId");
+                        splitParams.addValue("accountId", splitPatch.accountId());
+                    }
+
+                    if (!splitSet.isEmpty()) {
+                        splitSet.add("updated_at = now()");
+                        splitSet.add("revision = revision + 1");
+                        String splitSql = "UPDATE public.split SET "
+                                + String.join(", ", splitSet)
+                                + " WHERE id = :splitId AND deleted_at IS NULL";
+                        template.update(splitSql, splitParams);
+                    }
+                }
+            }
+
+            // ── Step 4: Fetch and return updated transaction ──────────────
+            return fetchTransaction(template, txId);
+        });
     }
 }
