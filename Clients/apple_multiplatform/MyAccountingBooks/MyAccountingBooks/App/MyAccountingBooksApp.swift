@@ -11,8 +11,9 @@
 /// The main application entry point for MyAccountingBooks.
 ///
 /// Manages the authentication flow and sets up window scenes:
-/// - Primary window: Presents `ContentView` or `LoginView` based on authentication state.
-/// - Account Register windows: Dedicated windows opened via `AccountRegisterWindowPayload`.
+/// - **Primary window**: Presents `ContentView` or `LoginView` based on authentication state.
+/// - **Account Register windows**: Dedicated windows opened via `AccountRegisterWindowPayload`.
+/// - **Account Form windows**: Modal windows for creating and editing accounts, opened via `AccountFormWindowPayload`.
 import SwiftUI
 
 @main
@@ -38,6 +39,10 @@ struct MyAccountingBooksApp: App {
         
         // ── Account register windows ──────────────────────────────────────
         /// Secondary window group for account registers, opened with a value payload.
+        ///
+        /// Each account register window displays the transaction history for a specific
+        /// account. Multiple register windows can be open simultaneously, one per account.
+        /// SwiftUI automatically deduplicates windows by payload value.
         WindowGroup("Account Register", for: AccountRegisterWindowPayload.self) { $payload in
             if let payload {
                 AccountRegisterWindowContent(payload: payload)
@@ -47,5 +52,27 @@ struct MyAccountingBooksApp: App {
         .windowStyle(.titleBar)
         .windowToolbarStyle(.unified)
         .defaultSize(width: 900, height: 600)
+        
+        // ── Account form windows ──────────────────────────────────────────
+        /// Window group for creating and editing accounts, opened with a value payload.
+        ///
+        /// Account form windows are used for:
+        /// - **Creating new accounts**: `existingAccount` is `nil`, `suggestedParentId` may
+        ///   pre-select a parent account.
+        /// - **Editing existing accounts**: `existingAccount` contains the account data to modify.
+        ///
+        /// Opened from:
+        /// - Toolbar "New Account" button in `AccountTreeView`
+        /// - Context menu "New Sub-Account" action (with `suggestedParentId` set)
+        /// - Context menu "Edit Account" action (with `existingAccount` populated)
+        WindowGroup("Account", for: AccountFormWindowPayload.self) { $payload in
+            if let payload {
+                AccountFormWindowContent(payload: payload)
+                    .environment(auth)
+            }
+        }
+        .windowStyle(.titleBar)
+        .windowToolbarStyle(.unified)
+        .defaultSize(width: 540, height: 580)
     }
 }

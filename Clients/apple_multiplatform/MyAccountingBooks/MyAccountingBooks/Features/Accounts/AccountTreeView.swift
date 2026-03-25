@@ -60,12 +60,20 @@ import SwiftUI
  variable acts as a one-shot trigger: it is set on double-tap and immediately cleared
  after `openWindow(value:)` is called.
 
+ # Account Management
+
+ The toolbar provides a "New Account" button that opens an account creation form with
+ no pre-selected parent. Context menus on each account row provide:
+ - **New Sub-Account**: Opens the account form with the right-clicked account pre-selected
+   as the parent via `suggestedParentId`.
+ - **Edit Account**: Opens the account form pre-populated with the existing account's data.
+
  - Important: Requires `AuthService` in the SwiftUI environment to obtain a valid
    bearer token before loading.
  - Note: The `Task.yield()` before `loadAccounts` prevents race conditions when this
    view renders simultaneously with other views that also trigger network requests.
  - SeeAlso: `AccountTreeViewModel`, `AccountRowView`, `AccountRegisterView`,
-   `AccountRegisterWindowPayload`
+   `AccountRegisterWindowPayload`, `AccountFormWindowPayload`
  */
 struct AccountTreeView: View {
 
@@ -96,7 +104,7 @@ struct AccountTreeView: View {
     /// Provided by the SwiftUI window management system. Called with an
     /// `AccountRegisterWindowPayload` value that carries the ledger and account.
     @Environment(\.openWindow) private var openWindow
-
+    
     var body: some View {
         /// Switches between loading, empty, and populated tree states.
         Group {
@@ -111,6 +119,24 @@ struct AccountTreeView: View {
         }
         .navigationTitle(ledger.name)
         .searchable(text: $viewModel.searchText, prompt: "Search accounts…")
+        // ── Toolbar: New Account button ───────────────────────────────────────
+        // Opens account creation form with no pre-selected parent (nil).
+        // User must choose parent from the full account tree picker.
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    openWindow(value: AccountFormWindowPayload(
+                        ledger: ledger,
+                        existingAccount: nil,
+                        suggestedParentId: nil
+                    ))
+                } label: {
+                    Label("New Account", systemImage: "plus")
+                }
+                .help("Add a new account to this ledger")
+            }
+        }
+        // ─────────────────────────────────────────────────────────────────────
         .task(id: ledger.id) {
             guard let token = auth.token else { return }
             // Small yield to avoid racing with other concurrent tasks
@@ -157,6 +183,7 @@ struct AccountTreeView: View {
         ) { node in
             AccountRowView(node: node, balance: viewModel.balances[node.id])
                 .tag(node)
+                // ── Double-click: open register ───────────────────────────
                 .simultaneousGesture(
                     TapGesture(count: 2).onEnded {
                         // Only open the register for real leaf accounts.
@@ -165,6 +192,32 @@ struct AccountTreeView: View {
                         registerOpenFor = node
                     }
                 )
+                // ── Right-click context menu ──────────────────────────────
+                // Provides quick actions for managing account hierarchy:
+                // - "New Sub-Account": Pre-selects this node as parent via suggestedParentId
+                // - "Edit Account": Opens form with existing account data for modification
+                .contextMenu {
+                    Button {
+                        openWindow(value: AccountFormWindowPayload(
+                            ledger: ledger,
+                            existingAccount: nil,
+                            suggestedParentId: node.id
+                        ))
+                    } label: {
+                        Label("New Sub-Account", systemImage: "plus.circle")
+                    }
+
+                    Button {
+                        openWindow(value: AccountFormWindowPayload(
+                            ledger: ledger,
+                            existingAccount: AccountFormPayload(node: node),
+                            suggestedParentId: nil
+                        ))
+                    } label: {
+                        Label("Edit Account", systemImage: "pencil")
+                    }
+                }
+                // ─────────────────────────────────────────────────────────
         }
         .listStyle(.sidebar)
         .onChange(of: registerOpenFor) { _, newNode in
