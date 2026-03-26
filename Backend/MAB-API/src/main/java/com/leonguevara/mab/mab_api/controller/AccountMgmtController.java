@@ -5,18 +5,18 @@
 // Purpose: REST controller for account management operations
 //          that are NOT scoped under a specific ledger path:
 //
-//          POST /accounts             — create a new account
-//          GET  /account-types        — fetch account type catalog
+//          POST  /accounts             — create a new account
+//          PATCH /accounts/{accountId} — partially update an account
 //
 //          These routes cannot live in AccountController because
 //          that controller is mapped to /ledgers, which would cause:
-//          - POST /ledgers      → collision with LedgerController
-//          - GET /ledgers/account-types → "account-types" matched
-//            as {ledgerId} path variable (routing conflict)
+//          - POST /ledgers → collision with LedgerController
 //
-//          Separating them here keeps routing unambiguous.
+//          The account type catalog (GET /account-types) lives in
+//          AccountTypeController to avoid prefix ambiguity between
+//          /accounts and /account-types.
 // ============================================================
-// Last edited: 2026-03-25
+// Last edited: 2026-03-26
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -27,6 +27,7 @@ import com.leonguevara.mab.mab_api.dto.request.CreateAccountRequest;
 import com.leonguevara.mab.mab_api.dto.response.AccountResponse;
 import com.leonguevara.mab.mab_api.dto.response.AccountTypeResponse;
 import com.leonguevara.mab.mab_api.service.AccountService;
+import com.leonguevara.mab.mab_api.dto.request.PatchAccountRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -43,13 +44,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping
 @Tag(name = "Account Management",
-        description = "Create accounts and retrieve the account type catalog")
+        description = "Create and partially update accounts in a ledger's chart of accounts")
 @SecurityRequirement(name = "bearerAuth")
 public class AccountMgmtController {
 
@@ -151,75 +155,63 @@ public class AccountMgmtController {
                 .body(accountService.createAccount(request));
     }
 
-    // ── GET /account-types ────────────────────────────────────────────────────
+    // ── PATCH /accounts/{accountId} ───────────────────────────────────────────
 
     /**
-     * Retrieves the complete catalog of account types.
+     * Partially updates an existing account.
      * <p>
-     * <strong>REST route:</strong> {@code GET /account-types}
+     * <strong>REST route:</strong> {@code PATCH /accounts/{accountId}}
      * <p>
-     * <strong>Purpose:</strong> Account types define the functional classification of
-     * accounts (BANK, CASH, RECEIVABLE, PAYABLE, EQUITY, STOCK, etc.) and are used when
-     * creating or updating accounts. This endpoint provides the reference data needed to
-     * populate account type dropdowns in client applications.
+     * <strong>Partial update semantics:</strong> Only fields present (non-null) in the
+     * {@link PatchAccountRequest} body are applied. Fields omitted from the request are
+     * left unchanged. This follows standard HTTP PATCH semantics.
      * <p>
-     * <strong>System-wide catalog:</strong> Account types are NOT tenant-scoped—they are
-     * shared across all owners and are seeded during schema bootstrap via
-     * {@code 002_Populating_account_type.pgsql}. The same catalog is available to all users.
+     * <strong>Updatable fields:</strong> Clients may patch {@code name}, {@code code},
+     * {@code accountTypeCode}, {@code accountRole}, {@code isPlaceholder}, and
+     * {@code isHidden}. Fields that define the account's structural position in the chart
+     * of accounts (e.g., {@code parentId}, {@code ledgerId}, {@code kind}) cannot be
+     * changed after creation.
      * <p>
-     * <strong>Authentication:</strong> Requires JWT authentication (enforced by
-     * {@code @SecurityRequirement}). Although account types are system-wide, the endpoint
-     * is protected to maintain consistent auth requirements across the API.
+     * <strong>Security:</strong> Requires JWT authentication. The owner ID is resolved
+     * from the JWT token. Row-Level Security (RLS) ensures the authenticated user can
+     * only update accounts that belong to ledgers they own. If {@code accountId} belongs
+     * to another owner's ledger, the operation will fail with HTTP 404 (not 403, to
+     * avoid leaking existence information).
      * <p>
-     * <strong>Response format:</strong> Returns a list of {@link AccountTypeResponse}
-     * objects, each containing:
-     * <ul>
-     *   <li>{@code id} — UUID primary key</li>
-     *   <li>{@code code} — Stable functional code (use this value for {@code accountTypeCode}
-     *       when creating/updating accounts)</li>
-     *   <li>{@code name} — Human-readable display name</li>
-     *   <li>{@code kind} — Accounting nature (1=Asset, 2=Liability, 3=Equity, 4=Revenue,
-     *       5=Gain/Loss, 6=Expense)</li>
-     *   <li>{@code normalBalance} — 0=Debit, 1=Credit</li>
-     *   <li>{@code sortOrder} — Display order hint for UI</li>
-     * </ul>
+     * <strong>No ledger ID in path:</strong> Unlike some routes, this endpoint does not
+     * require the ledger ID in the URL. RLS enforces ownership at the DB level using
+     * the JWT-derived owner ID, so the ledger is not needed for authorization.
      * <p>
-     * <strong>Ordering:</strong> Results are ordered by {@code sortOrder ASC}, providing
-     * a natural display order for UI dropdowns.
-     * <p>
-     * <strong>Filtering:</strong> Only active, non-deleted account types are returned.
-     * <p>
-     * <strong>Typical usage:</strong>
-     * <ul>
-     *   <li>Populating the account type dropdown in account creation forms</li>
-     *   <li>Validating {@code accountTypeCode} values before submission</li>
-     *   <li>Displaying account type names in account lists and reports</li>
-     * </ul>
+     * <strong>Response:</strong> Returns HTTP 200 OK with the full updated account in
+     * the response body, reflecting all current field values after the patch is applied.
      *
-     * @return HTTP 200 with a list of all active {@link AccountTypeResponse} objects,
-     *         ordered by {@code sortOrder}. Never returns null; returns an empty list if
-     *         no account types exist (which should never happen in a properly seeded database).
-     * @throws com.leonguevara.mab.mab_api.exception.ApiException HTTP 401 if no valid JWT token.
+     * @param accountId The UUID of the account to update.
+     * @param request   The patch request containing only the fields to be updated.
+     *                  See {@link PatchAccountRequest} for field descriptions.
+     * @return          HTTP 200 with the updated {@link AccountResponse}.
+     * @throws com.leonguevara.mab.mab_api.exception.ApiException HTTP 400 if the patch
+     *         data is invalid (e.g., unrecognized {@code accountTypeCode}).
+     * @throws com.leonguevara.mab.mab_api.exception.ApiException HTTP 401 if no valid
+     *         JWT token is present.
+     * @throws com.leonguevara.mab.mab_api.exception.ApiException HTTP 404 if the account
+     *         does not exist or does not belong to the authenticated owner.
      */
-    @GetMapping("/account-types")
-    @Operation(summary = "List account types",
+    @PatchMapping("/accounts/{accountId}")
+    @Operation(summary = "Update account",
             description = """
-                       Returns the full account type catalog ordered by `sortOrder`.
-
-                       Use the `code` field as the value for `accountTypeCode` when
-                       creating or updating accounts.
-
-                       Results are filtered to active, non-deleted types only.
-                       The `kind` field matches the account `kind` integer:
-                       1=Asset, 2=Liability, 3=Equity, 4=Revenue,
-                       5=Gain/Loss, 6=Expense.
-                       """)
+               Partially updates an account. Only non-null fields are applied.
+               Ledger ownership is enforced via RLS — no ledgerId needed in the path.
+               """)
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Account type list"),
+            @ApiResponse(responseCode = "200", description = "Account updated"),
             @ApiResponse(responseCode = "401", description = "Missing or invalid token",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Account not found",
                     content = @Content)
     })
-    public ResponseEntity<List<AccountTypeResponse>> getAccountTypes() {
-        return ResponseEntity.ok(accountService.getAccountTypes());
+    public ResponseEntity<AccountResponse> patchAccount(
+            @PathVariable UUID accountId,
+            @RequestBody PatchAccountRequest request) {
+        return ResponseEntity.ok(accountService.patchAccount(accountId, request));
     }
 }

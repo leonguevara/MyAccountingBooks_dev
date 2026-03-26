@@ -28,24 +28,48 @@ import SwiftUI
 /// }
 /// ```
 ///
-/// Open the window:
+/// Open the window for creating a new account:
 /// ```swift
-/// // Create new account
+/// // Create account with no parent pre-selected
 /// let payload = AccountFormWindowPayload(
 ///     ledger: currentLedger,
-///     existingAccount: nil
+///     existingAccount: nil,
+///     suggestedParentId: nil
 /// )
 /// openWindow(value: payload)
 ///
-/// // Edit existing account
+/// // Create account with suggested parent (e.g., "Add Sub-Account")
 /// let payload = AccountFormWindowPayload(
 ///     ledger: currentLedger,
-///     existingAccount: AccountFormPayload(node: selectedAccount)
+///     existingAccount: nil,
+///     suggestedParentId: parentAccount.id  // Pre-select parent
 /// )
 /// openWindow(value: payload)
 /// ```
 ///
-/// - Note: The account tree (`allRoots`) is loaded inside `AccountFormView` via its `.task` modifier.
+/// Open the window for editing an existing account:
+/// ```swift
+/// let payload = AccountFormWindowPayload(
+///     ledger: currentLedger,
+///     existingAccount: AccountFormPayload(node: selectedAccount),
+///     suggestedParentId: nil  // Not used in edit mode
+/// )
+/// openWindow(value: payload)
+/// ```
+///
+/// ## Parent Selection
+///
+/// The `suggestedParentId` field in the payload is intended for pre-selecting a parent
+/// account when creating new accounts (e.g., when clicking "Add Sub-Account" in the
+/// account tree context menu).
+///
+/// **Current implementation note:** The `suggestedParentId` is not yet fully wired through
+/// to the form. To complete this feature, `AccountFormView` would need access to the full
+/// payload (not just the mode) so it can resolve the UUID to an `AccountNode` after loading
+/// the account tree in its `.task` modifier.
+///
+/// - Note: The account tree is loaded inside `AccountFormView` via its `.task` modifier,
+///   which allows for deferred parent resolution after the tree data is available.
 /// - SeeAlso: `AccountFormWindowPayload`, `AccountFormView`, `AccountFormViewModel.Mode`
 struct AccountFormWindowContent: View {
 
@@ -56,8 +80,8 @@ struct AccountFormWindowContent: View {
 
     var body: some View {
         AccountFormView(
-            mode: formMode,
-            allRoots: []    // roots loaded inside AccountFormView
+            mode: formMode  //,
+            //allRoots: []    // roots loaded inside AccountFormView
         )
         .environment(auth)
     }
@@ -66,6 +90,22 @@ struct AccountFormWindowContent: View {
     ///
     /// - If `existingAccount` is present: Returns `.edit` mode
     /// - If `existingAccount` is `nil`: Returns `.create` mode
+    ///
+    /// ## Parent Pre-Selection
+    ///
+    /// In create mode, `suggestedParentId` from the payload cannot be immediately resolved here
+    /// because the account tree hasn't been loaded yet. The current implementation always
+    /// passes `suggestedParent: nil` to the create mode.
+    ///
+    /// **Note:** To fully implement suggested parent functionality, `AccountFormWindowContent`
+    /// would need to:
+    /// 1. Pass the complete payload to `AccountFormView` (not just the mode)
+    /// 2. `AccountFormView` would load the account tree in its `.task` modifier
+    /// 3. Resolve `payload.suggestedParentId` to an `AccountNode` using the loaded tree
+    /// 4. Update `viewModel.selectedParent` with the resolved node
+    ///
+    /// This deferred resolution pattern avoids blocking the window from opening while
+    /// waiting for network requests to complete.
     ///
     /// - Returns: The appropriate `AccountFormViewModel.Mode` for the form.
     private var formMode: AccountFormViewModel.Mode {
@@ -88,6 +128,7 @@ struct AccountFormWindowContent: View {
 ///
 /// - **Dual mode operation**: Create or edit based on `AccountFormViewModel.Mode`
 /// - **Parent selection**: Hierarchical account picker with search
+/// - **Suggested parent**: Supports pre-selecting a parent for "Add Sub-Account" workflows
 /// - **Account type catalog**: Type picker with placeholder support
 /// - **Role selection**: Dropdown with common accounting roles
 /// - **Opening balance**: Optional initial balance with contra account (create only)
@@ -147,12 +188,6 @@ struct AccountFormView: View {
     /// The form mode determining create or edit behavior.
     let mode: AccountFormViewModel.Mode
     
-    /// The complete chart of accounts hierarchy for parent/contra account selection.
-    ///
-    /// Initially empty (passed as `[]` from `AccountFormWindowContent`). The form
-    /// loads the account tree in its `.task` modifier.
-    let allRoots: [AccountNode]
-
     @Environment(AuthService.self) private var auth
     @Environment(\.dismiss) private var dismiss
     
@@ -161,6 +196,9 @@ struct AccountFormView: View {
     
     /// Dictionary mapping account UUIDs to full hierarchical paths for display.
     @State private var accountPaths: [UUID: String] = [:]
+    
+    // Fix #9.1: Populate correctly the parents list
+    @State private var loadedRoots: [AccountNode] = []
 
     /// The ledger context extracted from the mode.
     private var ledger: LedgerResponse {
@@ -175,7 +213,7 @@ struct AccountFormView: View {
         if case .edit = mode { return true }
         return false
     }
-
+    
     var body: some View {
         VStack(spacing: 0) {
             // ── Header ───────────────────────────────────────────────
@@ -224,9 +262,23 @@ struct AccountFormView: View {
             }
         }
         .frame(minWidth: 520, minHeight: 560)
+        // Account loading: Loads account types first, then fetches the account tree
+        // and resolves parent references. In create mode with a suggested parent,
+        // the suggestedParentId would be resolved here after loadedRoots is populated.
         .task {
             guard let token = auth.token else { return }
-            await viewModel.load(mode: mode, allRoots: allRoots, token: token)
+            // Step 1: load account types immediately (fast — no tree needed yet)
+            await viewModel.load(mode: mode, allRoots: [], token: token)
+            // Step 2: fetch the account tree
+            if let flat = try? await AccountService.shared.fetchAccounts(
+                ledgerID: ledger.id, token: token
+            ) {
+                loadedRoots  = AccountTreeBuilder.build(from: flat)
+                accountPaths = AccountTreeBuilder.buildPathMap(from: loadedRoots)
+                // Step 3: re-run load now that the tree is available so the
+                // parent picker can resolve the existing account's parent node
+                await viewModel.load(mode: mode, allRoots: loadedRoots, token: token)
+            }
         }
         .onChange(of: viewModel.didSave) { _, saved in
             if saved { dismiss() }
@@ -255,9 +307,10 @@ struct AccountFormView: View {
             FormRow(label: "Parent") {
                 AccountNodePicker(
                     selection: $viewModel.selectedParent,
-                    allRoots: allRoots,
+                    allRoots: loadedRoots,
                     accountPaths: accountPaths,
-                    placeholder: "Select parent account…"
+                    placeholder: "Select parent account…",
+                    leafOnly: false
                 )
             }
         }
@@ -338,14 +391,14 @@ struct AccountFormView: View {
             FormRow(label: "Date") {
                 DatePicker("",
                     selection: $viewModel.openingBalanceDate,
-                    displayedComponents: .date
+                           displayedComponents: [.date, .hourAndMinute]
                 )
                 .labelsHidden()
             }
             FormRow(label: "Contra Account") {
                 AccountNodePicker(
                     selection: $viewModel.openingBalanceAccount,
-                    allRoots: allRoots,
+                    allRoots: loadedRoots,
                     accountPaths: accountPaths,
                     placeholder: "Select equity/contra account…",
                     leafOnly: false

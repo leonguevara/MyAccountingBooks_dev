@@ -15,29 +15,39 @@ import Foundation
 /// including loading account types, validating user input, creating new accounts, updating
 /// existing accounts, and posting opening balance transactions when needed.
 ///
+/// ## Overview
+///
+/// This view model was created on 2026-03-25 to support the account management UI,
+/// providing a clean separation between view logic and business logic for account
+/// creation and editing operations.
+///
 /// ## Features
 ///
 /// - **Dual mode operation**: Create new accounts or edit existing ones
-/// - **Account type catalog**: Loads and presents available account types
-/// - **Parent account selection**: Supports hierarchical account structure
+/// - **Account type catalog**: Loads and presents available account types from the backend
+/// - **Parent account selection**: Supports hierarchical account structure with suggested parent
 /// - **Opening balance**: Posts initial balance transaction for new accounts
-/// - **Placeholder support**: Allows creating organizational accounts
+/// - **Placeholder support**: Allows creating organizational accounts without types
 /// - **Validation**: Ensures required fields are populated before saving
-/// - **Error handling**: Captures and displays API errors
+/// - **Error handling**: Captures and displays API errors with user-friendly messages
+/// - **Change notifications**: Posts system notification when accounts are saved for UI refresh
 ///
 /// ## Usage
 ///
-/// **Creating a new account:**
+/// **Creating a new account with suggested parent:**
 /// ```swift
 /// let viewModel = AccountFormViewModel()
+/// 
+/// // Mode with suggested parent (e.g., from "Add Sub-Account" action)
 /// let mode = AccountFormViewModel.Mode.create(
 ///     ledger: currentLedger,
-///     suggestedParent: assetsRoot
+///     suggestedParent: assetsRootAccount  // Pre-selects this as parent
 /// )
 ///
 /// await viewModel.load(mode: mode, allRoots: accountTree, token: authToken)
 ///
-/// // User fills in form fields
+/// // viewModel.selectedParent is now pre-populated with assetsRootAccount
+/// // User fills in remaining fields
 /// viewModel.name = "Business Checking"
 /// viewModel.code = "1010"
 /// viewModel.selectedAccountType = bankAccountType
@@ -48,6 +58,17 @@ import Foundation
 /// if viewModel.didSave {
 ///     // Success - dismiss form
 /// }
+/// ```
+///
+/// **Creating a new account without suggested parent:**
+/// ```swift
+/// let mode = AccountFormViewModel.Mode.create(
+///     ledger: currentLedger,
+///     suggestedParent: nil  // User must select parent manually
+/// )
+///
+/// await viewModel.load(mode: mode, allRoots: accountTree, token: authToken)
+/// // viewModel.selectedParent is nil - user selects from picker
 /// ```
 ///
 /// **Editing an existing account:**
@@ -78,8 +99,63 @@ import Foundation
 /// // Automatically posts a transaction with opening balance
 /// ```
 ///
-/// - Note: Uses the `@Observable` macro for SwiftUI state management.
-/// - SeeAlso: `AccountFormPayload`, `CreateAccountRequest`, `PatchAccountRequest`
+/// ## State Management
+///
+/// Uses the `@Observable` macro (iOS 17+/macOS 14+) for automatic view updates.
+/// All published properties automatically trigger SwiftUI view refreshes when changed.
+///
+/// ## Change Notification
+///
+/// When an account is successfully saved, posts a `.accountSaved` notification with
+/// the ledger ID, allowing other parts of the app (like `AccountTreeView`) to refresh
+/// their data.
+///
+/// - Note: This is a new file created on 2026-03-25 as part of implementing account
+///   creation and editing functionality (Fix #9).
+/// - SeeAlso: `AccountFormPayload`, `CreateAccountRequest`, `PatchAccountRequest`,
+///   `AccountFormView`, `AccountFormWindowContent`
+
+/// Notification posted when an account is successfully saved (created or updated).
+///
+/// This notification is posted by `AccountFormViewModel.save(mode:token:)` after
+/// successfully creating or updating an account. The notification's `object` is the
+/// ledger ID (`UUID`) of the affected ledger.
+///
+/// ## Usage
+///
+/// **Observing account saves:**
+/// ```swift
+/// NotificationCenter.default.addObserver(
+///     forName: .accountSaved,
+///     object: nil,
+///     queue: .main
+/// ) { notification in
+///     if let ledgerId = notification.object as? UUID {
+///         // Refresh account tree for this ledger
+///         await reloadAccounts(for: ledgerId)
+///     }
+/// }
+/// ```
+///
+/// **In SwiftUI:**
+/// ```swift
+/// .onReceive(NotificationCenter.default.publisher(for: .accountSaved)) { notification in
+///     if let ledgerId = notification.object as? UUID,
+///        ledgerId == currentLedger.id {
+///         Task {
+///             await viewModel.loadAccounts(ledgerID: ledgerId, token: token)
+///         }
+///     }
+/// }
+/// ```
+///
+/// - Note: Posted on successful save only (not on validation failures or API errors).
+/// - SeeAlso: `AccountFormViewModel.save(mode:token:)`, `AccountTreeView`
+extension Notification.Name {
+    /// Posted when an account is saved, with the ledger UUID as the object.
+    static let accountSaved = Notification.Name("com.leonfelipe.mab.accountSaved")
+}
+
 @Observable
 final class AccountFormViewModel {
 
@@ -96,19 +172,42 @@ final class AccountFormViewModel {
     ///
     /// - **create**: Creating a new account
     ///   - `ledger`: The ledger context for the new account
-    ///   - `suggestedParent`: Optional parent account to pre-select
+    ///   - `suggestedParent`: Optional parent account to pre-select in the form
     ///
     /// - **edit**: Editing an existing account
     ///   - `ledger`: The ledger context (for validation)
     ///   - `account`: Payload containing the current account data
     ///
+    /// ## Suggested Parent Usage
+    ///
+    /// The `suggestedParent` parameter in create mode enables "Add Sub-Account" workflows
+    /// where the parent is already known (e.g., from a context menu action):
+    ///
+    /// ```swift
+    /// // User right-clicks "Assets" and chooses "Add Sub-Account"
+    /// let mode = Mode.create(
+    ///     ledger: currentLedger,
+    ///     suggestedParent: assetsAccount  // Pre-selects "Assets" as parent
+    /// )
+    /// ```
+    ///
+    /// When `load(mode:allRoots:token:)` is called with this mode, the view model
+    /// automatically sets `selectedParent` to the suggested parent, providing a
+    /// better user experience.
+    ///
     /// ## Usage
     ///
     /// ```swift
-    /// // Create mode
+    /// // Create mode with suggested parent
     /// let createMode = Mode.create(
     ///     ledger: currentLedger,
     ///     suggestedParent: assetsRoot
+    /// )
+    ///
+    /// // Create mode without suggested parent
+    /// let createMode = Mode.create(
+    ///     ledger: currentLedger,
+    ///     suggestedParent: nil  // User picks parent manually
     /// )
     ///
     /// // Edit mode
@@ -117,6 +216,8 @@ final class AccountFormViewModel {
     ///     account: AccountFormPayload(node: existingAccount)
     /// )
     /// ```
+    ///
+    /// - SeeAlso: `load(mode:allRoots:token:)`, `AccountFormWindowPayload.suggestedParentId`
     enum Mode {
         /// Creating a new account with optional suggested parent.
         case create(ledger: LedgerResponse, suggestedParent: AccountNode?)
@@ -269,41 +370,86 @@ final class AccountFormViewModel {
     /// Loads account types and pre-populates form fields based on the mode.
     ///
     /// This method must be called before presenting the form to the user. It fetches
-    /// the account type catalog from the backend and, in edit mode, resolves existing
-    /// account data to populate form fields.
+    /// the account type catalog from the backend and, depending on the mode, pre-populates
+    /// form fields with either suggested defaults (create) or existing values (edit).
     ///
-    /// **Behavior by mode:**
+    /// ## Behavior by Mode
     ///
-    /// - **Create mode**: Sets `selectedParent` to the suggested parent (if provided)
-    /// - **Edit mode**:
-    ///   - Pre-fills name, code, placeholder status, hidden status, and role
-    ///   - Resolves parent account UUID to `AccountNode` reference
-    ///   - Resolves account type code to `AccountTypeItem` reference
+    /// **Create mode:**
+    /// - Fetches account types from backend
+    /// - Sets `selectedParent` to the `suggestedParent` if provided
+    /// - Leaves other fields at their default values for user input
     ///
-    /// **Flow:**
+    /// **Edit mode:**
+    /// - Fetches account types from backend
+    /// - Pre-fills: name, code, placeholder status, hidden status, and role
+    /// - Resolves parent account UUID to `AccountNode` reference using `allRoots`
+    /// - Resolves account type code to `AccountTypeItem` reference
+    ///
+    /// ## Suggested Parent Flow
+    ///
+    /// The suggested parent feature enables "Add Sub-Account" workflows:
+    ///
+    /// ```swift
+    /// // User right-clicks "Cash" account and selects "Add Sub-Account"
+    /// let mode = Mode.create(
+    ///     ledger: currentLedger,
+    ///     suggestedParent: cashAccount  // Pre-select Cash as parent
+    /// )
+    ///
+    /// await viewModel.load(mode: mode, allRoots: accountTree, token: token)
+    ///
+    /// // Now viewModel.selectedParent == cashAccount
+    /// // User sees "Cash" pre-selected in parent picker
+    /// ```
+    ///
+    /// ## Loading Flow
+    ///
     /// 1. Sets `isLoading = true`
-    /// 2. Fetches account types from the backend
-    /// 3. Populates form fields based on mode
+    /// 2. Fetches account types from backend via `AccountService`
+    /// 3. Populates form fields based on mode (create or edit)
     /// 4. Sets `isLoading = false`
-    /// 5. On error, sets `errorMessage`
+    /// 5. On error, sets `errorMessage` with user-friendly message
     ///
-    /// **Usage:**
+    /// ## Usage Examples
+    ///
+    /// **Create with suggested parent:**
+    /// ```swift
+    /// let mode = Mode.create(ledger: ledger, suggestedParent: assetsAccount)
+    /// await viewModel.load(mode: mode, allRoots: accountTree, token: authToken)
+    /// // selectedParent is now assetsAccount
+    /// ```
+    ///
+    /// **Create without suggested parent:**
     /// ```swift
     /// let mode = Mode.create(ledger: ledger, suggestedParent: nil)
     /// await viewModel.load(mode: mode, allRoots: accountTree, token: authToken)
-    ///
-    /// // Form is now ready for user input
-    /// if let error = viewModel.errorMessage {
-    ///     // Handle error
-    /// }
+    /// // selectedParent is nil - user must choose
     /// ```
+    ///
+    /// **Edit existing:**
+    /// ```swift
+    /// let payload = AccountFormPayload(node: existingAccount)
+    /// let mode = Mode.edit(ledger: ledger, account: payload)
+    /// await viewModel.load(mode: mode, allRoots: accountTree, token: authToken)
+    /// // All fields pre-populated from existing account
+    /// ```
+    ///
+    /// ## Parameters
     ///
     /// - Parameters:
     ///   - mode: The form mode (create or edit) determining pre-population behavior
-    ///   - allRoots: The complete account tree for resolving parent and contra account references
-    ///   - token: Authentication token for the account types request
+    ///   - allRoots: The complete account tree for resolving parent references and
+    ///               populating the parent/contra account pickers
+    ///   - token: Authentication token for the account types API request
+    ///
+    /// ## Error Handling
+    ///
+    /// On network or parsing errors, sets `errorMessage` with the localized description.
+    /// The UI should display this in an alert or error banner.
     ///
     /// - Note: This method runs on the main actor and updates UI state properties.
+    /// - SeeAlso: `Mode`, `AccountService.fetchAccountTypes(token:)`
     @MainActor
     func load(mode: Mode, allRoots: [AccountNode], token: String) async {
         isLoading = true
@@ -343,23 +489,60 @@ final class AccountFormViewModel {
     /// `saveCreate()` or `savePatch()` based on the mode. In create mode with an
     /// opening balance, it also posts an opening balance transaction automatically.
     ///
-    /// **Validation:**
-    /// - Name must not be empty
-    /// - Parent account must be selected
-    /// - Non-placeholder accounts must have a type selected
+    /// ## Validation
     ///
-    /// **Create mode flow:**
+    /// Checks that:
+    /// - Name is not empty (after trimming whitespace)
+    /// - Parent account is selected
+    /// - Non-placeholder accounts have a type selected
+    ///
+    /// If validation fails, returns early without attempting to save.
+    ///
+    /// ## Create Mode Flow
+    ///
     /// 1. Builds `CreateAccountRequest` from form fields
-    /// 2. Creates the account via `AccountService`
-    /// 3. If opening balance provided, posts opening balance transaction
+    /// 2. Posts request to backend via `AccountService.createAccount()`
+    /// 3. If opening balance provided (`hasOpeningBalance == true`):
+    ///    - Posts opening balance transaction with two splits (DR new account, CR contra)
     /// 4. Sets `didSave = true` on success
+    /// 5. Posts `.accountSaved` notification with ledger ID for UI refresh
     ///
-    /// **Edit mode flow:**
+    /// ## Edit Mode Flow
+    ///
     /// 1. Builds `PatchAccountRequest` from form fields
-    /// 2. Updates the account via `AccountService`
+    /// 2. Sends PATCH request to backend via `AccountService.patchAccount()`
     /// 3. Sets `didSave = true` on success
+    /// 4. Posts `.accountSaved` notification with ledger ID for UI refresh
     ///
-    /// **Usage:**
+    /// ## Opening Balance Transaction
+    ///
+    /// If creating an account with a non-zero opening balance:
+    /// ```
+    /// Date: openingBalanceDate
+    /// Memo: "Opening balance"
+    ///
+    /// Splits:
+    /// - DR  New Account            $1,000.00
+    /// - CR  Opening Balance Equity $1,000.00
+    /// ```
+    ///
+    /// ## Change Notification
+    ///
+    /// On successful save, posts `Notification.Name.accountSaved` with the ledger's
+    /// UUID as the object. Views observing this notification can refresh their
+    /// account data:
+    ///
+    /// ```swift
+    /// .onReceive(NotificationCenter.default.publisher(for: .accountSaved)) { notification in
+    ///     if let ledgerId = notification.object as? UUID,
+    ///        ledgerId == currentLedger.id {
+    ///         Task { await reloadAccounts() }
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// ## Usage
+    ///
     /// ```swift
     /// await viewModel.save(mode: mode, token: authToken)
     ///
@@ -372,12 +555,22 @@ final class AccountFormViewModel {
     /// }
     /// ```
     ///
+    /// ## Parameters
+    ///
     /// - Parameters:
     ///   - mode: The form mode (create or edit) determining which save operation to perform
     ///   - token: Authentication token for API requests
     ///
-    /// - Note: Sets `isSaving = true` during the operation and `false` when complete.
-    ///         Updates `errorMessage` on failure and `didSave` on success.
+    /// ## State Changes
+    ///
+    /// - Sets `isSaving = true` at start, `false` when complete
+    /// - Sets `errorMessage` on failure (with localized description)
+    /// - Sets `didSave = true` on success
+    /// - Posts `.accountSaved` notification on success
+    ///
+    /// - Note: This method runs on the main actor and updates UI state properties.
+    /// - SeeAlso: `canSave`, `saveCreate(ledger:token:)`, `savePatch(ledger:accountId:token:)`,
+    ///   `Notification.Name.accountSaved`
     @MainActor
     func save(mode: Mode, token: String) async {
         guard canSave else { return }
@@ -397,6 +590,17 @@ final class AccountFormViewModel {
                 )
             }
             didSave = true
+            
+            // Extract ledger ID and post notification to refresh UI
+            let notificationLedger: LedgerResponse
+            switch mode {
+            case .create(let l, _): notificationLedger = l
+            case .edit(let l, _):   notificationLedger = l
+            }
+            NotificationCenter.default.post(
+                name: .accountSaved,
+                object: notificationLedger.id
+            )
         } catch {
             errorMessage = error.localizedDescription
         }

@@ -30,6 +30,10 @@ import SwiftUI
  - **Account register**: Double-clicking a non-placeholder leaf account opens its
    register in a dedicated window via `openWindow(value:)`. Placeholder and
    parent nodes are excluded from this action.
+ - **Account management**: Create, edit, and organize accounts via toolbar and
+   context menu actions that open dedicated form windows.
+ - **Automatic refresh**: Observes `.accountSaved` notifications to refresh the
+   tree immediately when accounts are created or modified.
  - **Error handling**: Network failures surface as a dismissible alert.
  - **Concurrent loading**: Accounts and balances are fetched concurrently via
    `AccountTreeViewModel.loadAccounts(ledgerID:token:)`.
@@ -68,12 +72,27 @@ import SwiftUI
    as the parent via `suggestedParentId`.
  - **Edit Account**: Opens the account form pre-populated with the existing account's data.
 
+ ## Automatic Refresh
+
+ The view observes `Notification.Name.accountSaved` posted by `AccountFormViewModel`
+ when accounts are successfully created or updated. When a notification is received
+ for the current ledger, the view automatically calls `viewModel.forceReload()` to
+ fetch the updated account tree from the backend.
+
+ This ensures that:
+ - Newly created accounts appear immediately in the tree
+ - Account edits (name, code, parent changes) are reflected without manual refresh
+ - The account hierarchy stays synchronized with the backend state
+
+ No user action is required — the tree updates automatically as soon as the account
+ form is saved.
+
  - Important: Requires `AuthService` in the SwiftUI environment to obtain a valid
    bearer token before loading.
  - Note: The `Task.yield()` before `loadAccounts` prevents race conditions when this
    view renders simultaneously with other views that also trigger network requests.
  - SeeAlso: `AccountTreeViewModel`, `AccountRowView`, `AccountRegisterView`,
-   `AccountRegisterWindowPayload`, `AccountFormWindowPayload`
+   `AccountRegisterWindowPayload`, `AccountFormWindowPayload`, `AccountFormViewModel`
  */
 struct AccountTreeView: View {
 
@@ -154,6 +173,25 @@ struct AccountTreeView: View {
             Button("OK", role: .cancel) { viewModel.errorMessage = nil }
         } message: {
             Text(viewModel.errorMessage ?? "")
+        }
+        // ── Automatic refresh on account changes ──────────────────────────────
+        // Observes notifications posted by AccountFormViewModel when accounts are
+        // saved (created or updated). When a notification is received for this
+        // ledger, forces a reload to fetch the updated account tree.
+        //
+        // This ensures that newly created accounts appear immediately, and that
+        // edits (name changes, parent moves, etc.) are reflected without requiring
+        // manual refresh or app restart.
+        .onReceive(NotificationCenter.default.publisher(
+            for: .accountSaved
+        )) { notification in
+            // Only reload if the notification is for this ledger
+            guard let savedLedgerID = notification.object as? UUID,
+                  savedLedgerID == ledger.id,
+                  let token = auth.token else { return }
+            Task {
+                await viewModel.forceReload(ledgerID: ledger.id, token: token)
+            }
         }
     }
 

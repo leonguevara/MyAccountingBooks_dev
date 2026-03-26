@@ -28,7 +28,7 @@
 //             TenantContext.withOwner() so SET LOCAL
 //             app.current_owner_id activates RLS.
 // ============================================================
-// Last edited: 2026-03-25
+// Last edited: 2026-03-26
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -170,7 +170,7 @@ public class AccountRepository {
      *
      * @param  ownerID  The authenticated owner's UUID.
      * @param  ledgerID The ledger ID to check.
-     * @return          true if the ledger exists and belongs to an owner.
+     * @return          true if the ledger exists and belongs to the authenticated owner.
      */
     public boolean ledgerExists(UUID ownerID, UUID ledgerID) {
         return TenantContext.withOwner(ownerID, jdbc, tx, template -> {
@@ -288,7 +288,7 @@ public class AccountRepository {
                             .addValue("code",           request.code())
                             .addValue("parentId",       request.parentId())
                             .addValue("accountTypeId",  accountTypeId)
-                            .addValue("accountRole",    (short) request.accountRole())
+                            .addValue("accountRole",    request.accountRole())
                             .addValue("isPlaceholder",  request.isPlaceholder())
                             .addValue("isHidden",       request.isHidden())
                             .addValue("kind",           kind)
@@ -301,7 +301,7 @@ public class AccountRepository {
         });
     }
 
-// ── Patch account ─────────────────────────────────────────────────────────────
+    // ── Patch account ────────────────────────────────────────────────────────
 
     /**
      * Partially updates an existing account with sparse field updates.
@@ -372,7 +372,7 @@ public class AccountRepository {
             }
             if (request.accountRole() != null) {
                 setClauses.add("account_role = :accountRole");
-                params.addValue("accountRole", request.accountRole().shortValue());
+                params.addValue("accountRole", request.accountRole());
             }
             if (request.isPlaceholder() != null) {
                 setClauses.add("is_placeholder = :isPlaceholder");
@@ -396,7 +396,7 @@ public class AccountRepository {
         });
     }
 
-// ── Fetch account types catalog ───────────────────────────────────────────────
+    // ── Fetch account types catalog ──────────────────────────────────────────
 
     /**
      * Retrieves all active account types from the system-wide catalog.
@@ -433,7 +433,7 @@ public class AccountRepository {
         ));
     }
 
-// ── Private fetch helper ──────────────────────────────────────────────────────
+    // ── Private fetch helper ─────────────────────────────────────────────────
 
     /**
      * Private helper method to fetch a single account by ID.
@@ -457,22 +457,13 @@ public class AccountRepository {
         String sql = """
         SELECT a.id, a.name, a.code, a.parent_id,
                a.is_placeholder, a.is_hidden, a.kind,
-               at.code AS account_type_code
+               at.code AS at_code
           FROM public.account a
           LEFT JOIN public.account_type at ON at.id = a.account_type_id
          WHERE a.id = :id AND a.deleted_at IS NULL
         """;
         return template.queryForObject(sql,
                 new MapSqlParameterSource("id", accountId),
-                (rs, _) -> new AccountResponse(
-                        rs.getObject("id",        UUID.class),
-                        rs.getString("name"),
-                        rs.getString("code"),
-                        rs.getObject("parent_id", UUID.class),
-                        rs.getBoolean("is_placeholder"),
-                        rs.getBoolean("is_hidden"),
-                        rs.getInt("kind"),
-                        rs.getString("account_type_code")
-                ));
+                ACCOUNT_MAPPER);
     }
 }

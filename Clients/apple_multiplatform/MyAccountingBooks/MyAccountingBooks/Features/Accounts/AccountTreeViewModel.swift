@@ -32,6 +32,8 @@ import Foundation
    as containers for matching descendants.
  - **Duplicate prevention**: Skips redundant network loads when the same ledger is
    already loaded.
+ - **Change notifications**: Responds to `.accountSaved` notifications to refresh
+   the tree when accounts are created or modified.
  - **Error handling**: Captures failures in `errorMessage` for display as an alert.
 
  # Loading Workflow
@@ -71,6 +73,16 @@ import Foundation
          guard let token = auth.token else { return }
          await viewModel.loadAccounts(ledgerID: selectedLedger.id, token: token)
      }
+     // Refresh when accounts are saved from the account form
+     .onReceive(NotificationCenter.default.publisher(for: .accountSaved)) { notification in
+         if let savedLedgerId = notification.object as? UUID,
+            savedLedgerId == selectedLedger.id {
+             Task {
+                 guard let token = auth.token else { return }
+                 await viewModel.forceReload(ledgerID: savedLedgerId, token: token)
+             }
+         }
+     }
  }
  ```
 
@@ -85,11 +97,23 @@ import Foundation
  | `isLoading`     | `Bool`           | `true` while network operations are in flight      |
  | `errorMessage`  | `String?`        | Set on failure; `nil` when no error is present     |
 
+ # Refreshing on Account Changes
+
+ When accounts are created or edited via `AccountFormView`, the form's view model
+ posts a `.accountSaved` notification with the ledger UUID. Views displaying the
+ account tree should observe this notification and call `forceReload(ledgerID:token:)`
+ to fetch the updated account structure.
+
+ This ensures that newly created accounts appear immediately in the tree without
+ requiring a manual refresh or app restart.
+
  - Important: All UI-state mutations occur on `@MainActor`. `loadAccounts` must be
    called from a `@MainActor` context (e.g., a SwiftUI `.task` modifier).
  - Note: Uses `loadedLedgerID` to prevent duplicate loads when the same ledger is
-   already in memory. A new ledger ID always triggers a full reload.
- - SeeAlso: `AccountTreeBuilder`, `AccountService`, `BalanceMap`, `AccountNode`
+   already in memory. A new ledger ID always triggers a full reload. Use `forceReload`
+   to bypass this guard when external changes require a refresh.
+ - SeeAlso: `AccountTreeBuilder`, `AccountService`, `BalanceMap`, `AccountNode`,
+   `forceReload(ledgerID:token:)`, `Notification.Name.accountSaved`
  */
 @Observable
 final class AccountTreeViewModel {
@@ -403,5 +427,83 @@ final class AccountTreeViewModel {
             }
         }
         return results
+    }
+    
+    // MARK: - Force Reload
+    
+    /**
+     Forces a complete reload of accounts and balances, bypassing the duplicate-prevention guard.
+     
+     This method clears `loadedLedgerID` before calling `loadAccounts(ledgerID:token:)`,
+     ensuring that the network request is made even if the same ledger was previously loaded.
+     
+     ## When to Use
+     
+     Use `forceReload` when external changes have occurred that require fresh data from
+     the backend:
+     
+     - **Account created**: A new account was added via `AccountFormView`
+     - **Account edited**: An existing account's properties were modified
+     - **Account deleted**: An account was removed (when deletion is implemented)
+     - **Account moved**: An account's parent was changed, affecting the tree structure
+     
+     ## Normal Loading vs. Force Reload
+     
+     | Method              | Behavior                                                    |
+     |---------------------|-------------------------------------------------------------|
+     | `loadAccounts`      | Skips network request if `ledgerID` matches last load       |
+     | `forceReload`       | Always performs network request, regardless of last load    |
+     
+     ## Usage with Notifications
+     
+     The primary use case is responding to `.accountSaved` notifications posted by
+     `AccountFormViewModel` after successfully creating or updating an account:
+     
+     ```swift
+     .onReceive(NotificationCenter.default.publisher(for: .accountSaved)) { notification in
+         if let savedLedgerId = notification.object as? UUID,
+            savedLedgerId == currentLedger.id {
+             Task {
+                 guard let token = auth.token else { return }
+                 await viewModel.forceReload(ledgerID: savedLedgerId, token: token)
+             }
+         }
+     }
+     ```
+     
+     ## Flow
+     
+     1. Sets `loadedLedgerID = nil` to clear the duplicate-prevention guard
+     2. Calls `loadAccounts(ledgerID:token:)` which now proceeds with the full load
+     3. `loadAccounts` resets `loadedLedgerID` to the new ledger ID at the end
+     
+     ## Example: Manual Refresh Button
+     
+     ```swift
+     ToolbarItem {
+         Button {
+             Task {
+                 guard let token = auth.token else { return }
+                 await viewModel.forceReload(ledgerID: ledger.id, token: token)
+             }
+         } label: {
+             Label("Refresh", systemImage: "arrow.clockwise")
+         }
+     }
+     ```
+     
+     - Parameters:
+       - ledgerID: The unique identifier of the ledger to reload
+       - token: A valid bearer authentication token
+     
+     - Note: This method runs on `@MainActor` like `loadAccounts`, ensuring UI updates
+       happen on the main thread.
+     - SeeAlso: `loadAccounts(ledgerID:token:)`, `Notification.Name.accountSaved`,
+       `AccountFormViewModel.save(mode:token:)`
+     */
+    @MainActor
+    func forceReload(ledgerID: UUID, token: String) async {
+        loadedLedgerID = nil          // clear the guard
+        await loadAccounts(ledgerID: ledgerID, token: token)
     }
 }

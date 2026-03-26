@@ -14,7 +14,7 @@
 //          All routes require authentication — enforced globally
 //          by SecurityConfig. No per-method annotations needed.
 // ============================================================
-// Last edited: 2026-03-25
+// Last edited: 2026-03-26
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -23,7 +23,6 @@ package com.leonguevara.mab.mab_api.controller;
 
 import com.leonguevara.mab.mab_api.dto.response.AccountResponse;
 import com.leonguevara.mab.mab_api.service.AccountService;
-import com.leonguevara.mab.mab_api.dto.request.PatchAccountRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,7 +34,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 
 // @RestController: REST controller — return values serialized as JSON.
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 // @RequestMapping: base URL path for this controller.
@@ -46,8 +44,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 // @PathVariable: extracts a value from the URL path (e.g. {ledgerId}).
 import org.springframework.web.bind.annotation.PathVariable;
-
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.UUID;
@@ -125,66 +121,4 @@ public class AccountController {
             @PathVariable UUID ledgerId) {
         return accountService.getAccountsForLedger(ledgerId);
     }
-
-    // ── PATCH /ledgers/{ledgerId}/accounts/{accountId} ────────────────────────
-
-    /**
-     * Partially updates an existing account with sparse field updates.
-     * <p>
-     * <strong>REST route:</strong> {@code PATCH /ledgers/{ledgerId}/accounts/{accountId}}
-     * <p>
-     * <strong>Update semantics:</strong> Implements JSON Merge Patch (RFC 7396). Only
-     * non-null fields in the request body are applied to the account. Fields set to
-     * {@code null} retain their existing database values. This allows clients to update
-     * specific fields (e.g., just the name) without needing to send the entire account object.
-     * <p>
-     * <strong>Security:</strong> Requires JWT authentication. The owner ID is resolved
-     * from the JWT token, and Row-Level Security (RLS) ensures only accounts in ledgers
-     * owned by the authenticated user can be modified.
-     * <p>
-     * <strong>Path parameters:</strong>
-     * <ul>
-     *   <li>{@code ledgerId} — Currently included for REST resource nesting but not used
-     *       in validation. Future versions may enforce that the account belongs to this ledger.</li>
-     *   <li>{@code accountId} — The UUID of the account to update.</li>
-     * </ul>
-     * <p>
-     * <strong>Editable fields:</strong> name, code, parentId, accountTypeCode, accountRole,
-     * isPlaceholder, isHidden. See {@link PatchAccountRequest} for field descriptions and constraints.
-     * <p>
-     * <strong>Important constraints:</strong>
-     * <ul>
-     *   <li>Changing {@code parentId} must not create circular references (not validated at API layer)</li>
-     *   <li>Converting to placeholder ({@code isPlaceholder: true}) should only be done if
-     *       the account has no posted transactions (not validated at API layer)</li>
-     *   <li>Changing {@code accountTypeCode} on accounts with transactions may violate
-     *       business rules (not validated at API layer)</li>
-     * </ul>
-     *
-     * @param ledgerId  The UUID of the ledger (from URL path). Currently not used for validation.
-     * @param accountId The UUID of the account to update (from URL path).
-     * @param request   The patch request body with nullable fields. Only non-null fields are applied.
-     * @return          HTTP 200 with the updated {@link AccountResponse} in the response body.
-     * @throws com.leonguevara.mab.mab_api.exception.ApiException HTTP 401 if no valid JWT token.
-     * @throws com.leonguevara.mab.mab_api.exception.ApiException HTTP 404 if account not found
-     *         or not owned by the authenticated user.
-     * @throws org.springframework.dao.DataAccessException if database constraints are violated
-     *         (e.g., invalid parent ID, invalid account type code).
-     */
-    @Operation(summary = "Update account",
-            description = "Partially updates an account. Only non-null fields are applied.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Account updated"),
-            @ApiResponse(responseCode = "401", description = "Missing or invalid token",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "Account not found",
-                    content = @Content)
-    })
-    public ResponseEntity<AccountResponse> patchAccount(
-            @PathVariable UUID ledgerId,
-            @PathVariable UUID accountId,
-            @RequestBody PatchAccountRequest request) {
-        return ResponseEntity.ok(accountService.patchAccount(accountId, request));
-    }
-
 }
