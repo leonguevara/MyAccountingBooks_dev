@@ -139,15 +139,17 @@ struct AccountTreeView: View {
         .navigationTitle(ledger.name)
         .searchable(text: $viewModel.searchText, prompt: "Search accounts…")
         // ── Toolbar: New Account button ───────────────────────────────────────
-        // Opens account creation form with no pre-selected parent (nil).
-        // User must choose parent from the full account tree picker.
+        // Opens account creation form with no pre-selected parent (nil) and no
+        // suggested name. User must choose parent from the full account tree picker
+        // and provide a name for the new account.
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     openWindow(value: AccountFormWindowPayload(
                         ledger: ledger,
                         existingAccount: nil,
-                        suggestedParentId: nil
+                        suggestedParentId: nil,
+                        suggestedName: nil
                     ))
                 } label: {
                     Label("New Account", systemImage: "plus")
@@ -232,14 +234,17 @@ struct AccountTreeView: View {
                 )
                 // ── Right-click context menu ──────────────────────────────
                 // Provides quick actions for managing account hierarchy:
-                // - "New Sub-Account": Pre-selects this node as parent via suggestedParentId
-                // - "Edit Account": Opens form with existing account data for modification
+                // - "New Sub-Account": Pre-selects this node as parent via suggestedParentId,
+                //   with no suggested name (user provides name in form)
+                // - "Edit Account": Opens form with existing account data for modification,
+                //   with no parent pre-selection (parent is determined by existing data)
                 .contextMenu {
                     Button {
                         openWindow(value: AccountFormWindowPayload(
                             ledger: ledger,
                             existingAccount: nil,
-                            suggestedParentId: node.id
+                            suggestedParentId: node.id,
+                            suggestedName: nil
                         ))
                     } label: {
                         Label("New Sub-Account", systemImage: "plus.circle")
@@ -249,7 +254,8 @@ struct AccountTreeView: View {
                         openWindow(value: AccountFormWindowPayload(
                             ledger: ledger,
                             existingAccount: AccountFormPayload(node: node),
-                            suggestedParentId: nil
+                            suggestedParentId: nil,
+                            suggestedName: nil
                         ))
                     } label: {
                         Label("Edit Account", systemImage: "pencil")

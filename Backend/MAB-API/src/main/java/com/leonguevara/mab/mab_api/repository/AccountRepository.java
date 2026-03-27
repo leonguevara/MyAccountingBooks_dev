@@ -28,7 +28,7 @@
 //             TenantContext.withOwner() so SET LOCAL
 //             app.current_owner_id activates RLS.
 // ============================================================
-// Last edited: 2026-03-26
+// Last edited: 2026-03-27
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -84,7 +84,6 @@ public class AccountRepository {
     // Maps a single result row to an AccountResponse record.
     // The LEFT JOIN on account_type means accountTypeCode may be null
     // for placeholder accounts — rs.getString() returns null safely.
-    // Parameter rowNum is never used, so I'm replacing it with an underscore
     private static final RowMapper<AccountResponse> ACCOUNT_MAPPER = (rs, _) ->
             new AccountResponse(
                     // id: UUID primary key of this account.
@@ -204,6 +203,8 @@ public class AccountRepository {
      *   <li>Resolves {@code accountTypeCode} to {@code account_type.id} (if provided)</li>
      *   <li>Retrieves parent account's {@code kind}, {@code commodity_scu}, and {@code commodity_id}</li>
      *   <li>Inserts the new account row with inherited properties from parent</li>
+     *   <li>Auto-promotes the parent to a placeholder (if not already one) — a parent with
+     *       at least one child cannot receive transactions directly under double-entry rules</li>
      *   <li>Fetches and returns the newly created account via {@link #fetchAccount}</li>
      * </ol>
      * <p>
@@ -296,6 +297,24 @@ public class AccountRepository {
                             .addValue("commodityId",    commodityId),
                     UUID.class
             );
+
+            // ── Auto-promote parent to placeholder ───────────────────────────
+            // If the parent account was not already a placeholder, mark it as one.
+            // A parent with at least one child cannot receive transactions directly
+            // under double-entry accounting rules.
+            // This UPDATE is a no-op when the parent is already a placeholder.
+            String promoteParentSql = """
+                    UPDATE public.account
+                       SET is_placeholder = true,
+                           updated_at     = now(),
+                           revision       = revision + 1
+                     WHERE id             = :parentId
+                       AND is_placeholder = false
+                       AND deleted_at     IS NULL
+                    """;
+            template.update(promoteParentSql,
+                    new MapSqlParameterSource("parentId", request.parentId()));
+            // ─────────────────────────────────────────────────────────────────
 
             return fetchAccount(template, newId);
         });

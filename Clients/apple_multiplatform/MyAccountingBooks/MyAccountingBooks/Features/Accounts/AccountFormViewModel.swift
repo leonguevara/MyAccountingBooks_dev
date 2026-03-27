@@ -110,8 +110,6 @@ import Foundation
 /// the ledger ID, allowing other parts of the app (like `AccountTreeView`) to refresh
 /// their data.
 ///
-/// - Note: This is a new file created on 2026-03-25 as part of implementing account
-///   creation and editing functionality (Fix #9).
 /// - SeeAlso: `AccountFormPayload`, `CreateAccountRequest`, `PatchAccountRequest`,
 ///   `AccountFormView`, `AccountFormWindowContent`
 
@@ -173,6 +171,7 @@ final class AccountFormViewModel {
     /// - **create**: Creating a new account
     ///   - `ledger`: The ledger context for the new account
     ///   - `suggestedParent`: Optional parent account to pre-select in the form
+    ///   - `suggestedName`: Optional account name to pre-fill in the form
     ///
     /// - **edit**: Editing an existing account
     ///   - `ledger`: The ledger context (for validation)
@@ -187,27 +186,51 @@ final class AccountFormViewModel {
     /// // User right-clicks "Assets" and chooses "Add Sub-Account"
     /// let mode = Mode.create(
     ///     ledger: currentLedger,
-    ///     suggestedParent: assetsAccount  // Pre-selects "Assets" as parent
+    ///     suggestedParent: assetsAccount,  // Pre-selects "Assets" as parent
+    ///     suggestedName: nil
+    /// )
+    /// ```
+    ///
+    /// ## Suggested Name Usage
+    ///
+    /// The `suggestedName` parameter enables pre-filling the account name from a search
+    /// query or user input (e.g., from transaction form account pickers):
+    ///
+    /// ```swift
+    /// // User types "Savings" in account picker and clicks "New Account..."
+    /// let mode = Mode.create(
+    ///     ledger: currentLedger,
+    ///     suggestedParent: nil,
+    ///     suggestedName: "Savings"  // Pre-fills name field
     /// )
     /// ```
     ///
     /// When `load(mode:allRoots:token:)` is called with this mode, the view model
-    /// automatically sets `selectedParent` to the suggested parent, providing a
-    /// better user experience.
+    /// automatically sets `selectedParent` and `name` if provided, streamlining
+    /// the account creation workflow.
     ///
     /// ## Usage
     ///
     /// ```swift
-    /// // Create mode with suggested parent
+    /// // Create mode with suggested parent only (from account tree)
     /// let createMode = Mode.create(
     ///     ledger: currentLedger,
-    ///     suggestedParent: assetsRoot
+    ///     suggestedParent: assetsRoot,
+    ///     suggestedName: nil
     /// )
     ///
-    /// // Create mode without suggested parent
+    /// // Create mode with suggested name only (from transaction form)
     /// let createMode = Mode.create(
     ///     ledger: currentLedger,
-    ///     suggestedParent: nil  // User picks parent manually
+    ///     suggestedParent: nil,
+    ///     suggestedName: "Savings"
+    /// )
+    ///
+    /// // Create mode with no suggestions
+    /// let createMode = Mode.create(
+    ///     ledger: currentLedger,
+    ///     suggestedParent: nil,
+    ///     suggestedName: nil
     /// )
     ///
     /// // Edit mode
@@ -217,10 +240,11 @@ final class AccountFormViewModel {
     /// )
     /// ```
     ///
-    /// - SeeAlso: `load(mode:allRoots:token:)`, `AccountFormWindowPayload.suggestedParentId`
+    /// - SeeAlso: `load(mode:allRoots:token:)`, `AccountFormWindowPayload.suggestedParentId`,
+    ///   `AccountFormWindowPayload.suggestedName`
     enum Mode {
-        /// Creating a new account with optional suggested parent.
-        case create(ledger: LedgerResponse, suggestedParent: AccountNode?)
+        /// Creating a new account with optional suggested parent and name.
+        case create(ledger: LedgerResponse, suggestedParent: AccountNode?, suggestedName: String?)
         
         /// Editing an existing account with current values.
         case edit(ledger: LedgerResponse, account: AccountFormPayload)
@@ -378,6 +402,7 @@ final class AccountFormViewModel {
     /// **Create mode:**
     /// - Fetches account types from backend
     /// - Sets `selectedParent` to the `suggestedParent` if provided
+    /// - Sets `name` to the `suggestedName` if provided and non-empty
     /// - Leaves other fields at their default values for user input
     ///
     /// **Edit mode:**
@@ -394,13 +419,32 @@ final class AccountFormViewModel {
     /// // User right-clicks "Cash" account and selects "Add Sub-Account"
     /// let mode = Mode.create(
     ///     ledger: currentLedger,
-    ///     suggestedParent: cashAccount  // Pre-select Cash as parent
+    ///     suggestedParent: cashAccount,  // Pre-select Cash as parent
+    ///     suggestedName: nil
     /// )
     ///
     /// await viewModel.load(mode: mode, allRoots: accountTree, token: token)
     ///
     /// // Now viewModel.selectedParent == cashAccount
     /// // User sees "Cash" pre-selected in parent picker
+    /// ```
+    ///
+    /// ## Suggested Name Flow
+    ///
+    /// The suggested name feature enables pre-filling from search queries:
+    ///
+    /// ```swift
+    /// // User types "Savings" in transaction form picker and clicks "New Account..."
+    /// let mode = Mode.create(
+    ///     ledger: currentLedger,
+    ///     suggestedParent: nil,
+    ///     suggestedName: "Savings"  // Pre-fill name
+    /// )
+    ///
+    /// await viewModel.load(mode: mode, allRoots: accountTree, token: token)
+    ///
+    /// // Now viewModel.name == "Savings"
+    /// // User can modify or accept the pre-filled name
     /// ```
     ///
     /// ## Loading Flow
@@ -415,16 +459,16 @@ final class AccountFormViewModel {
     ///
     /// **Create with suggested parent:**
     /// ```swift
-    /// let mode = Mode.create(ledger: ledger, suggestedParent: assetsAccount)
+    /// let mode = Mode.create(ledger: ledger, suggestedParent: assetsAccount, suggestedName: nil)
     /// await viewModel.load(mode: mode, allRoots: accountTree, token: authToken)
     /// // selectedParent is now assetsAccount
     /// ```
     ///
-    /// **Create without suggested parent:**
+    /// **Create with suggested name:**
     /// ```swift
-    /// let mode = Mode.create(ledger: ledger, suggestedParent: nil)
+    /// let mode = Mode.create(ledger: ledger, suggestedParent: nil, suggestedName: "Savings")
     /// await viewModel.load(mode: mode, allRoots: accountTree, token: authToken)
-    /// // selectedParent is nil - user must choose
+    /// // name is now "Savings"
     /// ```
     ///
     /// **Edit existing:**
@@ -457,8 +501,11 @@ final class AccountFormViewModel {
             accountTypes = try await AccountService.shared.fetchAccountTypes(token: token)
 
             switch mode {
-            case .create(_, let suggestedParent):
+            case .create(_, let suggestedParent, let suggestedName):
                 selectedParent = suggestedParent
+                if let suggestedName, !suggestedName.isEmpty {
+                    name = suggestedName
+                }          // don't overwrite if already set
 
             case .edit(_, let existing):
                 name          = existing.name
@@ -579,7 +626,7 @@ final class AccountFormViewModel {
 
         do {
             switch mode {
-            case .create(let ledger, _):
+            case .create(let ledger, _, _):
                 try await saveCreate(ledger: ledger, token: token)
 
             case .edit(let ledger, let existing):
@@ -594,7 +641,7 @@ final class AccountFormViewModel {
             // Extract ledger ID and post notification to refresh UI
             let notificationLedger: LedgerResponse
             switch mode {
-            case .create(let l, _): notificationLedger = l
+            case .create(let l, _, _): notificationLedger = l
             case .edit(let l, _):   notificationLedger = l
             }
             NotificationCenter.default.post(

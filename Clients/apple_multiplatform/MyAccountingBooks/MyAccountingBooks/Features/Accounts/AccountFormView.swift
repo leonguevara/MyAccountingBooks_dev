@@ -63,10 +63,11 @@ import SwiftUI
 /// account when creating new accounts (e.g., when clicking "Add Sub-Account" in the
 /// account tree context menu).
 ///
-/// **Current implementation note:** The `suggestedParentId` is not yet fully wired through
-/// to the form. To complete this feature, `AccountFormView` would need access to the full
-/// payload (not just the mode) so it can resolve the UUID to an `AccountNode` after loading
-/// the account tree in its `.task` modifier.
+/// **Partial implementation note:** `suggestedName` is fully wired — it is passed through
+/// to `AccountFormViewModel.Mode.create` and pre-fills the account name field. However,
+/// `suggestedParentId` is not yet wired: `formMode` always passes `suggestedParent: nil`.
+/// To complete that feature, the UUID would need to be resolved to an `AccountNode` after
+/// the account tree loads in `AccountFormView`'s `.task` modifier.
 ///
 /// - Note: The account tree is loaded inside `AccountFormView` via its `.task` modifier,
 ///   which allows for deferred parent resolution after the tree data is available.
@@ -93,16 +94,15 @@ struct AccountFormWindowContent: View {
     ///
     /// ## Parent Pre-Selection
     ///
-    /// In create mode, `suggestedParentId` from the payload cannot be immediately resolved here
-    /// because the account tree hasn't been loaded yet. The current implementation always
-    /// passes `suggestedParent: nil` to the create mode.
+    /// `suggestedName` is forwarded directly to `Mode.create` and pre-fills the account
+    /// name field. `suggestedParentId`, however, cannot be resolved here because the account
+    /// tree hasn't loaded yet — `formMode` always passes `suggestedParent: nil`.
     ///
-    /// **Note:** To fully implement suggested parent functionality, `AccountFormWindowContent`
-    /// would need to:
+    /// To wire up `suggestedParentId` in the future:
     /// 1. Pass the complete payload to `AccountFormView` (not just the mode)
-    /// 2. `AccountFormView` would load the account tree in its `.task` modifier
-    /// 3. Resolve `payload.suggestedParentId` to an `AccountNode` using the loaded tree
-    /// 4. Update `viewModel.selectedParent` with the resolved node
+    /// 2. After `AccountFormView` loads the account tree in its `.task` modifier,
+    ///    resolve `payload.suggestedParentId` to an `AccountNode` using the loaded tree
+    /// 3. Update `viewModel.selectedParent` with the resolved node
     ///
     /// This deferred resolution pattern avoids blocking the window from opening while
     /// waiting for network requests to complete.
@@ -112,7 +112,7 @@ struct AccountFormWindowContent: View {
         if let existing = payload.existingAccount {
             return .edit(ledger: payload.ledger, account: existing)
         }
-        return .create(ledger: payload.ledger, suggestedParent: nil)
+        return .create(ledger: payload.ledger, suggestedParent: nil, suggestedName: payload.suggestedName)
     }
 }
 
@@ -148,10 +148,11 @@ struct AccountFormWindowContent: View {
 /// ```swift
 /// let mode = AccountFormViewModel.Mode.create(
 ///     ledger: currentLedger,
-///     suggestedParent: assetsRoot
+///     suggestedParent: nil,
+///     suggestedName: nil
 /// )
 ///
-/// AccountFormView(mode: mode, allRoots: accountTree)
+/// AccountFormView(mode: mode)
 /// ```
 ///
 /// **Edit mode:**
@@ -162,7 +163,7 @@ struct AccountFormWindowContent: View {
 ///     account: payload
 /// )
 ///
-/// AccountFormView(mode: mode, allRoots: accountTree)
+/// AccountFormView(mode: mode)
 /// ```
 ///
 /// ## Opening Balance
@@ -197,13 +198,12 @@ struct AccountFormView: View {
     /// Dictionary mapping account UUIDs to full hierarchical paths for display.
     @State private var accountPaths: [UUID: String] = [:]
     
-    // Fix #9.1: Populate correctly the parents list
     @State private var loadedRoots: [AccountNode] = []
 
     /// The ledger context extracted from the mode.
     private var ledger: LedgerResponse {
         switch mode {
-        case .create(let l, _): return l
+        case .create(let l, _, _): return l
         case .edit(let l, _):   return l
         }
     }

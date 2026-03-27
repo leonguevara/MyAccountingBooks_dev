@@ -305,13 +305,13 @@ struct PatchAccountRequest: Encodable {
 /// ```swift
 /// WindowGroup(for: AccountFormWindowPayload.self) { $payload in
 ///     if let payload = payload {
-///         AccountFormView(payload: payload)
+///         AccountFormWindowContent(payload: payload)
 ///     }
 /// }
 /// ```
 ///
 /// - Note: Conforms to `Hashable` and `Codable` for SwiftUI window management.
-/// - SeeAlso: `AccountFormPayload`, `AccountFormView`
+/// - SeeAlso: `AccountFormPayload`, `AccountFormWindowContent`, `AccountFormView`
 struct AccountFormWindowPayload: Hashable, Codable {
     /// The ledger context for this account form.
     ///
@@ -336,6 +336,13 @@ struct AccountFormWindowPayload: Hashable, Codable {
     /// - Note: This field is only used in create mode. When editing (`existingAccount` is not `nil`),
     ///   the parent is determined by the existing account's `parentId`.
     let suggestedParentId: UUID?
+    
+    /// Optional name to pre-fill in the account name field when creating a new account.
+    ///
+    /// Enables "create on the spot" workflows from account pickers: the user types a name
+    /// that doesn't exist yet, taps "New Account…", and the form opens with the name already
+    /// filled in. Ignored in edit mode.
+    var suggestedName: String?
 }
 
 /// Codable snapshot of an AccountNode for window passing.
