@@ -10,90 +10,88 @@
 
 import SwiftUI
 
-/**
- Displays a hierarchical chart of accounts for a given ledger.
-
- `AccountTreeView` binds to an `AccountTreeViewModel` to load, filter, and render
- the full chart of accounts as a collapsible sidebar tree. Each row shows the account
- code, name, type label, kind color dot, and — for non-root accounts — the current
- balance fetched and rolled up by the view model.
-
- # Features
- - **Hierarchical display**: Uses `List(children:selection:)` to render a fully
-   collapsible account tree with disclosure indicators at every level.
- - **Balance column**: Each non-root row shows its current balance. Placeholder
-   (parent) balances are automatically rolled up from descendants by
-   `AccountTreeViewModel`. The root account balance is intentionally suppressed
-   as it aggregates the entire ledger and adds no useful information.
- - **Search/filter**: A `.searchable` modifier filters the tree in real time,
-   preserving parent nodes as containers for matching descendants.
- - **Account register**: Double-clicking a non-placeholder leaf account opens its
-   register in a dedicated window via `openWindow(value:)`. Placeholder and
-   parent nodes are excluded from this action.
- - **Account management**: Create, edit, and organize accounts via toolbar and
-   context menu actions that open dedicated form windows.
- - **Automatic refresh**: Observes `.accountSaved` notifications to refresh the
-   tree immediately when accounts are created or modified.
- - **Error handling**: Network failures surface as a dismissible alert.
- - **Concurrent loading**: Accounts and balances are fetched concurrently via
-   `AccountTreeViewModel.loadAccounts(ledgerID:token:)`.
-
- # Usage Example
-
- ```swift
- AccountTreeView(ledger: someLedger)
-     .environment(AuthService())
- ```
-
- # Balance Display Rules
-
- | Account type        | Balance shown? | Reason                                       |
- |---------------------|----------------|----------------------------------------------|
- | Root (no parent)    | No             | Aggregates whole ledger — omitted for clarity |
- | Placeholder parent  | Yes            | Shows rolled-up subtotal from descendants    |
- | Real leaf account   | Yes            | Shows API-provided balance directly          |
-
- Negative balances are rendered in red; zero and positive values use the primary
- label color.
-
- # Register Window Interaction
-
- Double-clicking any **non-placeholder leaf** opens its register window. The interaction
- is implemented using a `simultaneousGesture(TapGesture(count:2))` so that single-tap
- selection and double-tap window opening do not conflict. The `registerOpenFor` state
- variable acts as a one-shot trigger: it is set on double-tap and immediately cleared
- after `openWindow(value:)` is called.
-
- # Account Management
-
- The toolbar provides a "New Account" button that opens an account creation form with
- no pre-selected parent. Context menus on each account row provide:
- - **New Sub-Account**: Opens the account form with the right-clicked account pre-selected
-   as the parent via `suggestedParentId`.
- - **Edit Account**: Opens the account form pre-populated with the existing account's data.
-
- ## Automatic Refresh
-
- The view observes `Notification.Name.accountSaved` posted by `AccountFormViewModel`
- when accounts are successfully created or updated. When a notification is received
- for the current ledger, the view automatically calls `viewModel.forceReload()` to
- fetch the updated account tree from the backend.
-
- This ensures that:
- - Newly created accounts appear immediately in the tree
- - Account edits (name, code, parent changes) are reflected without manual refresh
- - The account hierarchy stays synchronized with the backend state
-
- No user action is required — the tree updates automatically as soon as the account
- form is saved.
-
- - Important: Requires `AuthService` in the SwiftUI environment to obtain a valid
-   bearer token before loading.
- - Note: The `Task.yield()` before `loadAccounts` prevents race conditions when this
-   view renders simultaneously with other views that also trigger network requests.
- - SeeAlso: `AccountTreeViewModel`, `AccountRowView`, `AccountRegisterView`,
-   `AccountRegisterWindowPayload`, `AccountFormWindowPayload`, `AccountFormViewModel`
- */
+/// Displays a hierarchical chart of accounts for a given ledger.
+///
+/// `AccountTreeView` binds to an ``AccountTreeViewModel`` to load, filter, and render
+/// the full chart of accounts as a collapsible sidebar tree. Each row shows the account
+/// code, name, type label, kind color dot, and — for non-root accounts — the current
+/// balance fetched and rolled up by the view model.
+///
+/// ## Features
+/// - **Hierarchical display**: Uses `List(children:selection:)` to render a fully
+///   collapsible account tree with disclosure indicators at every level.
+/// - **Balance column**: Each non-root row shows its current balance. Placeholder
+///   (parent) balances are automatically rolled up from descendants by
+///   ``AccountTreeViewModel``. The root account balance is intentionally suppressed
+///   as it aggregates the entire ledger and adds no useful information.
+/// - **Search/filter**: A `.searchable` modifier filters the tree in real time,
+///   preserving parent nodes as containers for matching descendants.
+/// - **Account register**: Double-clicking a non-placeholder leaf account opens its
+///   register in a dedicated window via `openWindow(value:)`. Placeholder and
+///   parent nodes are excluded from this action.
+/// - **Account management**: Create, edit, and organize accounts via toolbar and
+///   context menu actions that open dedicated form windows.
+/// - **Automatic refresh**: Observes `.accountSaved` notifications to refresh the
+///   tree immediately when accounts are created or modified.
+/// - **Error handling**: Network failures surface as a dismissible alert.
+/// - **Concurrent loading**: Accounts and balances are fetched concurrently via
+///   ``AccountTreeViewModel/loadAccounts(ledgerID:token:)``.
+///
+/// ## Usage Example
+///
+/// ```swift
+/// AccountTreeView(ledger: someLedger)
+///     .environment(AuthService())
+/// ```
+///
+/// ## Balance Display Rules
+///
+/// | Account type        | Balance shown? | Reason                                        |
+/// |---------------------|----------------|-----------------------------------------------|
+/// | Root (no parent)    | No             | Aggregates whole ledger — omitted for clarity |
+/// | Placeholder parent  | Yes            | Shows rolled-up subtotal from descendants     |
+/// | Real leaf account   | Yes            | Shows API-provided balance directly           |
+///
+/// Negative balances are rendered in red; zero and positive values use the primary
+/// label color.
+///
+/// ## Register Window Interaction
+///
+/// Double-clicking any **non-placeholder leaf** opens its register window. The interaction
+/// is implemented using a `simultaneousGesture(TapGesture(count:2))` so that single-tap
+/// selection and double-tap window opening do not conflict. The `registerOpenFor` state
+/// variable acts as a one-shot trigger: it is set on double-tap and immediately cleared
+/// after `openWindow(value:)` is called.
+///
+/// ## Account Management
+///
+/// The toolbar provides a "New Account" button that opens an account creation form with
+/// no pre-selected parent. Context menus on each account row provide:
+/// - **New Sub-Account**: Opens the account form with the right-clicked account pre-selected
+///   as the parent via `suggestedParentId`.
+/// - **Edit Account**: Opens the account form pre-populated with the existing account's data.
+///
+/// ### Automatic Refresh
+///
+/// The view observes `Notification.Name.accountSaved` posted by ``AccountFormViewModel``
+/// when accounts are successfully created or updated. When a notification is received
+/// for the current ledger, the view automatically calls `viewModel.forceReload()` to
+/// fetch the updated account tree from the backend.
+///
+/// This ensures that:
+/// - Newly created accounts appear immediately in the tree
+/// - Account edits (name, code, parent changes) are reflected without manual refresh
+/// - The account hierarchy stays synchronized with the backend state
+///
+/// No user action is required — the tree updates automatically as soon as the account
+/// form is saved.
+///
+/// - Important: Requires ``AuthService`` in the SwiftUI environment to obtain a valid
+///   bearer token before loading.
+/// - Note: The `Task.yield()` before `loadAccounts` prevents race conditions when this
+///   view renders simultaneously with other views that also trigger network requests.
+/// - SeeAlso: ``AccountTreeViewModel``, ``AccountRowView``, ``AccountRegisterView``,
+///   ``AccountRegisterWindowPayload``, ``AccountFormWindowPayload``, ``AccountFormViewModel``
 struct AccountTreeView: View {
 
     /// The ledger whose accounts are displayed.
@@ -125,7 +123,7 @@ struct AccountTreeView: View {
     @Environment(\.openWindow) private var openWindow
     
     var body: some View {
-        /// Switches between loading, empty, and populated tree states.
+        // Switches between loading, empty, and populated tree states.
         Group {
             if viewModel.isLoading && viewModel.roots.isEmpty {
                 ProgressView("Loading accounts…")
@@ -199,21 +197,19 @@ struct AccountTreeView: View {
 
     // MARK: - Subviews
 
-    /**
-     The hierarchical account list with selection, disclosure, and double-click support.
-
-     Renders `viewModel.filteredRoots` using `List(children:selection:)`, which
-     automatically provides disclosure triangles for parent nodes. Each row is an
-     `AccountRowView` tagged with its `AccountNode` for selection binding.
-
-     Double-click detection uses `simultaneousGesture(TapGesture(count:2))` so
-     single-tap selection and double-tap register opening do not conflict. The
-     `.onChange(of: registerOpenFor)` modifier consumes the trigger and calls
-     `openRegisterWindow(for:)`, then resets the trigger to `nil`.
-
-     - Note: `\.optionalChildren` returns `nil` for leaf nodes so that no
-       disclosure arrow is rendered for accounts with no children.
-     */
+    /// The hierarchical account list with selection, disclosure, and double-click support.
+    ///
+    /// Renders `viewModel.filteredRoots` using `List(children:selection:)`, which
+    /// automatically provides disclosure triangles for parent nodes. Each row is an
+    /// ``AccountRowView`` tagged with its ``AccountNode`` for selection binding.
+    ///
+    /// Double-click detection uses `simultaneousGesture(TapGesture(count:2))` so
+    /// single-tap selection and double-tap register opening do not conflict. The
+    /// `.onChange(of: registerOpenFor)` modifier consumes the trigger and calls
+    /// ``openRegisterWindow(for:)``, then resets the trigger to `nil`.
+    ///
+    /// - Note: `\.optionalChildren` returns `nil` for leaf nodes so that no
+    ///   disclosure arrow is rendered for accounts with no children.
     private var accountTree: some View {
         List(
             viewModel.filteredRoots,
@@ -271,13 +267,11 @@ struct AccountTreeView: View {
         }
     }
 
-    /**
-     Placeholder content shown when the account list is empty or no search results match.
-
-     Displays context-sensitive messaging:
-     - When `searchText` is empty: indicates the ledger has no accounts.
-     - When `searchText` is non-empty: indicates no accounts match the query.
-     */
+    /// Placeholder content shown when the account list is empty or no search results match.
+    ///
+    /// Displays context-sensitive messaging:
+    /// - When `searchText` is empty: indicates the ledger has no accounts.
+    /// - When `searchText` is non-empty: indicates no accounts match the query.
     private var emptyState: some View {
         VStack(spacing: 12) {
             Image(systemName: "list.bullet.indent")
@@ -302,19 +296,17 @@ struct AccountTreeView: View {
 
     // MARK: - Window Management
 
-    /**
-     Opens a new account register window for the given account node.
-
-     Constructs an `AccountRegisterWindowPayload` from the current ledger and
-     the provided node, then calls `openWindow(value:)` to present a new window
-     via the `WindowGroup` registered in `MyAccountingBooksApp`.
-
-     Multiple register windows can be open simultaneously — one per account.
-     SwiftUI deduplicates windows by payload value, so double-clicking the same
-     account brings its existing window to the front rather than opening a duplicate.
-
-     - Parameter node: The leaf `AccountNode` whose register should be opened.
-     */
+    /// Opens a new account register window for the given account node.
+    ///
+    /// Constructs an ``AccountRegisterWindowPayload`` from the current ledger and
+    /// the provided node, then calls `openWindow(value:)` to present a new window
+    /// via the `WindowGroup` registered in ``MyAccountingBooksApp``.
+    ///
+    /// Multiple register windows can be open simultaneously — one per account.
+    /// SwiftUI deduplicates windows by payload value, so double-clicking the same
+    /// account brings its existing window to the front rather than opening a duplicate.
+    ///
+    /// - Parameter node: The leaf ``AccountNode`` whose register should be opened.
     private func openRegisterWindow(for node: AccountNode) {
         openWindow(value: AccountRegisterWindowPayload(
             ledger: ledger,
@@ -325,58 +317,57 @@ struct AccountTreeView: View {
 
 // MARK: - Account Row
 
-/**
- A single row in the account tree representing one account node.
-
- `AccountRowView` composes four visual elements from left to right:
- 1. A color-coded **kind dot** indicating the account's accounting classification.
- 2. The optional **account code** in monospaced secondary type.
- 3. The **account name** — italic and secondary for placeholders, primary for real accounts.
- 4. The **account type code** as a tertiary caption below the name.
- 5. The **current balance** right-aligned, shown for all non-root accounts.
- 6. An **eye-slash icon** for hidden accounts.
-
- # Balance Display
-
- The balance column follows these rules:
- - Suppressed for the root account (`parentId == nil`) since it reflects the entire
-   ledger and provides no actionable information.
- - Negative values are rendered in red.
- - Zero and positive values use the primary label color.
- - The number of decimal places is derived from `balanceDenom` (e.g., 100 → 2 places).
-
- # Kind Color Legend
-
- | Kind value | Color  | Classification |
- |------------|--------|----------------|
- | 1          | Blue   | Asset          |
- | 2          | Red    | Liability      |
- | 3          | Purple | Equity         |
- | 4          | Green  | Income         |
- | 5          | Orange | Expense        |
- | other      | Gray   | Other / System |
-
- - SeeAlso: `AccountNode`, `AccountBalanceResponse`, `AccountTreeViewModel.balances`
- */
+/// A single row in the account tree representing one account node.
+///
+/// `AccountRowView` composes six visual elements from left to right:
+/// 1. A color-coded **kind dot** indicating the account's accounting classification.
+/// 2. The optional **account code** in monospaced secondary type (controlled by ``AppStorageKeys/showAccountCode``).
+/// 3. The **account name** — italic and secondary for placeholders, primary for real accounts.
+/// 4. The **account type code** as a tertiary caption below the name.
+/// 5. The **current balance** right-aligned, shown for all non-root accounts.
+/// 6. An **eye-slash icon** for hidden accounts.
+///
+/// ## Balance Display
+///
+/// The balance column follows these rules:
+/// - Suppressed for the root account (`parentId == nil`) since it reflects the entire
+///   ledger and provides no actionable information.
+/// - Negative values are rendered in red.
+/// - Zero and positive values use the primary label color.
+/// - The number of decimal places is derived from `balanceDenom` (e.g., 100 → 2 places).
+///
+/// ## Kind Color Legend
+///
+/// | Kind value | Color  | Classification |
+/// |------------|--------|----------------|
+/// | 1          | Blue   | Asset          |
+/// | 2          | Red    | Liability      |
+/// | 3          | Purple | Equity         |
+/// | 4          | Green  | Income         |
+/// | 5          | Orange | Expense        |
+/// | other      | Gray   | Other / System |
+///
+/// - SeeAlso: ``AccountNode``, ``AccountBalanceResponse``, ``AccountTreeViewModel``
 private struct AccountRowView: View {
     
-    // Fix issue #4: Optionally show Account's code within the tree
+    /// Whether the account-code column is visible in each row.
+    ///
+    /// Mirrors the preference stored under ``AppStorageKeys/showAccountCode``.
+    /// Toggled by the user in ``SettingsView``. Implemented as part of fix for issue #4.
     @AppStorage(AppStorageKeys.showAccountCode)
     private var showAccountCode: Bool = true
 
     /// The account node to display.
     let node: AccountNode
 
-    /**
-     The pre-fetched balance for this account, or `nil` if unavailable.
-
-     Supplied by `AccountTreeViewModel.balances`, which contains both
-     API-provided leaf balances and balances rolled up to placeholder parents
-     by `AccountTreeViewModel.rollUpBalances(_:)`.
-
-     A `nil` value means the balance map did not include an entry for this account,
-     which can occur if the ledger has no transactions yet.
-     */
+    /// The pre-fetched balance for this account, or `nil` if unavailable.
+    ///
+    /// Supplied by `AccountTreeViewModel.balances`, which contains both
+    /// API-provided leaf balances and balances rolled up to placeholder parents
+    /// by `AccountTreeViewModel.rollUpBalances(_:)`.
+    ///
+    /// A `nil` value means the balance map did not include an entry for this account,
+    /// which can occur if the ledger has no transactions yet.
     let balance: AccountBalanceResponse?
 
     var body: some View {
@@ -427,25 +418,23 @@ private struct AccountRowView: View {
 
     // MARK: - Formatting
 
-    /**
-     Formats a balance response as a locale-aware numeric string without a currency symbol.
-
-     The number of fraction digits is derived from `balanceDenom`:
-
-     | Denominator | Decimal places | Example output |
-     |-------------|----------------|----------------|
-     | 1           | 0              | `"1,250"`      |
-     | 10          | 1              | `"1,250.0"`    |
-     | 100         | 2              | `"1,250.00"`   |
-     | 1000        | 3              | `"1,250.000"`  |
-     | other       | 2 (default)    | `"1,250.00"`   |
-
-     The currency symbol is intentionally omitted (`code: ""`). The ledger's currency
-     is already visible in the navigation subtitle of the parent `AccountTreeView`.
-
-     - Parameter b: The `AccountBalanceResponse` to format.
-     - Returns: A locale-formatted decimal string with the appropriate fraction digits.
-     */
+    /// Formats a balance response as a locale-aware numeric string without a currency symbol.
+    ///
+    /// The number of fraction digits is derived from `balanceDenom`:
+    ///
+    /// | Denominator | Decimal places | Example output |
+    /// |-------------|----------------|----------------|
+    /// | 1           | 0              | `"1,250"`      |
+    /// | 10          | 1              | `"1,250.0"`    |
+    /// | 100         | 2              | `"1,250.00"`   |
+    /// | 1000        | 3              | `"1,250.000"`  |
+    /// | other       | 2 (default)    | `"1,250.00"`   |
+    ///
+    /// The currency symbol is intentionally omitted (`code: ""`). The ledger's currency
+    /// is already visible in the navigation subtitle of the parent ``AccountTreeView``.
+    ///
+    /// - Parameter b: The ``AccountBalanceResponse`` to format.
+    /// - Returns: A locale-formatted decimal string with the appropriate fraction digits.
     private func formattedBalance(_ b: AccountBalanceResponse) -> String {
         let denom = b.balanceDenom
         let decimalPlaces = denom == 1    ? 0
@@ -459,15 +448,13 @@ private struct AccountRowView: View {
 
     // MARK: - Kind Color
 
-    /**
-     Returns the color associated with the account's accounting kind.
-
-     Used by the kind indicator dot to provide an instant visual classification
-     without requiring the user to read the account type label.
-
-     - Note: Values 6 (Cost of Sales), 7 (Memorandum), and 8 (Statistical) fall
-       through to `.gray` since they are uncommon in personal accounting contexts.
-     */
+    /// Returns the color associated with the account's accounting kind.
+    ///
+    /// Used by the kind indicator dot to provide an instant visual classification
+    /// without requiring the user to read the account type label.
+    ///
+    /// - Note: Values 6 (Cost of Sales), 7 (Memorandum), and 8 (Statistical) fall
+    ///   through to `.gray` since they are uncommon in personal accounting contexts.
     private var kindColor: Color {
         switch node.account.kind {
         case 1:  return .blue        // Asset

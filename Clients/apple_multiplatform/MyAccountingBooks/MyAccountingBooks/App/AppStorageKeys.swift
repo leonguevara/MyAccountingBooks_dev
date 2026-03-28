@@ -9,10 +9,24 @@
 
 import Foundation
 
-/// Namespaced constants for all `@AppStorage` / `UserDefaults` keys used in the app.
+/// Namespaced constants for every `@AppStorage` / `UserDefaults` key used in the app.
 ///
-/// Always use these constants instead of raw string literals to avoid key mismatches.
+/// Centralising keys here prevents typo-driven mismatches between the view that writes
+/// a preference and any view that reads it.
+///
+/// ## Usage
+/// ```swift
+/// @AppStorage(AppStorageKeys.showAccountCode) var showAccountCode: Bool = true
+/// ```
+///
+/// > Important: Never use raw string literals for UserDefaults keys. Always reference a
+/// > constant from this enum so that renaming a key is a single-site change.
 enum AppStorageKeys {
-    /// Whether the account code column is shown in the COA tree.
+    /// The UserDefaults key that controls whether the account-code column is
+    /// visible in the Chart of Accounts tree.
+    ///
+    /// - Type: `Bool`
+    /// - Default: `true`
+    /// - Written by: ``SettingsView``
     static let showAccountCode = "showAccountCode"
 }

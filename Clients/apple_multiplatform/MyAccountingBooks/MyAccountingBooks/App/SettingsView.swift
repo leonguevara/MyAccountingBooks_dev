@@ -9,16 +9,22 @@
 
 import SwiftUI
 
-/// Application preferences window, accessible via ⌘ + , or the app menu.
+/// Application-level preferences window.
 ///
-/// Currently exposes the following preferences:
-/// - **Show account code**: toggles the account code column in the COA tree.
+/// Presented as a standard macOS Settings scene (⌘ + , or **MyAccountingBooks › Settings…**).
+/// Each preference is persisted via `@AppStorage` using the keys defined in ``AppStorageKeys``,
+/// so any view that binds to the same key receives updates automatically.
 ///
-/// Preferences are persisted via `@AppStorage` (UserDefaults) and read
-/// throughout the app using the same keys.
+/// ## Sections
+/// ### Chart of Accounts
+/// | Preference | Default | Effect |
+/// |---|---|---|
+/// | Show account code | `true` | Displays the account-code column in the COA tree. |
 struct SettingsView: View {
 
-    /// Controls whether account codes are shown in the COA tree rows.
+    /// Whether the account-code column is visible in the COA tree.
+    ///
+    /// Persisted under ``AppStorageKeys/showAccountCode``.
     @AppStorage(AppStorageKeys.showAccountCode)
     private var showAccountCode: Bool = true
 

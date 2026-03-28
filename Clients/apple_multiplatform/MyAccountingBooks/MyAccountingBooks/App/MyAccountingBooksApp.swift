@@ -8,22 +8,39 @@
 //  Developed with AI assistance
 //
 
-/// The main application entry point for MyAccountingBooks.
-///
-/// Manages the authentication flow and sets up window scenes:
-/// - **Primary window**: Presents `ContentView` or `LoginView` based on authentication state.
-/// - **Account Register windows**: Dedicated windows opened via `AccountRegisterWindowPayload`.
-/// - **Account Form windows**: Modal windows for creating and editing accounts, opened via `AccountFormWindowPayload`.
 import SwiftUI
 
+/// Application entry point for MyAccountingBooks.
+///
+/// Owns the global ``AuthService`` instance and composes all SwiftUI `Scene`s.
+/// `AuthService` is injected into every scene via the environment so that any
+/// descendant view can read or mutate authentication state without direct coupling.
+///
+/// ## Scenes
+/// | Scene | Title | Default size |
+/// |---|---|---|
+/// | Primary `WindowGroup` | *(app name)* | 1100 × 720 |
+/// | Account Register `WindowGroup` | "Account Register" | 900 × 600 |
+/// | Account Form `WindowGroup` | "Account" | 540 × 580 |
+/// | `Settings` | "Settings" | per ``SettingsView`` |
 @main
 struct MyAccountingBooksApp: App {
-    /// Authentication service shared across the app via the environment.
+    /// Authentication service shared across all scenes via the SwiftUI environment.
+    ///
+    /// Declared with `@State` so SwiftUI owns the object's lifetime for the duration
+    /// of the app process. Passed down with `.environment(auth)` rather than
+    /// `@EnvironmentObject` to leverage the Observation framework.
     @State private var auth = AuthService()
 
-    /// Configures the app's primary window scene and presents the appropriate root view.
+    /// Declares the app's window scenes.
+    ///
+    /// - The primary `WindowGroup` guards its root view behind `auth.isAuthenticated`:
+    ///   authenticated users see ``ContentView``; everyone else sees ``LoginView``.
+    /// - Secondary window groups are value-typed and keyed by their payload structs,
+    ///   allowing multiple independent windows of the same kind to coexist.
+    /// - The `Settings` scene wires in ``SettingsView`` and is reachable via ⌘ + ,.
     var body: some Scene {
-        /// Primary window group that conditionally presents content based on authentication state.
+        // Primary window — shows ContentView or LoginView based on auth state.
         WindowGroup {
             if auth.isAuthenticated {
                 ContentView()
@@ -38,11 +55,9 @@ struct MyAccountingBooksApp: App {
         .defaultSize(width: 1100, height: 720)
         
         // ── Account register windows ──────────────────────────────────────
-        /// Secondary window group for account registers, opened with a value payload.
-        ///
-        /// Each account register window displays the transaction history for a specific
-        /// account. Multiple register windows can be open simultaneously, one per account.
-        /// SwiftUI automatically deduplicates windows by payload value.
+        // Each window shows the transaction history for one account.
+        // SwiftUI deduplicates windows by payload value, so opening the same
+        // account twice brings the existing window to the front.
         WindowGroup("Account Register", for: AccountRegisterWindowPayload.self) { $payload in
             if let payload {
                 AccountRegisterWindowContent(payload: payload)
@@ -54,17 +69,14 @@ struct MyAccountingBooksApp: App {
         .defaultSize(width: 900, height: 600)
         
         // ── Account form windows ──────────────────────────────────────────
-        /// Window group for creating and editing accounts, opened with a value payload.
-        ///
-        /// Account form windows are used for:
-        /// - **Creating new accounts**: `existingAccount` is `nil`, `suggestedParentId` may
-        ///   pre-select a parent account.
-        /// - **Editing existing accounts**: `existingAccount` contains the account data to modify.
-        ///
-        /// Opened from:
-        /// - Toolbar "New Account" button in `AccountTreeView`
-        /// - Context menu "New Sub-Account" action (with `suggestedParentId` set)
-        /// - Context menu "Edit Account" action (with `existingAccount` populated)
+        // Used for both account creation and editing:
+        //   • Creation — existingAccount is nil; suggestedParentId may pre-select a parent.
+        //   • Editing  — existingAccount carries the account data to modify.
+        //
+        // Opened from:
+        //   • Toolbar "New Account" button in AccountTreeView
+        //   • Context menu "New Sub-Account" (suggestedParentId set)
+        //   • Context menu "Edit Account"    (existingAccount populated)
         WindowGroup("Account", for: AccountFormWindowPayload.self) { $payload in
             if let payload {
                 AccountFormWindowContent(payload: payload)
@@ -74,7 +86,9 @@ struct MyAccountingBooksApp: App {
         .windowStyle(.titleBar)
         .windowToolbarStyle(.unified)
         .defaultSize(width: 540, height: 580)
-        
+
+        // ── Settings ──────────────────────────────────────────────────────
+        // Standard macOS preferences window. Reachable via ⌘ + , or the app menu.
         Settings {
             SettingsView()
         }
