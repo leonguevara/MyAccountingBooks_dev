@@ -27,8 +27,12 @@
 //          4. TenantContext: all queries go through
 //             TenantContext.withOwner() so SET LOCAL
 //             app.current_owner_id activates RLS.
+//
+//          5. account_role: returned alongside each account so
+//             clients can apply operational-role logic (Banks,
+//             Cash, Memo) without a separate lookup call.
 // ============================================================
-// Last edited: 2026-03-27
+// Last edited: 2026-03-28
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -59,6 +63,21 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Data access layer for Chart of Accounts (COA) operations.
+ * <p>
+ * All tenant-scoped queries are executed inside
+ * {@link com.leonguevara.mab.mab_api.config.TenantContext#withOwner TenantContext.withOwner()},
+ * which issues {@code SET LOCAL app.current_owner_id} to activate PostgreSQL Row-Level
+ * Security before any SQL runs. Omitting this wrapper would cause all RLS-protected
+ * queries to return zero rows.
+ * <p>
+ * The exception is {@link #findAllAccountTypes()}, which reads the system-wide
+ * {@code account_type} catalog that is shared across all tenants and is not RLS-protected.
+ *
+ * @see com.leonguevara.mab.mab_api.config.TenantContext
+ * @see com.leonguevara.mab.mab_api.service.AccountService
+ */
 @Repository
 public class AccountRepository {
 
@@ -102,7 +121,10 @@ public class AccountRepository {
                     rs.getInt("kind"),
                     // at_code: account_type.code from the LEFT JOIN.
                     // Null if the account has no account_type assigned.
-                    rs.getString("at_code")
+                    rs.getString("at_code"),
+                    // account_role: operational role smallint (0=Unspecified, 101=banks,
+                    // 210=Accounts payable). Clients use this for special display/validation rules.
+                    rs.getInt("account_role")
             );
 
     /**
@@ -110,14 +132,16 @@ public class AccountRepository {
      * ordered by account code for natural COA display order.
      * <p>
      * Query design:
-     *   - LEFT JOIN account_type: placeholder accounts have NULL
-     *     account_type_id — LEFT JOIN ensures they still appear.
-     *   - WHERE a.ledger_id = :ledgerId: scopes to this ledger.
-     *   - RLS on account table: PostgreSQL automatically filters to
-     *     accounts whose ledger belongs to the current owner.
-     *     If ledgerId belongs to a different owner, zero rows return.
-     *   - ORDER BY COALESCE(a.code, a.name): accounts with codes sort
-     *     by code; accounts without codes sort by name as fallback.
+     * <ul>
+     *   <li><b>LEFT JOIN account_type</b>: placeholder accounts have {@code NULL}
+     *       {@code account_type_id} — LEFT JOIN ensures they still appear.</li>
+     *   <li><b>WHERE a.ledger_id = :ledgerId</b>: scopes results to this ledger.</li>
+     *   <li><b>RLS on account table</b>: PostgreSQL automatically filters to accounts
+     *       whose ledger belongs to the current owner. If {@code ledgerId} belongs to a
+     *       different owner, zero rows are returned.</li>
+     *   <li><b>ORDER BY COALESCE(a.code, a.name)</b>: accounts with codes sort by code;
+     *       accounts without codes sort by name as fallback.</li>
+     * </ul>
      *
      * @param  ownerID   The authenticated owner's UUID (from JWT).
      * @param  ledgerID  The ledger whose accounts to retrieve.
@@ -138,7 +162,8 @@ public class AccountRepository {
                         a.is_placeholder,
                         a.is_hidden,
                         a.kind,
-                        at.code   AS at_code
+                        at.code   AS at_code,
+                        a.account_role
                     FROM  public.account      a
                     -- LEFT JOIN: placeholder accounts have no account_type_id.
                     -- Using LEFT JOIN ensures they are included in results.
@@ -476,7 +501,7 @@ public class AccountRepository {
         String sql = """
         SELECT a.id, a.name, a.code, a.parent_id,
                a.is_placeholder, a.is_hidden, a.kind,
-               at.code AS at_code
+               at.code AS at_code, a.account_role
           FROM public.account a
           LEFT JOIN public.account_type at ON at.id = a.account_type_id
          WHERE a.id = :id AND a.deleted_at IS NULL

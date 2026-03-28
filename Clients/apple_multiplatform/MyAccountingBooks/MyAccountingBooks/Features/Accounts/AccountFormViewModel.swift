@@ -4,114 +4,11 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-25.
+//  Last modified by León Felie Guevara Chávez on 2026-03-28
 //  Developed with AI assistance.
 //
 
 import Foundation
-
-/// View model managing the account creation and editing form.
-///
-/// `AccountFormViewModel` handles the complete lifecycle of account form interactions,
-/// including loading account types, validating user input, creating new accounts, updating
-/// existing accounts, and posting opening balance transactions when needed.
-///
-/// ## Overview
-///
-/// This view model was created on 2026-03-25 to support the account management UI,
-/// providing a clean separation between view logic and business logic for account
-/// creation and editing operations.
-///
-/// ## Features
-///
-/// - **Dual mode operation**: Create new accounts or edit existing ones
-/// - **Account type catalog**: Loads and presents available account types from the backend
-/// - **Parent account selection**: Supports hierarchical account structure with suggested parent
-/// - **Opening balance**: Posts initial balance transaction for new accounts
-/// - **Placeholder support**: Allows creating organizational accounts without types
-/// - **Validation**: Ensures required fields are populated before saving
-/// - **Error handling**: Captures and displays API errors with user-friendly messages
-/// - **Change notifications**: Posts system notification when accounts are saved for UI refresh
-///
-/// ## Usage
-///
-/// **Creating a new account with suggested parent:**
-/// ```swift
-/// let viewModel = AccountFormViewModel()
-/// 
-/// // Mode with suggested parent (e.g., from "Add Sub-Account" action)
-/// let mode = AccountFormViewModel.Mode.create(
-///     ledger: currentLedger,
-///     suggestedParent: assetsRootAccount  // Pre-selects this as parent
-/// )
-///
-/// await viewModel.load(mode: mode, allRoots: accountTree, token: authToken)
-///
-/// // viewModel.selectedParent is now pre-populated with assetsRootAccount
-/// // User fills in remaining fields
-/// viewModel.name = "Business Checking"
-/// viewModel.code = "1010"
-/// viewModel.selectedAccountType = bankAccountType
-/// viewModel.accountRole = 1  // Asset
-///
-/// await viewModel.save(mode: mode, token: authToken)
-///
-/// if viewModel.didSave {
-///     // Success - dismiss form
-/// }
-/// ```
-///
-/// **Creating a new account without suggested parent:**
-/// ```swift
-/// let mode = AccountFormViewModel.Mode.create(
-///     ledger: currentLedger,
-///     suggestedParent: nil  // User must select parent manually
-/// )
-///
-/// await viewModel.load(mode: mode, allRoots: accountTree, token: authToken)
-/// // viewModel.selectedParent is nil - user selects from picker
-/// ```
-///
-/// **Editing an existing account:**
-/// ```swift
-/// let payload = AccountFormPayload(node: selectedAccount)
-/// let mode = AccountFormViewModel.Mode.edit(
-///     ledger: currentLedger,
-///     account: payload
-/// )
-///
-/// await viewModel.load(mode: mode, allRoots: accountTree, token: authToken)
-///
-/// // Form is pre-populated with existing values
-/// // User makes changes
-/// viewModel.name = "Updated Account Name"
-///
-/// await viewModel.save(mode: mode, token: authToken)
-/// ```
-///
-/// **Opening balance flow:**
-/// ```swift
-/// // When creating a new account
-/// viewModel.openingBalanceAmount = "1000.00"
-/// viewModel.openingBalanceDate = startOfYear
-/// viewModel.openingBalanceAccount = equityAccount  // Contra account
-///
-/// await viewModel.save(mode: .create(...), token: authToken)
-/// // Automatically posts a transaction with opening balance
-/// ```
-///
-/// ## State Management
-///
-/// Uses the `@Observable` macro (iOS 17+/macOS 14+) for automatic view updates.
-/// All published properties automatically trigger SwiftUI view refreshes when changed.
-///
-/// ## Change Notification
-///
-/// When an account is successfully saved, posts a `.accountSaved` notification with
-/// the ledger ID, allowing other parts of the app (like `AccountTreeView`) to refresh
-/// their data.
-///
-/// - SeeAlso: `AccountFormPayload`, `CreateAccountRequest`, `PatchAccountRequest`,
-///   `AccountFormView`, `AccountFormWindowContent`
 
 /// Notification posted when an account is successfully saved (created or updated).
 ///
@@ -148,12 +45,75 @@ import Foundation
 /// ```
 ///
 /// - Note: Posted on successful save only (not on validation failures or API errors).
-/// - SeeAlso: `AccountFormViewModel.save(mode:token:)`, `AccountTreeView`
+/// - SeeAlso: ``AccountFormViewModel/save(mode:token:)``, ``AccountTreeView``
 extension Notification.Name {
     /// Posted when an account is saved, with the ledger UUID as the object.
     static let accountSaved = Notification.Name("com.leonfelipe.mab.accountSaved")
 }
 
+/// View model managing the account creation and editing form.
+///
+/// `AccountFormViewModel` handles the complete lifecycle of account form interactions,
+/// including loading account types, validating user input, creating new accounts, updating
+/// existing accounts, and posting opening balance transactions when needed.
+///
+/// ## Features
+///
+/// - **Dual mode operation**: Create new accounts or edit existing ones via ``Mode``.
+/// - **Account type catalog**: Loads and presents available ``AccountTypeItem`` values from the backend.
+/// - **Parent account selection**: Supports hierarchical account structure with optional suggested parent.
+/// - **Opening balance**: Posts initial balance transaction for new accounts.
+/// - **Placeholder support**: Allows creating organizational accounts without a type.
+/// - **Validation**: Ensures required fields are populated before saving (see ``canSave``).
+/// - **Error handling**: Captures and displays API errors with user-friendly messages.
+/// - **Change notifications**: Posts ``Notification/Name/accountSaved`` when an account is saved.
+///
+/// ## Usage
+///
+/// **Creating a new account with a suggested parent:**
+/// ```swift
+/// let viewModel = AccountFormViewModel()
+///
+/// let mode = AccountFormViewModel.Mode.create(
+///     ledger: currentLedger,
+///     suggestedParent: assetsRootAccount,
+///     suggestedName: nil
+/// )
+///
+/// await viewModel.load(mode: mode, allRoots: accountTree, token: authToken)
+///
+/// viewModel.name = "Business Checking"
+/// viewModel.code = "1010"
+/// viewModel.selectedAccountType = bankAccountType
+/// viewModel.accountRole = AccountRole.bank.rawValue  // 101
+///
+/// await viewModel.save(mode: mode, token: authToken)
+///
+/// if viewModel.didSave { /* dismiss form */ }
+/// ```
+///
+/// **Editing an existing account:**
+/// ```swift
+/// let payload = AccountFormPayload(node: selectedAccount)
+/// let mode = AccountFormViewModel.Mode.edit(ledger: currentLedger, account: payload)
+///
+/// await viewModel.load(mode: mode, allRoots: accountTree, token: authToken)
+/// viewModel.name = "Updated Account Name"
+/// await viewModel.save(mode: mode, token: authToken)
+/// ```
+///
+/// ## State Management
+///
+/// Uses the `@Observable` macro (macOS 14+) for automatic SwiftUI view updates.
+/// All mutable properties trigger view refreshes when changed.
+///
+/// ## Change Notification
+///
+/// On a successful save, posts ``Notification/Name/accountSaved`` with the ledger UUID
+/// as the object, allowing views like ``AccountTreeView`` to refresh without polling.
+///
+/// - SeeAlso: ``AccountFormPayload``, ``CreateAccountRequest``, ``PatchAccountRequest``,
+///   ``AccountFormView``, ``AccountFormWindowContent``
 @Observable
 final class AccountFormViewModel {
 
@@ -240,8 +200,7 @@ final class AccountFormViewModel {
     /// )
     /// ```
     ///
-    /// - SeeAlso: `load(mode:allRoots:token:)`, `AccountFormWindowPayload.suggestedParentId`,
-    ///   `AccountFormWindowPayload.suggestedName`
+    /// - SeeAlso: ``load(mode:allRoots:token:)``, ``AccountFormWindowPayload``
     enum Mode {
         /// Creating a new account with optional suggested parent and name.
         case create(ledger: LedgerResponse, suggestedParent: AccountNode?, suggestedName: String?)
@@ -277,16 +236,12 @@ final class AccountFormViewModel {
     /// and normal balance direction. Placeholder accounts don't require a type.
     var selectedAccountType: AccountTypeItem?
     
-    /// The fundamental accounting category (role) for this account.
+    /// The operational role for this account, stored as the raw `Int` value of ``AccountRole``.
     ///
-    /// Values:
-    /// - 1: Asset
-    /// - 2: Liability
-    /// - 3: Equity
-    /// - 4: Income
-    /// - 5: Expense
+    /// Defaults to `0` (``AccountRole/unspecified``). Use ``AccountRole`` raw values when
+    /// setting this field (e.g., `AccountRole.bank.rawValue` = 101).
     ///
-    /// Must be compatible with the parent account's role.
+    /// - SeeAlso: ``AccountRole``
     var accountRole: Int = 0
     
     /// Whether this is a placeholder (organizational) account.
@@ -333,8 +288,8 @@ final class AccountFormViewModel {
 
     /// The complete catalog of account types loaded from the backend.
     ///
-    /// Populated by `load()`. Used to populate the account type picker
-    /// in the form UI.
+    /// Populated by ``load(mode:allRoots:token:)``. Used to populate the
+    /// account type picker in the form UI.
     var accountTypes: [AccountTypeItem] = []
     
     /// `true` while loading account types and populating the form.
@@ -493,7 +448,7 @@ final class AccountFormViewModel {
     /// The UI should display this in an alert or error banner.
     ///
     /// - Note: This method runs on the main actor and updates UI state properties.
-    /// - SeeAlso: `Mode`, `AccountService.fetchAccountTypes(token:)`
+    /// - SeeAlso: ``Mode``, ``AccountService``
     @MainActor
     func load(mode: Mode, allRoots: [AccountNode], token: String) async {
         isLoading = true
@@ -616,8 +571,7 @@ final class AccountFormViewModel {
     /// - Posts `.accountSaved` notification on success
     ///
     /// - Note: This method runs on the main actor and updates UI state properties.
-    /// - SeeAlso: `canSave`, `saveCreate(ledger:token:)`, `savePatch(ledger:accountId:token:)`,
-    ///   `Notification.Name.accountSaved`
+    /// - SeeAlso: ``canSave``, ``Notification/Name/accountSaved``
     @MainActor
     func save(mode: Mode, token: String) async {
         guard canSave else { return }
@@ -633,6 +587,7 @@ final class AccountFormViewModel {
                 try await savePatch(
                     ledger: ledger,
                     accountId: existing.id,
+                    originalRole: existing.accountRole,
                     token: token
                 )
             }
@@ -693,24 +648,28 @@ final class AccountFormViewModel {
 
     /// Updates an existing account with the current form values.
     ///
-    /// Builds a `PatchAccountRequest` with all form fields and sends it to the backend.
-    /// All fields are included (even if unchanged) since this is a full form submission.
+    /// Builds a ``PatchAccountRequest`` with all form fields and sends it to the backend.
+    /// `accountRole` is only included in the patch when it differs from `originalRole`,
+    /// avoiding spurious role updates when the user hasn't changed the role field.
     ///
     /// - Parameters:
-    ///   - ledger: The ledger context (for validation)
-    ///   - accountId: The UUID of the account to update
-    ///   - token: Authentication token
+    ///   - ledger: The ledger context (unused at present; reserved for future validation).
+    ///   - accountId: The UUID of the account to update.
+    ///   - originalRole: The account's role value at load time. The patch omits `accountRole`
+    ///     when the current ``accountRole`` equals this value.
+    ///   - token: Authentication token.
     ///
-    /// - Throws: `APIError` if the update fails
+    /// - Throws: `APIError` if the update fails.
     private func savePatch(ledger: LedgerResponse,
                            accountId: UUID,
+                           originalRole: Int,
                            token: String) async throws {
         let request = PatchAccountRequest(
             name:            name.trimmingCharacters(in: .whitespaces),
             code:            code.isEmpty ? nil : code.trimmingCharacters(in: .whitespaces),
             parentId:        selectedParent?.id,
             accountTypeCode: isPlaceholder ? nil : selectedAccountType?.code,
-            accountRole:     accountRole,
+            accountRole:     accountRole != originalRole ? accountRole : nil,
             isPlaceholder:   isPlaceholder,
             isHidden:        isHidden
         )
@@ -797,7 +756,7 @@ final class AccountFormViewModel {
     ///
     /// Performs a depth-first search through the account hierarchy to find
     /// a node matching the given UUID. Used to resolve account UUIDs to
-    /// `AccountNode` references when loading the form in edit mode.
+    /// ``AccountNode`` references when loading the form in edit mode.
     ///
     /// - Parameters:
     ///   - id: The UUID to search for, or `nil` to return `nil` immediately

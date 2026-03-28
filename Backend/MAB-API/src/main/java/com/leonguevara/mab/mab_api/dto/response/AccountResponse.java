@@ -14,8 +14,13 @@
 //          (e.g. "CASH", "AP", "SALES") joined from the
 //          account_type table. Allows clients to apply
 //          display logic without a separate lookup call.
+//
+//          accountRole: operational role of the account
+//          (e.g. 0=Normal, 1=Control, 2=Tax, 3=Memo).
+//          Clients use this to apply special handling rules
+//          without a separate lookup call.
 // ============================================================
-// Last edited: 2026-03-05
+// Last edited: 2026-03-28
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -28,16 +33,19 @@ import java.util.UUID;
  * Response body representing a single account.
  * <p>
  * Returned JSON example:
+ * <pre>{@code
  * {
- *   "id":            "uuid",
- *   "name":          "Cash and Cash Equivalents",
- *   "code":          "1010",
- *   "parentId":      "uuid-of-parent",
- *   "isPlaceholder": false,
+ *   "id":              "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+ *   "name":            "Cash and Cash Equivalents",
+ *   "code":            "1010",
+ *   "parentId":        "uuid-of-parent",
+ *   "isPlaceholder":   false,
  *   "isHidden":        false,
  *   "kind":            1,
- *   "accountTypeCode": "CASH"
+ *   "accountTypeCode": "CASH",
+ *   "accountRole":     0
  * }
+ * }</pre>
  *
  * @param id              UUID primary key of the account.
  * @param name            Display name.
@@ -51,6 +59,9 @@ import java.util.UUID;
  *                        6=expense, 7=memorandum, 8=statistical.
  * @param accountTypeCode The code from account_type (e.g. "CASH", "AP", "SALES").
  *                        Null if no account type is assigned.
+ * @param accountRole     Operational role of the account: 0=Unspecified, 101=Banks,
+ *                        200=Account payables. Clients use this to apply special
+ *                        display or validation rules without a separate lookup.
  */
 public record AccountResponse(
         UUID    id,
@@ -60,5 +71,6 @@ public record AccountResponse(
         boolean isPlaceholder,
         boolean isHidden,
         int     kind,
-        String  accountTypeCode
+        String  accountTypeCode,
+        int     accountRole
 ) {}

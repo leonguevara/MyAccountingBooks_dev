@@ -4,6 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-25.
+//  Last modified by León Felie Guevara Chávez on 2026-03-28
 //  Developed with AI assistance.
 //
 
@@ -69,9 +70,9 @@ import SwiftUI
 /// To complete that feature, the UUID would need to be resolved to an `AccountNode` after
 /// the account tree loads in `AccountFormView`'s `.task` modifier.
 ///
-/// - Note: The account tree is loaded inside `AccountFormView` via its `.task` modifier,
+/// - Note: The account tree is loaded inside ``AccountFormView`` via its `.task` modifier,
 ///   which allows for deferred parent resolution after the tree data is available.
-/// - SeeAlso: `AccountFormWindowPayload`, `AccountFormView`, `AccountFormViewModel.Mode`
+/// - SeeAlso: ``AccountFormWindowPayload``, ``AccountFormView``, ``AccountFormViewModel``
 struct AccountFormWindowContent: View {
 
     /// The payload passed from the window system containing ledger and optional account data.
@@ -107,7 +108,7 @@ struct AccountFormWindowContent: View {
     /// This deferred resolution pattern avoids blocking the window from opening while
     /// waiting for network requests to complete.
     ///
-    /// - Returns: The appropriate `AccountFormViewModel.Mode` for the form.
+    /// - Returns: The appropriate ``AccountFormViewModel/Mode`` for the form.
     private var formMode: AccountFormViewModel.Mode {
         if let existing = payload.existingAccount {
             return .edit(ledger: payload.ledger, account: existing)
@@ -183,7 +184,7 @@ struct AccountFormWindowContent: View {
 /// - Form is not currently saving
 ///
 /// - Note: Designed for macOS with a minimum window size of 520×560 points.
-/// - SeeAlso: `AccountFormViewModel`, `AccountFormPayload`, `AccountFormWindowContent`
+/// - SeeAlso: ``AccountFormViewModel``, ``AccountFormPayload``, ``AccountFormWindowContent``
 struct AccountFormView: View {
 
     /// The form mode determining create or edit behavior.
@@ -198,6 +199,9 @@ struct AccountFormView: View {
     /// Dictionary mapping account UUIDs to full hierarchical paths for display.
     @State private var accountPaths: [UUID: String] = [:]
     
+    /// The full account tree for the current ledger, built after the `.task` modifier
+    /// fetches the flat account list and passes it through ``AccountTreeBuilder/build(from:)``.
+    /// Used by ``AccountNodePicker`` instances in the form.
     @State private var loadedRoots: [AccountNode] = []
 
     /// The ledger context extracted from the mode.
@@ -250,6 +254,10 @@ struct AccountFormView: View {
                         if !isEditMode {
                             openingBalanceSection
                         }
+                        Text("* Required field")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 20)
                         if let error = viewModel.errorMessage {
                             Text(error)
                                 .foregroundStyle(.red)
@@ -293,10 +301,10 @@ struct AccountFormView: View {
     /// - **Code**: Optional text field for account code/number
     /// - **Parent**: Required picker for selecting the parent account in the hierarchy
     ///
-    /// Uses `AccountNodePicker` for parent selection with search functionality.
+    /// Uses ``AccountNodePicker`` for parent selection with search functionality.
     private var identificationSection: some View {
         FormSection(title: "Identification") {
-            FormRow(label: "Name") {
+            FormRow(label: "Name *") {
                 TextField("Account name", text: $viewModel.name)
                     .textFieldStyle(.roundedBorder)
             }
@@ -304,7 +312,7 @@ struct AccountFormView: View {
                 TextField("e.g. 100-01.001.01", text: $viewModel.code)
                     .textFieldStyle(.roundedBorder)
             }
-            FormRow(label: "Parent") {
+            FormRow(label: "Parent *") {
                 AccountNodePicker(
                     selection: $viewModel.selectedParent,
                     allRoots: loadedRoots,
@@ -326,7 +334,7 @@ struct AccountFormView: View {
     /// Account type is automatically cleared when placeholder mode is toggled on.
     private var classificationSection: some View {
         FormSection(title: "Classification") {
-            FormRow(label: "Account Type") {
+            FormRow(label: viewModel.isPlaceholder ? "Account Type" : "Account Type *") {
                 if viewModel.isPlaceholder {
                     Text("Not required for placeholder accounts")
                         .foregroundStyle(.secondary)
@@ -523,7 +531,7 @@ private struct FormRow<Content: View>: View {
 /// - Empty search shows all candidates
 /// - Results update in real-time as user types
 ///
-/// - Note: This is a private component used within `AccountFormView`.
+/// - Note: This is a private component used within ``AccountFormView``.
 private struct AccountNodePicker: View {
     /// Binding to the selected account node.
     @Binding var selection: AccountNode?
@@ -678,15 +686,20 @@ private struct AccountTypePicker: View {
 ///
 /// ## Role Categories
 ///
-/// - **Generic (0)**: Unspecified
-/// - **Assets (100-130)**: Bank, Cash, Fixed Assets
-/// - **Liabilities (200-210)**: Generic, Credit Card
-/// - **Equity (300)**: Generic
-/// - **Income (400)**: Revenue
-/// - **Cost of Sales (500)**: COGS
-/// - **Expenses (600)**: Operating expenses
-/// - **Memo (700-800)**: Non-posting accounts
-/// - **Statistical (900)**: Tracking accounts
+/// Populated from ``AccountRole/allCases``; see ``AccountRole`` for the full range layout.
+///
+/// | Range     | Examples                                        |
+/// |-----------|-------------------------------------------------|
+/// | 0         | Unspecified                                     |
+/// | 100–199   | Cash & Equivalents, Bank, Receivable, Inventory |
+/// | 200–299   | Accounts Payable, Taxes Payable, Loans Payable  |
+/// | 300–399   | Capital, Retained Earnings, Current Year Result |
+/// | 400–499   | Sales Revenue, Service Revenue, Other Income    |
+/// | 500–599   | Cost of Goods Sold, Cost of Services            |
+/// | 600–699   | Operating, Administrative, Selling Expenses     |
+/// | 700, 800  | Memorandum Debit / Credit (off-balance)         |
+/// | 900       | KPI / Statistical                               |
+/// | 4300–4399 | Financial result roles (RIF / interest, FX…)    |
 ///
 /// ## Usage
 ///
@@ -694,46 +707,16 @@ private struct AccountTypePicker: View {
 /// AccountRolePicker(selection: $viewModel.accountRole)
 /// ```
 ///
-/// - Note: This is a private component used within `AccountFormView`. The role values
-///   are numeric codes that correspond to specific account classifications in the backend.
+/// - Note: This is a private component used within ``AccountFormView``.
+/// - SeeAlso: ``AccountRole``
 private struct AccountRolePicker: View {
     /// Binding to the selected role code.
     @Binding var selection: Int
 
-    /// Common accounting roles with numeric codes and readable labels.
-    ///
-    /// The codes follow a hierarchy:
-    /// - 0: Generic/unspecified
-    /// - 100-199: Assets (110=Bank, 120=Cash, 130=Fixed)
-    /// - 200-299: Liabilities (210=Credit Card)
-    /// - 300-399: Equity
-    /// - 400-499: Income/Revenue
-    /// - 500-599: Cost of Sales
-    /// - 600-699: Expenses
-    /// - 700-799: Memo accounts (Debit)
-    /// - 800-899: Memo accounts (Credit)
-    /// - 900-999: Statistical/tracking
-    private let roles: [(Int, String)] = [
-        (0,    "Generic (0)"),
-        (100,  "Asset — Generic (100)"),
-        (110,  "Asset — Bank (110)"),
-        (120,  "Asset — Cash (120)"),
-        (130,  "Asset — Fixed (130)"),
-        (200,  "Liability — Generic (200)"),
-        (210,  "Liability — Credit Card (210)"),
-        (300,  "Equity — Generic (300)"),
-        (400,  "Income — Generic (400)"),
-        (500,  "Cost of Sales (500)"),
-        (600,  "Expense — Generic (600)"),
-        (700,  "Memo Debit (700)"),
-        (800,  "Memo Credit (800)"),
-        (900,  "Statistical (900)")
-    ]
-
     var body: some View {
         Picker("", selection: $selection) {
-            ForEach(roles, id: \.0) { role in
-                Text(role.1).tag(role.0)
+            ForEach(AccountRole.allCases, id: \.rawValue) { role in
+                Text(role.displayName).tag(Int(role.rawValue))
             }
         }
         .labelsHidden()

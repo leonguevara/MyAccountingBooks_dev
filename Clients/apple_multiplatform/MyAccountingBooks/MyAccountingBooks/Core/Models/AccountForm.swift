@@ -45,7 +45,7 @@ import Foundation
 /// }
 /// ```
 ///
-/// - SeeAlso: `CreateAccountRequest`, `PatchAccountRequest`, `AccountNode`
+/// - SeeAlso: ``CreateAccountRequest``, ``PatchAccountRequest``, ``AccountNode``
 struct AccountTypeItem: Codable, Identifiable, Hashable {
     /// Unique identifier for this account type.
     let id: UUID
@@ -128,7 +128,7 @@ struct AccountTypeItem: Codable, Identifiable, Hashable {
 ///
 /// - Important: The `accountRole` must be compatible with the account's position in the
 ///   hierarchy. For example, an Income account cannot be a child of an Asset account.
-/// - SeeAlso: `PatchAccountRequest`, `AccountNode`, `APIEndpoint.createAccount`
+/// - SeeAlso: ``PatchAccountRequest``, ``AccountNode``, ``AccountRole``
 struct CreateAccountRequest: Encodable {
     /// The unique identifier of the ledger this account belongs to.
     let ledgerId: UUID
@@ -145,18 +145,19 @@ struct CreateAccountRequest: Encodable {
     /// Optional account type code from the catalog (e.g., "BANK", "EQUITY", "INCOME").
     let accountTypeCode: String?
     
-    /// Fundamental accounting category:
-    /// - 1: Asset
-    /// - 2: Liability
-    /// - 3: Equity
-    /// - 4: Income
-    /// - 5: Expense
+    /// The operational role of the account, encoded as the raw `Int16` value of ``AccountRole``.
+    ///
+    /// Use ``AccountRole`` to obtain the correct raw value (e.g., `AccountRole.bank.rawValue` = 101).
+    /// Do **not** pass `kind` values (1–5) here — those belong to the `kind` field inherited
+    /// from the parent account on the backend side.
+    ///
+    /// - SeeAlso: ``AccountRole``
     let accountRole: Int
-    
+
     /// If `true`, this is a placeholder account used for organization only.
     /// Placeholder accounts cannot have transactions posted directly to them.
     let isPlaceholder: Bool
-    
+
     /// If `true`, this account is hidden from most UI views (e.g., inactive accounts).
     let isHidden: Bool
 
@@ -221,7 +222,7 @@ struct CreateAccountRequest: Encodable {
 /// - Important: Changing `accountRole` or `parentId` may violate chart of accounts rules.
 ///   The backend validates these changes before applying them.
 /// - Note: Moving an account (changing `parentId`) preserves all child accounts — they move with it.
-/// - SeeAlso: `CreateAccountRequest`, `APIEndpoint.patchAccount(id:)`
+/// - SeeAlso: ``CreateAccountRequest``, ``AccountRole``
 struct PatchAccountRequest: Encodable {
     /// Updated account name. If nil, the existing name is preserved.
     var name: String?
@@ -236,8 +237,14 @@ struct PatchAccountRequest: Encodable {
     /// Updated account type code. If nil, the existing type code is preserved.
     var accountTypeCode: String?
     
-    /// Updated account role (fundamental category). If nil, the existing role is preserved.
-    /// - Warning: Changing this may break chart of accounts consistency.
+    /// Updated operational role. If `nil`, the existing role is preserved.
+    ///
+    /// Pass the raw `Int` value of the desired ``AccountRole`` case
+    /// (e.g., `AccountRole.bank.rawValue` = 101).
+    ///
+    /// - Warning: Changing this after transactions have been posted may break
+    ///   chart-of-accounts consistency. The backend does not validate role changes
+    ///   against existing transaction history.
     var accountRole: Int?
     
     /// Updated placeholder status. If nil, the existing status is preserved.
@@ -311,7 +318,7 @@ struct PatchAccountRequest: Encodable {
 /// ```
 ///
 /// - Note: Conforms to `Hashable` and `Codable` for SwiftUI window management.
-/// - SeeAlso: `AccountFormPayload`, `AccountFormWindowContent`, `AccountFormView`
+/// - SeeAlso: ``AccountFormPayload``, ``AccountFormWindowContent``, ``AccountFormView``
 struct AccountFormWindowPayload: Hashable, Codable {
     /// The ledger context for this account form.
     ///
@@ -377,9 +384,9 @@ struct AccountFormWindowPayload: Hashable, Codable {
 /// }
 /// ```
 ///
-/// - Note: The `accountRole` field is stored in the `kind` property of the underlying
-///   account record. This payload extracts it for clarity in form binding.
-/// - SeeAlso: `AccountFormWindowPayload`, `AccountNode`
+/// - Note: `accountRole` and `kind` are distinct fields — `accountRole` encodes operational
+///   intent via ``AccountRole``; `kind` encodes accounting nature (Asset, Liability, etc.).
+/// - SeeAlso: ``AccountFormWindowPayload``, ``AccountNode``, ``AccountRole``
 struct AccountFormPayload: Hashable, Codable {
     /// The unique identifier of the account being edited.
     let id: UUID
@@ -396,29 +403,31 @@ struct AccountFormPayload: Hashable, Codable {
     /// The account type code from the catalog (e.g., "BANK", "EQUITY").
     let accountTypeCode: String?
     
-    /// Fundamental accounting category (role):
-    /// - 1: Asset
-    /// - 2: Liability
-    /// - 3: Equity
-    /// - 4: Income
-    /// - 5: Expense
+    /// The operational role of the account, as the raw `Int` value of ``AccountRole``.
+    ///
+    /// Populated from `AccountResponse.accountRole`. Use ``AccountRole/init(rawValue:)``
+    /// to convert back to a typed enum value for display or validation logic.
+    ///
+    /// - SeeAlso: ``AccountRole``
     let accountRole: Int
-    
+
     /// Whether this account is a placeholder (organizational only, no direct postings).
     let isPlaceholder: Bool
-    
+
     /// Whether this account is hidden from most UI views.
     let isHidden: Bool
-    
-    /// The account's fundamental category (same as `accountRole` in this context).
+
+    /// The accounting nature of the account (1=Asset, 2=Liability, 3=Equity, 4=Income, 5=Expense).
     ///
-    /// Included for compatibility with the underlying account structure.
+    /// This is the `kind` dimension — distinct from `accountRole`, which encodes operational
+    /// intent via ``AccountRole``. `kind` is inherited from the parent account on the backend
+    /// and is included here for read-only display purposes.
     let kind: Int
 
-    /// Initializes a payload from an existing AccountNode.
+    /// Initializes a payload from an existing ``AccountNode``.
     ///
-    /// Extracts all relevant fields from the account node, including the parent ID
-    /// and account role (stored in the `kind` field of the underlying account).
+    /// Extracts all relevant fields from the node's underlying ``AccountResponse``,
+    /// including `accountRole` (operational role) and `kind` (accounting nature).
     ///
     /// - Parameter node: The account node to create a payload from.
     init(node: AccountNode) {
@@ -427,7 +436,7 @@ struct AccountFormPayload: Hashable, Codable {
         self.code            = node.code
         self.parentId        = node.account.parentId
         self.accountTypeCode = node.accountTypeCode
-        self.accountRole     = node.account.kind  // role stored in kind field
+        self.accountRole     = node.account.accountRole
         self.isPlaceholder   = node.isPlaceholder
         self.isHidden        = node.isHidden
         self.kind            = node.account.kind
