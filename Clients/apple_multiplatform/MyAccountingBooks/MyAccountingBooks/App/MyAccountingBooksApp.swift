@@ -74,5 +74,9 @@ struct MyAccountingBooksApp: App {
         .windowStyle(.titleBar)
         .windowToolbarStyle(.unified)
         .defaultSize(width: 540, height: 580)
+        
+        Settings {
+            SettingsView()
+        }
     }
 }

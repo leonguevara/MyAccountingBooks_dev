@@ -359,6 +359,10 @@ struct AccountTreeView: View {
  - SeeAlso: `AccountNode`, `AccountBalanceResponse`, `AccountTreeViewModel.balances`
  */
 private struct AccountRowView: View {
+    
+    // Fix issue #4: Optionally show Account's code within the tree
+    @AppStorage(AppStorageKeys.showAccountCode)
+    private var showAccountCode: Bool = true
 
     /// The account node to display.
     let node: AccountNode
@@ -384,7 +388,7 @@ private struct AccountRowView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
-                    if let code = node.code {
+                    if showAccountCode, let code = node.code {
                         Text(code)
                             .font(.caption)
                             .foregroundStyle(.secondary)
