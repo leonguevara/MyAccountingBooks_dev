@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-12.
-//  Last modified by León Felipe Guevara Chávez on 2026-03-21.
+//  Last modified by León Felipe Guevara Chávez on 2026-03-28.
 //  Developed with AI assistance
 //
 
@@ -13,13 +13,15 @@ import SwiftUI
 /// Displays a hierarchical chart of accounts for a given ledger.
 ///
 /// `AccountTreeView` binds to an ``AccountTreeViewModel`` to load, filter, and render
-/// the full chart of accounts as a collapsible sidebar tree. Each row shows the account
-/// code, name, type label, kind color dot, and — for non-root accounts — the current
-/// balance fetched and rolled up by the view model.
+/// the full chart of accounts as a sidebar tree. Each row shows the account
+/// code (optional), name, type label, kind color dot, and — for non-root accounts — the
+/// current balance fetched and rolled up by the view model.
 ///
 /// ## Features
-/// - **Hierarchical display**: Uses `List(children:selection:)` to render a fully
-///   collapsible account tree with disclosure indicators at every level.
+/// - **Hierarchical display**: Renders a fully collapsible account tree using recursive
+///   `DisclosureGroup` views. All parent nodes are **expanded by default** when the tree
+///   first loads or when the ledger changes. The user can collapse individual branches;
+///   the expansion state is tracked in ``expandedIDs``.
 /// - **Balance column**: Each non-root row shows its current balance. Placeholder
 ///   (parent) balances are automatically rolled up from descendants by
 ///   ``AccountTreeViewModel``. The root account balance is intentionally suppressed
@@ -54,6 +56,16 @@ import SwiftUI
 ///
 /// Negative balances are rendered in red; zero and positive values use the primary
 /// label color.
+///
+/// ## Tree Expansion Behaviour
+///
+/// When the tree loads (or reloads), all parent nodes are automatically expanded by
+/// inserting their UUIDs into ``expandedIDs``. Each `DisclosureGroup` is bound to a
+/// `Binding<Bool>` that reads and writes this set, so expansion state persists while
+/// the view is alive but resets to fully-expanded on the next load.
+///
+/// The user may collapse any branch manually. Re-selecting a ledger triggers a fresh
+/// load, which calls ``expandAll(_:)`` again and restores the fully-expanded state.
 ///
 /// ## Register Window Interaction
 ///
@@ -116,14 +128,18 @@ struct AccountTreeView: View {
     /// `.onChange(of: registerOpenFor)`, then immediately reset to `nil`.
     @State private var registerOpenFor: AccountNode?
 
-    /// Environment action used to open a dedicated account register window.
+    /// Set of node UUIDs whose `DisclosureGroup` is currently expanded.
     ///
-    /// Provided by the SwiftUI window management system. Called with an
-    /// `AccountRegisterWindowPayload` value that carries the ledger and account.
+    /// Populated by ``expandAll(_:)`` after every tree load, which inserts every
+    /// parent node's UUID so all branches start open. The user may collapse
+    /// individual branches at any time; tapping the disclosure triangle removes
+    /// the UUID from this set. On next load, ``expandAll(_:)`` restores all IDs.
+    @State private var expandedIDs: Set<UUID> = []
+
+    /// Environment action used to open dedicated windows (register and form windows).
     @Environment(\.openWindow) private var openWindow
-    
+
     var body: some View {
-        // Switches between loading, empty, and populated tree states.
         Group {
             if viewModel.isLoading && viewModel.roots.isEmpty {
                 ProgressView("Loading accounts…")
@@ -163,6 +179,12 @@ struct AccountTreeView: View {
             await Task.yield()
             await viewModel.loadAccounts(ledgerID: ledger.id, token: token)
         }
+        // Expand all parent nodes whenever the tree loads or reloads.
+        // expandAll() inserts every parent UUID into expandedIDs so that
+        // all DisclosureGroups open by default. The user may collapse branches.
+        .onChange(of: viewModel.roots) { _, newRoots in
+            expandAll(newRoots)
+        }
         .alert(
             "Error",
             isPresented: Binding(
@@ -185,7 +207,6 @@ struct AccountTreeView: View {
         .onReceive(NotificationCenter.default.publisher(
             for: .accountSaved
         )) { notification in
-            // Only reload if the notification is for this ledger
             guard let savedLedgerID = notification.object as? UUID,
                   savedLedgerID == ledger.id,
                   let token = auth.token else { return }
@@ -197,73 +218,117 @@ struct AccountTreeView: View {
 
     // MARK: - Subviews
 
-    /// The hierarchical account list with selection, disclosure, and double-click support.
+    /// The hierarchical account list rendered as a `List` containing recursive
+    /// `DisclosureGroup` views.
     ///
-    /// Renders `viewModel.filteredRoots` using `List(children:selection:)`, which
-    /// automatically provides disclosure triangles for parent nodes. Each row is an
-    /// ``AccountRowView`` tagged with its ``AccountNode`` for selection binding.
+    /// All parent nodes are expanded by default via ``expandedIDs``. Each
+    /// `DisclosureGroup` is bound to a `Binding<Bool>` that reads/writes the set:
+    /// - **Opening** a group inserts its UUID into ``expandedIDs``.
+    /// - **Closing** a group removes its UUID from ``expandedIDs``.
     ///
-    /// Double-click detection uses `simultaneousGesture(TapGesture(count:2))` so
-    /// single-tap selection and double-tap register opening do not conflict. The
-    /// `.onChange(of: registerOpenFor)` modifier consumes the trigger and calls
-    /// ``openRegisterWindow(for:)``, then resets the trigger to `nil`.
+    /// Leaf nodes (accounts with no children) are rendered as plain ``AccountRowView``
+    /// rows without a disclosure indicator. Both leaf and parent rows carry a
+    /// context menu and — for non-placeholder leaves — a double-tap gesture to open
+    /// the account register.
     ///
-    /// - Note: `\.optionalChildren` returns `nil` for leaf nodes so that no
-    ///   disclosure arrow is rendered for accounts with no children.
+    /// The `.onChange(of: registerOpenFor)` modifier on the `List` consumes the
+    /// one-shot register-open trigger and calls ``openRegisterWindow(for:)``.
     private var accountTree: some View {
-        List(
-            viewModel.filteredRoots,
-            id: \.id,
-            children: \.optionalChildren,
-            selection: $selectedAccount
-        ) { node in
-            AccountRowView(node: node, balance: viewModel.balances[node.id])
-                .tag(node)
-                // ── Double-click: open register ───────────────────────────
-                .simultaneousGesture(
-                    TapGesture(count: 2).onEnded {
-                        // Only open the register for real leaf accounts.
-                        // Placeholder and parent nodes do not have a transaction register.
-                        guard !node.isPlaceholder && node.isLeaf else { return }
-                        registerOpenFor = node
-                    }
-                )
-                // ── Right-click context menu ──────────────────────────────
-                // Provides quick actions for managing account hierarchy:
-                // - "New Sub-Account": Pre-selects this node as parent via suggestedParentId,
-                //   with no suggested name (user provides name in form)
-                // - "Edit Account": Opens form with existing account data for modification,
-                //   with no parent pre-selection (parent is determined by existing data)
-                .contextMenu {
-                    Button {
-                        openWindow(value: AccountFormWindowPayload(
-                            ledger: ledger,
-                            existingAccount: nil,
-                            suggestedParentId: node.id,
-                            suggestedName: nil
-                        ))
-                    } label: {
-                        Label("New Sub-Account", systemImage: "plus.circle")
-                    }
-
-                    Button {
-                        openWindow(value: AccountFormWindowPayload(
-                            ledger: ledger,
-                            existingAccount: AccountFormPayload(node: node),
-                            suggestedParentId: nil,
-                            suggestedName: nil
-                        ))
-                    } label: {
-                        Label("Edit Account", systemImage: "pencil")
-                    }
-                }
-                // ─────────────────────────────────────────────────────────
+        List(selection: $selectedAccount) {
+            ForEach(viewModel.filteredRoots) { node in
+                accountRow(for: node)
+            }
         }
         .listStyle(.sidebar)
         .onChange(of: registerOpenFor) { _, newNode in
             guard let node = newNode else { return }
             openRegisterWindow(for: node)
             registerOpenFor = nil
+        }
+    }
+
+    /// Recursively renders a single account node as either a collapsible
+    /// `DisclosureGroup` (parent with children) or a plain row (leaf).
+    ///
+    /// **Parent nodes** render a `DisclosureGroup` whose expansion state is driven
+    /// by ``expandedIDs``. The label of the group is an ``AccountRowView`` that
+    /// also carries the context menu. Children are rendered by calling this method
+    /// recursively for each child node.
+    ///
+    /// **Leaf nodes** render a plain ``AccountRowView`` with:
+    /// - A `simultaneousGesture` for double-click register opening.
+    /// - A context menu for sub-account creation and account editing.
+    ///
+    /// - Parameter node: The ``AccountNode`` to render.
+    /// - Returns: A `View` — either a `DisclosureGroup` or an ``AccountRowView``.
+    @ViewBuilder
+    private func accountRow(for node: AccountNode) -> some View {
+        if node.children.isEmpty {
+            // ── Leaf node — plain row, no disclosure arrow ────────────────
+            AccountRowView(node: node, balance: viewModel.balances[node.id])
+                .tag(node)
+                .simultaneousGesture(
+                    TapGesture(count: 2).onEnded {
+                        // Only open the register for real (non-placeholder) leaf accounts.
+                        guard !node.isPlaceholder && node.isLeaf else { return }
+                        registerOpenFor = node
+                    }
+                )
+                .contextMenu { contextMenuItems(for: node) }
+        } else {
+            // ── Parent node — DisclosureGroup, expanded by default ────────
+            DisclosureGroup(
+                isExpanded: Binding(
+                    get: { expandedIDs.contains(node.id) },
+                    set: { isOpen in
+                        if isOpen { expandedIDs.insert(node.id) }
+                        else      { expandedIDs.remove(node.id) }
+                    }
+                )
+            ) {
+                ForEach(node.children) { child in
+                    accountRow(for: child)
+                }
+            } label: {
+                AccountRowView(node: node, balance: viewModel.balances[node.id])
+                    .tag(node)
+                    .contextMenu { contextMenuItems(for: node) }
+            }
+        }
+    }
+
+    /// Builds the context menu items shared by both leaf and parent account rows.
+    ///
+    /// Provides two actions:
+    /// - **New Sub-Account**: Opens the account form with `suggestedParentId` set to
+    ///   this node's UUID so the parent picker is pre-selected.
+    /// - **Edit Account**: Opens the account form in edit mode, pre-populated with
+    ///   the current node's data via ``AccountFormPayload``.
+    ///
+    /// - Parameter node: The ``AccountNode`` the menu was invoked on.
+    /// - Returns: A `View` containing the two `Button` items.
+    @ViewBuilder
+    private func contextMenuItems(for node: AccountNode) -> some View {
+        Button {
+            openWindow(value: AccountFormWindowPayload(
+                ledger: ledger,
+                existingAccount: nil,
+                suggestedParentId: node.id,
+                suggestedName: nil
+            ))
+        } label: {
+            Label("New Sub-Account", systemImage: "plus.circle")
+        }
+
+        Button {
+            openWindow(value: AccountFormWindowPayload(
+                ledger: ledger,
+                existingAccount: AccountFormPayload(node: node),
+                suggestedParentId: nil,
+                suggestedName: nil
+            ))
+        } label: {
+            Label("Edit Account", systemImage: "pencil")
         }
     }
 
@@ -313,6 +378,28 @@ struct AccountTreeView: View {
             account: node
         ))
     }
+
+    // MARK: - Expansion
+
+    /// Recursively inserts every parent node's UUID into ``expandedIDs``.
+    ///
+    /// Called via `.onChange(of: viewModel.roots)` immediately after the account
+    /// tree loads. Only nodes with at least one child are inserted — leaf nodes
+    /// have no `DisclosureGroup` and do not need an entry in the set.
+    ///
+    /// This method is safe to call repeatedly: `Set.insert` is idempotent, so
+    /// re-inserting an already-present UUID has no effect.
+    ///
+    /// - Parameter nodes: The array of ``AccountNode`` objects to process
+    ///   (top-level roots on the first call; recursed for children).
+    private func expandAll(_ nodes: [AccountNode]) {
+        for node in nodes {
+            if !node.children.isEmpty {
+                expandedIDs.insert(node.id)
+                expandAll(node.children)
+            }
+        }
+    }
 }
 
 // MARK: - Account Row
@@ -321,7 +408,8 @@ struct AccountTreeView: View {
 ///
 /// `AccountRowView` composes six visual elements from left to right:
 /// 1. A color-coded **kind dot** indicating the account's accounting classification.
-/// 2. The optional **account code** in monospaced secondary type (controlled by ``AppStorageKeys/showAccountCode``).
+/// 2. The optional **account code** in monospaced secondary type — visibility controlled
+///    by ``AppStorageKeys/showAccountCode`` (toggled in ``SettingsView``).
 /// 3. The **account name** — italic and secondary for placeholders, primary for real accounts.
 /// 4. The **account type code** as a tertiary caption below the name.
 /// 5. The **current balance** right-aligned, shown for all non-root accounts.
@@ -349,11 +437,12 @@ struct AccountTreeView: View {
 ///
 /// - SeeAlso: ``AccountNode``, ``AccountBalanceResponse``, ``AccountTreeViewModel``
 private struct AccountRowView: View {
-    
+
     /// Whether the account-code column is visible in each row.
     ///
     /// Mirrors the preference stored under ``AppStorageKeys/showAccountCode``.
-    /// Toggled by the user in ``SettingsView``. Implemented as part of fix for issue #4.
+    /// Toggled by the user in ``SettingsView``. Changes take effect immediately
+    /// across all open COA tree windows without requiring a reload.
     @AppStorage(AppStorageKeys.showAccountCode)
     private var showAccountCode: Bool = true
 
