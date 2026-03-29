@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-12.
-//  Last modified by León Felipe Guevara Chávez on 2026-03-28.
+//  Last modified by León Felipe Guevara Chávez on 2026-03-29.
 //  Developed with AI assistance
 //
 
@@ -250,50 +250,55 @@ struct AccountTreeView: View {
     /// Recursively renders a single account node as either a collapsible
     /// `DisclosureGroup` (parent with children) or a plain row (leaf).
     ///
-    /// **Parent nodes** render a `DisclosureGroup` whose expansion state is driven
-    /// by ``expandedIDs``. The label of the group is an ``AccountRowView`` that
-    /// also carries the context menu. Children are rendered by calling this method
-    /// recursively for each child node.
+    /// **Parent nodes** (nodes with at least one child) render a `DisclosureGroup`
+    /// whose expansion state is driven by ``expandedIDs``. The disclosure label is an
+    /// ``AccountRowView`` that carries a context menu. Children are rendered by calling
+    /// this method recursively for each child node.
     ///
-    /// **Leaf nodes** render a plain ``AccountRowView`` with:
-    /// - A `simultaneousGesture` for double-click register opening.
+    /// **Leaf nodes** (nodes with no children) render a plain ``AccountRowView`` with:
+    /// - A `simultaneousGesture(TapGesture(count: 2))` attached to every leaf.
+    ///   The gesture handler applies an additional guard — only **non-placeholder** leaves
+    ///   set `registerOpenFor`; placeholder leaves absorb the double-tap silently.
     /// - A context menu for sub-account creation and account editing.
     ///
+    /// Both parent and leaf rows carry the same context menu so that "New Sub-Account"
+    /// and "Edit Account" are accessible regardless of whether the node has children.
+    ///
     /// - Parameter node: The ``AccountNode`` to render.
-    /// - Returns: A `View` — either a `DisclosureGroup` or an ``AccountRowView``.
-    @ViewBuilder
-    private func accountRow(for node: AccountNode) -> some View {
+    /// - Returns: An `AnyView` wrapping either a `DisclosureGroup` (parent) or an ``AccountRowView`` (leaf).
+    private func accountRow(for node: AccountNode) -> AnyView {
         if node.children.isEmpty {
-            // ── Leaf node — plain row, no disclosure arrow ────────────────
-            AccountRowView(node: node, balance: viewModel.balances[node.id])
-                .tag(node)
-                .simultaneousGesture(
-                    TapGesture(count: 2).onEnded {
-                        // Only open the register for real (non-placeholder) leaf accounts.
-                        guard !node.isPlaceholder && node.isLeaf else { return }
-                        registerOpenFor = node
-                    }
-                )
-                .contextMenu { contextMenuItems(for: node) }
-        } else {
-            // ── Parent node — DisclosureGroup, expanded by default ────────
-            DisclosureGroup(
-                isExpanded: Binding(
-                    get: { expandedIDs.contains(node.id) },
-                    set: { isOpen in
-                        if isOpen { expandedIDs.insert(node.id) }
-                        else      { expandedIDs.remove(node.id) }
-                    }
-                )
-            ) {
-                ForEach(node.children) { child in
-                    accountRow(for: child)
-                }
-            } label: {
+            return AnyView(
                 AccountRowView(node: node, balance: viewModel.balances[node.id])
                     .tag(node)
+                    .simultaneousGesture(
+                        TapGesture(count: 2).onEnded {
+                            guard !node.isPlaceholder && node.isLeaf else { return }
+                            registerOpenFor = node
+                        }
+                    )
                     .contextMenu { contextMenuItems(for: node) }
-            }
+            )
+        } else {
+            return AnyView(
+                DisclosureGroup(
+                    isExpanded: Binding(
+                        get: { expandedIDs.contains(node.id) },
+                        set: { isOpen in
+                            if isOpen { expandedIDs.insert(node.id) }
+                            else      { expandedIDs.remove(node.id) }
+                        }
+                    )
+                ) {
+                    ForEach(node.children) { child in
+                        accountRow(for: child)
+                    }
+                } label: {
+                    AccountRowView(node: node, balance: viewModel.balances[node.id])
+                        .tag(node)
+                        .contextMenu { contextMenuItems(for: node) }
+                }
+            )
         }
     }
 
