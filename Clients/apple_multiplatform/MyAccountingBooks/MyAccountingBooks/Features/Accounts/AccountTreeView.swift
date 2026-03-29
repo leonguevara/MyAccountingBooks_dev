@@ -269,7 +269,7 @@ struct AccountTreeView: View {
     private func accountRow(for node: AccountNode) -> AnyView {
         if node.children.isEmpty {
             return AnyView(
-                AccountRowView(node: node, balance: viewModel.balances[node.id])
+                AccountRowView(node: node, balance: viewModel.balances[node.id], ledger: ledger)
                     .tag(node)
                     .simultaneousGesture(
                         TapGesture(count: 2).onEnded {
@@ -294,7 +294,7 @@ struct AccountTreeView: View {
                         accountRow(for: child)
                     }
                 } label: {
-                    AccountRowView(node: node, balance: viewModel.balances[node.id])
+                    AccountRowView(node: node, balance: viewModel.balances[node.id], ledger: ledger)
                         .tag(node)
                         .contextMenu { contextMenuItems(for: node) }
                 }
@@ -463,6 +463,12 @@ private struct AccountRowView: View {
     /// A `nil` value means the balance map did not include an entry for this account,
     /// which can occur if the ledger has no transactions yet.
     let balance: AccountBalanceResponse?
+    
+    /// The ledger that owns this account.
+    ///
+    /// Used by ``formattedBalance(_:)`` to obtain `decimalPlaces` and `currencyCode`
+    /// so that balance amounts are formatted with the correct precision and currency label.
+    let ledger: LedgerResponse
 
     var body: some View {
         HStack(spacing: 10) {
@@ -484,7 +490,7 @@ private struct AccountRowView: View {
                         .foregroundStyle(node.isPlaceholder ? .secondary : .primary)
                         .italic(node.isPlaceholder)
                 }
-                Text(node.accountTypeCode ?? "-")
+                Text(node.accountTypeCode ?? "SYSTEM")
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
@@ -495,7 +501,7 @@ private struct AccountRowView: View {
             // aggregates the entire ledger and adds no useful information to the tree.
             if let balance, node.account.parentId != nil {
                 Text(formattedBalance(balance))
-                    .font(.caption.monospacedDigit())
+                    .font(.body.monospacedDigit())
                     .foregroundStyle(
                         balance.balanceNum >= 0 ? Color.primary : Color.red
                     )
@@ -512,32 +518,54 @@ private struct AccountRowView: View {
 
     // MARK: - Formatting
 
-    /// Formats a balance response as a locale-aware numeric string without a currency symbol.
+    /// Formats a balance as a locale-aware string prefixed with the ledger's currency code and symbol.
     ///
-    /// The number of fraction digits is derived from `balanceDenom`:
+    /// Decimal precision is taken directly from `ledger.decimalPlaces` rather than
+    /// being inferred from `balanceDenom`. A `NumberFormatter` is used instead of
+    /// `Decimal.FormatStyle.Currency` because it reliably enforces `minimumFractionDigits`
+    /// even for zero values.
     ///
-    /// | Denominator | Decimal places | Example output |
-    /// |-------------|----------------|----------------|
-    /// | 1           | 0              | `"1,250"`      |
-    /// | 10          | 1              | `"1,250.0"`    |
-    /// | 100         | 2              | `"1,250.00"`   |
-    /// | 1000        | 3              | `"1,250.000"`  |
-    /// | other       | 2 (default)    | `"1,250.00"`   |
+    /// The output format is `"<CODE> <SYMBOL> <AMOUNT>"`, for example:
     ///
-    /// The currency symbol is intentionally omitted (`code: ""`). The ledger's currency
-    /// is already visible in the navigation subtitle of the parent ``AccountTreeView``.
+    /// | Currency | decimalPlaces | Example output      |
+    /// |----------|---------------|---------------------|
+    /// | USD      | 2             | `"USD $ 1,250.00"`  |
+    /// | JPY      | 0             | `"JPY ¥ 1250"`      |
+    /// | BTC      | 8             | `"BTC ₿ 0.00100000"`|
+    ///
+    /// The currency symbol is resolved by ``currencySymbol(for:)``. If the ISO 4217
+    /// code is unrecognised, the code itself is used as a fallback symbol.
     ///
     /// - Parameter b: The ``AccountBalanceResponse`` to format.
-    /// - Returns: A locale-formatted decimal string with the appropriate fraction digits.
+    /// - Returns: A locale-formatted string in the form `"<CODE> <SYMBOL> <AMOUNT>"`.
     private func formattedBalance(_ b: AccountBalanceResponse) -> String {
-        let denom = b.balanceDenom
-        let decimalPlaces = denom == 1    ? 0
-                          : denom == 10   ? 1
-                          : denom == 100  ? 2
-                          : denom == 1000 ? 3 : 2
-        return Decimal.FormatStyle.Currency(code: "")
-            .precision(.fractionLength(decimalPlaces))
-            .format(b.balance)
+        let decimalPlaces = ledger.decimalPlaces
+        // Use NumberFormatter directly — it reliably enforces minimum fraction digits
+        // even for zero values, unlike Decimal.FormatStyle.Currency(code: "").
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = decimalPlaces
+        formatter.maximumFractionDigits = decimalPlaces
+        formatter.usesGroupingSeparator = true
+        let amount = formatter.string(from: b.balance as NSDecimalNumber) ?? "\(b.balance)"
+        let symbol = Self.currencySymbol(for: ledger.currencyCode)
+        return "\(ledger.currencyCode) \(symbol) \(amount)"
+    }
+
+    /// Returns the locale-aware currency symbol for the given ISO 4217 currency code.
+    ///
+    /// Uses `NumberFormatter` to resolve the symbol, which covers all standard ISO 4217
+    /// codes (e.g., `"USD"` → `"$"`, `"EUR"` → `"€"`, `"BTC"` → `"₿"`).
+    /// Falls back to `code` itself if `NumberFormatter` cannot resolve the symbol.
+    ///
+    /// - Parameter code: An ISO 4217 currency code (e.g., `"USD"`, `"MXN"`).
+    /// - Returns: The currency symbol string, or `code` if unrecognised.
+    private static func currencySymbol(for code: String) -> String {
+        // Use NumberFormatter — it knows the symbol for every ISO 4217 code
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = code
+        return formatter.currencySymbol ?? code
     }
 
     // MARK: - Kind Color
