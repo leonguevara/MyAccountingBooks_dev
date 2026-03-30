@@ -10,71 +10,67 @@
 
 import SwiftUI
 
-/**
- A view displaying the list of available ledgers with session persistence and creation support.
- 
- `LedgerListView` presents the user's ledgers in a list format with full session management:
- - Loads ledgers from the backend on appear
- - Automatically restores the last selected ledger from session storage
- - Saves ledger selection changes to persist across app launches
- - Provides UI for creating new ledgers with templates
- - Handles loading, empty, and error states gracefully
- 
- # Features
- - **Ledger List**: Displays all available ledgers with currency and precision info
- - **Selection Management**: Binds to parent's `selectedLedger` for split view coordination
- - **Session Persistence**: Automatically saves and restores ledger selection
- - **Create Ledger**: Sheet-based form for creating new ledgers with templates
- - **Empty State**: Helpful placeholder when no ledgers exist
- - **Error Handling**: Displays errors in alerts
- 
- # Session Management
- 
- The view implements automatic session persistence:
- 
- **Saving selection:**
- - When user selects a ledger, it's saved to `SessionStore`
- - Persists across app launches and restarts
- 
- **Restoring selection:**
- - On load, view model checks `SessionStore` for last selected ledger
- - If found and still exists, automatically selects it
- - Happens transparently via `viewModel.restoredLedger` observation
- 
- # Usage Example
- 
- ```swift
- struct ContentView: View {
-     @State private var selectedLedger: LedgerResponse?
-     @Environment(AuthService.self) private var auth
-     
-     var body: some View {
-         NavigationSplitView {
-             LedgerListView(selectedLedger: $selectedLedger)
-         } detail: {
-             if let ledger = selectedLedger {
-                 LedgerDetailView(ledger: ledger)
-             } else {
-                 Text("Select a ledger")
-             }
-         }
-         .environment(auth)
-     }
- }
- ```
- 
- # State Flow
- 
- 1. **On appear**: `loadLedgers` is called via `.task`
- 2. **After load**: If last selected ledger exists, `restoredLedger` is set
- 3. **Restoration**: `onChange(of: restoredLedger)` applies selection
- 4. **Selection change**: `onChange(of: selectedLedger)` saves to session
- 5. **On next launch**: Process repeats, restoring the saved selection
- 
- - Important: Requires `AuthService` in the environment to obtain authentication token.
- - Note: Selection is only restored if the ledger still exists in the loaded list.
- - SeeAlso: `LedgerListViewModel`, `SessionStore`, `CreateLedgerSheet`
- */
+/// A view displaying the list of available ledgers with session persistence and creation support.
+///
+/// `LedgerListView` presents the user's ledgers in a list format with full session management:
+/// - Loads ledgers from the backend on appear
+/// - Automatically restores the last selected ledger from session storage
+/// - Saves ledger selection changes to persist across app launches
+/// - Provides UI for creating new ledgers with optional COA templates
+/// - Handles loading, empty, and error states gracefully
+///
+/// ## Features
+/// - **Ledger List**: Displays all available ledgers with currency and precision info
+/// - **Selection Management**: Binds to parent's `selectedLedger` for split view coordination
+/// - **Session Persistence**: Automatically saves and restores ledger selection
+/// - **Create Ledger**: Sheet-based form for creating new ledgers with optional COA templates
+/// - **Empty State**: Helpful placeholder when no ledgers exist
+/// - **Error Handling**: Displays errors in alerts
+///
+/// ## Session Management
+///
+/// **Saving selection:**
+/// - When the user selects a ledger it is written to ``SessionStore``
+/// - Persists across app launches and restarts
+///
+/// **Restoring selection:**
+/// - On load, ``LedgerListViewModel`` checks ``SessionStore`` for the last selected ledger ID
+/// - If found and still present in the list, it is automatically reselected
+/// - Happens transparently via `viewModel.restoredLedger` observation
+///
+/// ## Usage Example
+///
+/// ```swift
+/// struct ContentView: View {
+///     @State private var selectedLedger: LedgerResponse?
+///     @Environment(AuthService.self) private var auth
+///
+///     var body: some View {
+///         NavigationSplitView {
+///             LedgerListView(selectedLedger: $selectedLedger)
+///         } detail: {
+///             if let ledger = selectedLedger {
+///                 LedgerDetailView(ledger: ledger)
+///             } else {
+///                 Text("Select a ledger")
+///             }
+///         }
+///         .environment(auth)
+///     }
+/// }
+/// ```
+///
+/// ## State Flow
+///
+/// 1. **On appear**: ``LedgerListViewModel/loadLedgers(token:)`` is called via `.task`
+/// 2. **After load**: If the last selected ledger exists, `restoredLedger` is set
+/// 3. **Restoration**: `onChange(of: restoredLedger)` applies the selection
+/// 4. **Selection change**: `onChange(of: selectedLedger)` saves to ``SessionStore``
+/// 5. **On next launch**: Process repeats, restoring the saved selection
+///
+/// - Important: Requires ``AuthService`` in the environment to obtain the authentication token.
+/// - Note: Selection is only restored if the ledger still exists in the loaded list.
+/// - SeeAlso: ``LedgerListViewModel``, ``SessionStore``
 struct LedgerListView: View {
 
     // MARK: - Properties
@@ -90,14 +86,14 @@ struct LedgerListView: View {
     /// and ledger creation workflows.
     @State private var viewModel = LedgerListViewModel()
     
-    /// The currently selected ledger, bound from the parent NavigationSplitView.
+    /// The currently selected ledger, bound from the parent `NavigationSplitView`.
     ///
     /// When this value changes:
     /// - The selection drives the detail view in the split interface
-    /// - The selection is saved to `SessionStore` for persistence
+    /// - The ledger ID is written to ``SessionStore`` for persistence across launches
     ///
     /// When ledgers are loaded:
-    /// - If a previous selection exists in session storage and is found in the list,
+    /// - If a previous selection is found in ``SessionStore`` and still exists in the list,
     ///   this binding is automatically updated to restore the selection
     @Binding var selectedLedger: LedgerResponse?
 
@@ -202,8 +198,8 @@ struct LedgerListView: View {
 
     /// Sheet presenting the create ledger form bound to the view model.
     ///
-    /// The form fields are bound to the view model's `newLedger*` properties,
-    /// allowing the view model to handle validation and submission.
+    /// Form fields are bound to `viewModel.newLedger*` properties, delegating
+    /// validation and submission to ``LedgerListViewModel/createLedger(token:)``.
     private var createSheet: some View {
         CreateLedgerSheet(viewModel: viewModel)
     }
@@ -211,17 +207,15 @@ struct LedgerListView: View {
 
 // MARK: - Ledger Row
 
-/**
- A single row view representing a ledger in the list.
- 
- Displays:
- - **Ledger name**: Primary heading showing the ledger's display name
- - **Currency code**: With banknote icon (e.g., "MXN", "USD")
- - **Decimal places**: Precision setting for monetary amounts
- 
- Used within the ledger list to provide a consistent, scannable view of
- each ledger's key attributes.
- */
+/// A single row view representing a ledger in the list.
+///
+/// Displays:
+/// - **Ledger name**: Primary heading showing the ledger's display name
+/// - **Currency code**: With banknote icon (e.g., `"MXN"`, `"USD"`)
+/// - **Decimal places**: Precision setting for monetary amounts
+///
+/// Used within ``LedgerListView`` to provide a consistent, scannable summary of
+/// each ledger's key attributes.
 private struct LedgerRowView: View {
     /// The ledger to display in this row.
     let ledger: LedgerResponse
@@ -244,54 +238,34 @@ private struct LedgerRowView: View {
 
 // MARK: - Create Ledger Sheet
 
-/**
- A sheet-based form for creating a new ledger with optional chart of accounts template.
- 
- This view provides a complete ledger creation workflow with:
- 
- # Form Fields
- 
- **Required:**
- - **Name**: The ledger's display name (validated, cannot be empty)
- - **Currency**: Currency code (e.g., "MXN", "USD") - converted to uppercase
- - **Decimal places**: Precision for amounts (0-8, default: 2)
- 
- **Optional:**
- - **Template code**: Chart of accounts template identifier
- - **Template version**: Specific version of the template to use
- 
- # Template System
- 
- If template fields are provided:
- - The ledger is initialized with pre-populated accounts from the template
- - Common templates might include: "personal", "business", "nonprofit"
- 
- If template fields are left empty:
- - The ledger is created without any accounts
- - User must manually create their chart of accounts
- 
- # Validation
- 
- - Name must not be empty (after whitespace trimming)
- - Create button is disabled during submission
- - Errors are displayed inline below the form
- 
- # Usage
- 
- This sheet is presented automatically when `viewModel.showCreateSheet` is `true`.
- On successful creation:
- - New ledger appears in the list
- - Form is reset to defaults
- - Sheet is dismissed
- 
- On error:
- - Error message is displayed in the form
- - Sheet remains open for correction
- - User can retry or cancel
- 
- - Note: Form fields are bound directly to the view model for seamless state management.
- - SeeAlso: `LedgerListViewModel.createLedger(token:)`
- */
+/// A sheet-based form for creating a new ledger with an optional chart of accounts template.
+///
+/// ## Form Fields
+///
+/// **Required:**
+/// - **Name**: The ledger's display name (validated, cannot be empty)
+/// - **Currency**: Currency code (e.g., `"MXN"`, `"USD"`) — converted to uppercase
+/// - **Decimal places**: Precision for amounts (0–8, default: 2)
+///
+/// **Optional (COA Template):**
+/// - A `Toggle` reveals a `Picker` populated from `viewModel.availableTemplates`
+/// - When a template is selected its `code` and `version` are forwarded to the creation request
+/// - When the toggle is off the ledger is created with an empty chart of accounts
+///
+/// ## Validation
+///
+/// - Name must not be empty after whitespace trimming
+/// - Create button is disabled while `viewModel.isLoading` is `true`
+/// - Errors are displayed inline in a dedicated `Form` section
+///
+/// ## Outcome
+///
+/// **On success**: new ledger is appended to the list, form is reset, sheet is dismissed.
+///
+/// **On failure**: `errorMessage` is shown in the form; sheet stays open for correction.
+///
+/// - Note: Form fields are bound directly to ``LedgerListViewModel`` for seamless state management.
+/// - SeeAlso: ``LedgerListViewModel/createLedger(token:)``, ``CoaTemplateItem``
 private struct CreateLedgerSheet: View {
 
     /// The view model containing form state and creation logic.
@@ -315,10 +289,27 @@ private struct CreateLedgerSheet: View {
                 }
 
                 Section {
-                    TextField("Template code (optional)", text: $viewModel.newLedgerTemplateCode)
-                        .autocorrectionDisabled()
-                    TextField("Template version (optional)", text: $viewModel.newLedgerTemplateVersion)
-                        .autocorrectionDisabled()
+                    Toggle("Use a chart of accounts template", isOn: $viewModel.useTemplate)
+                        .onChange(of: viewModel.useTemplate) { _, on in
+                            if !on { viewModel.selectedTemplate = nil }
+                        }
+
+                    if viewModel.useTemplate {
+                        Picker("Template", selection: $viewModel.selectedTemplate) {
+                            Text("Select a template…").tag(Optional<CoaTemplateItem>.none)
+                            ForEach(viewModel.availableTemplates) { template in
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(template.displayName)
+                                    if let desc = template.description {
+                                        Text(desc)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                                .tag(Optional(template))
+                            }
+                        }
+                    }
                 } header: {
                     Text("Chart of Accounts Template")
                 } footer: {

@@ -4,131 +4,69 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-10.
-//  Last modified by León Felipe Guevara Chávez on 2026-03-25.
+//  Last modified by León Felipe Guevara Chávez on 2026-03-29.
 //  Developed with AI assistance.
 //
 
 import Foundation
 
-/**
- Describes backend API endpoints and constructs concrete URLs for requests.
- 
- `APIEndpoint` centralizes the path logic for all backend routes, providing a single source
- of truth for building request URLs. All endpoints are built from a common `baseURL` which
- can be adjusted to point to different environments (development, staging, production).
- 
- # Features
- - **Type-safe endpoints**: Each route is represented as an enum case
- - **Associated values**: Endpoints requiring IDs include them as parameters
- - **URL construction**: The `url` computed property builds the full URL
- - **Query parameters**: Endpoints like `commodities` support optional query strings
- - **Environment switching**: Change `baseURL` to point to different servers
- 
- # Available Endpoints
- 
- **Authentication:**
- - `login`: User authentication endpoint
- 
- **Ledgers:**
- - `listLedgers`: List all accessible ledgers
- - `createLedger`: Create a new ledger
- 
- **Accounts:**
- - `accounts(ledgerID:)`: Get chart of accounts for a ledger
- - `balances(ledgerID:)`: Get current balances for all accounts in a ledger
- - `createAccount`: Create a new account
- - `patchAccount(id:)`: Partially update an existing account
- - `accountTypes`: Get the catalog of account types
- 
- **Transactions:**
- - `transactions(ledgerID:)`: List transactions for a ledger
- - `postTransaction`: Create a new transaction
- - `patchTransaction(id:)`: Partially update an existing transaction
- - `reverseTransaction(id:)`: Reverse a posted transaction
- - `voidTransaction(id:)`: Void a posted transaction
- 
- **Commodities:**
- - `commodities(namespace:)`: List commodities, optionally filtered by namespace
- 
- # Usage Examples
- 
- **Building URLs:**
- ```swift
- // Authentication endpoint
- let loginURL = APIEndpoint.login.url
- // http://localhost:8080/auth/login
- 
- // Ledger-specific endpoint
- let ledgerID = UUID()
- let accountsURL = APIEndpoint.accounts(ledgerID: ledgerID).url
- // http://localhost:8080/ledgers/{uuid}/accounts
- 
- // Balance endpoint
- let balancesURL = APIEndpoint.balances(ledgerID: ledgerID).url
- // http://localhost:8080/ledgers/{uuid}/balances
- ```
- 
- **Using with URLRequest:**
- ```swift
- var request = URLRequest(url: APIEndpoint.listLedgers.url)
- request.httpMethod = "GET"
- request.addValue("application/json", forHTTPHeaderField: "Accept")
- request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
- ```
- 
- **Using with APIClient:**
- ```swift
- // APIClient automatically uses the endpoint's URL
- let ledgers: [LedgerResponse] = try await APIClient.shared.request(
-     .listLedgers,
-     method: "GET",
-     token: authToken
- )
- ```
- 
- **Response handling:**
- ```swift
- let endpoint = APIEndpoint.transactions(ledgerID: ledgerID)
- let (data, response) = try await URLSession.shared.data(
-     for: URLRequest(url: endpoint.url)
- )
- 
- if let http = response as? HTTPURLResponse {
-     switch http.statusCode {
-     case 200..<300:
-         // Success - decode data
-         let transactions = try JSONDecoder().decode([TransactionResponse].self, from: data)
-     case 401:
-         // Unauthorized - refresh credentials
-         throw APIError.unauthorized
-     case 404:
-         // Not found - ledger or resource doesn't exist
-         throw APIError.notFound
-     default:
-         // Other errors
-         throw APIError.serverError(http.statusCode)
-     }
- }
- ```
- 
- # Environment Configuration
- 
- Update `baseURL` for different environments:
- ```swift
- // Development
- static let baseURL = URL(string: "http://localhost:8080")!
- 
- // Staging
- static let baseURL = URL(string: "https://staging-api.example.com")!
- 
- // Production
- static let baseURL = URL(string: "https://api.example.com")!
- ```
- 
- - Important: Always use HTTPS in production environments for secure communication.
- - Note: The `url` property is computed on each access; cache if using multiple times.
- - SeeAlso: `APIClient`, `APIError`
- */
+/// Describes all backend API endpoints and constructs concrete `URL` values for requests.
+///
+/// `APIEndpoint` centralizes the path logic for all backend routes, providing a single
+/// source of truth for building request URLs. All endpoints are built from the shared
+/// ``baseURL``, which can be changed to target different environments.
+///
+/// ## Features
+///
+/// - **Type-safe endpoints**: Each route is an enum case — no raw strings scattered across the codebase.
+/// - **Associated values**: Endpoints requiring IDs carry them as labeled parameters.
+/// - **URL construction**: The ``url`` computed property assembles the full URL.
+/// - **Query parameters**: Endpoints such as ``commodities(namespace:)`` support optional query strings.
+/// - **Environment switching**: Update ``baseURL`` to point to staging or production.
+///
+/// ## Available Endpoints
+///
+/// | Group | Case | Method | Path |
+/// |---|---|---|---|
+/// | Auth | ``login`` | POST | `/auth/login` |
+/// | Ledgers | ``listLedgers`` | GET | `/ledgers` |
+/// | Ledgers | ``createLedger`` | POST | `/ledgers` |
+/// | Accounts | ``accounts(ledgerID:)`` | GET | `/ledgers/{id}/accounts` |
+/// | Accounts | ``balances(ledgerID:)`` | GET | `/ledgers/{id}/balances` |
+/// | Accounts | ``createAccount`` | POST | `/accounts` |
+/// | Accounts | ``patchAccount(id:)`` | PATCH | `/accounts/{id}` |
+/// | Accounts | ``accountTypes`` | GET | `/account-types` |
+/// | Transactions | ``transactions(ledgerID:)`` | GET | `/ledgers/{id}/transactions` |
+/// | Transactions | ``postTransaction`` | POST | `/transactions` |
+/// | Transactions | ``patchTransaction(id:)`` | PATCH | `/transactions/{id}` |
+/// | Transactions | ``reverseTransaction(id:)`` | POST | `/transactions/{id}/reverse` |
+/// | Transactions | ``voidTransaction(id:)`` | POST | `/transactions/{id}/void` |
+/// | Commodities | ``commodities(namespace:)`` | GET | `/commodities` |
+/// | COA Templates | ``coaTemplates`` | GET | `/coa-templates` |
+///
+/// ## Usage Example
+///
+/// ```swift
+/// // Direct URL access
+/// let loginURL = APIEndpoint.login.url
+///
+/// // With APIClient
+/// let ledgers: [LedgerResponse] = try await APIClient.shared.request(
+///     .listLedgers,
+///     method: "GET",
+///     token: authToken
+/// )
+///
+/// // Ledger-scoped endpoint
+/// let accounts: [AccountResponse] = try await APIClient.shared.request(
+///     .accounts(ledgerID: ledger.id),
+///     token: authToken
+/// )
+/// ```
+///
+/// - Important: Always use HTTPS in production environments for secure communication.
+/// - Note: ``url`` is computed on every access; assign it to a local variable if used multiple times.
+/// - SeeAlso: ``APIClient``, ``APIError``
 enum APIEndpoint {
     /// The base URL for all API requests.
     ///
@@ -177,7 +115,7 @@ enum APIEndpoint {
     /// **Path:** `GET /ledgers/{ledgerID}/accounts`
     ///
     /// Returns a flat list of all accounts which can be transformed into a hierarchy
-    /// using `AccountTreeBuilder`.
+    /// using ``AccountTreeBuilder``.
     ///
     /// **Response:** Array of account objects with parent/child relationships
     ///
@@ -205,7 +143,7 @@ enum APIEndpoint {
     /// ```
     ///
     /// - Parameter ledgerID: The unique identifier of the ledger.
-    /// - SeeAlso: `AccountBalanceResponse`, `BalanceMap`, `AccountService.fetchBalances(ledgerID:token:)`
+    /// - SeeAlso: ``AccountBalanceResponse``, ``AccountService/fetchBalances(ledgerID:token:)``
     case balances(ledgerID: UUID)
     
     /// Creates a new account in the chart of accounts.
@@ -216,17 +154,18 @@ enum APIEndpoint {
     /// parent account exists, the account type code is valid (if provided), and that the
     /// combination of properties adheres to the chart of accounts rules.
     ///
-    /// **Request body:** Account creation data (e.g., `CreateAccountRequest`)
-    /// - `ledgerId`: The ledger this account belongs to
-    /// - `name`: Display name for the account
-    /// - `code`: Optional account code/number
-    /// - `parentId`: UUID of the parent account
-    /// - `accountTypeCode`: Optional account type from the catalog
-    /// - `accountRole`: Fundamental category (1=Asset, 2=Liability, 3=Equity, 4=Income, 5=Expense)
-    /// - `isPlaceholder`: Whether this is an organizational placeholder
-    /// - `isHidden`: Whether this account is hidden from UI
+    /// **Request body:** Account creation data (``CreateAccountRequest``)
+    /// - `ledgerId`: The ledger this account belongs to.
+    /// - `name`: Display name for the account.
+    /// - `code`: Optional account code/number.
+    /// - `parentId`: UUID of the parent account.
+    /// - `accountTypeCode`: Optional account type from the catalog.
+    /// - `accountRole`: Operational role as an ``AccountRole`` raw value
+    ///   (e.g., `101` = Bank, `200` = Accounts Payable). Pass `0` for unspecified.
+    /// - `isPlaceholder`: Whether this is an organisational placeholder.
+    /// - `isHidden`: Whether this account is hidden from UI.
     ///
-    /// **Response:** The created account object
+    /// **Response:** The created account object.
     ///
     /// **Usage Example:**
     /// ```swift
@@ -236,7 +175,7 @@ enum APIEndpoint {
     ///     code: "1010",
     ///     parentId: assetsAccountId,
     ///     accountTypeCode: "BANK",
-    ///     accountRole: 1,
+    ///     accountRole: AccountRole.bank.rawValue,  // 101
     ///     isPlaceholder: false,
     ///     isHidden: false
     /// )
@@ -248,7 +187,7 @@ enum APIEndpoint {
     /// )
     /// ```
     ///
-    /// - SeeAlso: `CreateAccountRequest`, `PatchAccountRequest`, `accountTypes`
+    /// - SeeAlso: ``CreateAccountRequest``, ``PatchAccountRequest``, ``accountTypes``, ``AccountRole``
     case createAccount
     
     /// Partially updates an existing account.
@@ -283,7 +222,7 @@ enum APIEndpoint {
     /// - Parameter id: The unique identifier of the account to update.
     /// - Important: Changing `accountRole` or `parentId` may violate chart of accounts rules.
     ///   The backend validates these changes before applying them.
-    /// - SeeAlso: `PatchAccountRequest`, `CreateAccountRequest`
+    /// - SeeAlso: ``PatchAccountRequest``, ``CreateAccountRequest``
     case patchAccount(id: UUID)
     
     /// Retrieves the catalog of available account types.
@@ -318,7 +257,7 @@ enum APIEndpoint {
     /// }
     /// ```
     ///
-    /// - SeeAlso: `AccountTypeItem`, `CreateAccountRequest`, `PatchAccountRequest`
+    /// - SeeAlso: ``AccountTypeItem``, ``CreateAccountRequest``, ``PatchAccountRequest``
     case accountTypes
 
     // MARK: - Transactions
@@ -395,7 +334,7 @@ enum APIEndpoint {
     /// ```
     ///
     /// - Parameter id: The unique identifier of the transaction to update.
-    /// - SeeAlso: `PatchTransactionRequest`, `PatchSplitRequest`
+    /// - SeeAlso: ``PatchTransactionRequest``, ``PatchSplitRequest``
     case patchTransaction(id: UUID)
 
     // MARK: - Commodities
@@ -411,6 +350,22 @@ enum APIEndpoint {
     /// - Parameter namespace: A string to filter commodities by namespace (e.g., "CURRENCY", "ISO4217").
     ///                        Pass `nil` to retrieve all commodities.
     case commodities(namespace: String?)
+    
+    // MARK: - COA Templates
+
+    /// Retrieves all active chart-of-accounts templates from the global catalog.
+    ///
+    /// **Path:** `GET /coa-templates`
+    ///
+    /// Templates are not tenant-scoped — they are shared across all users and require
+    /// no owner context. Use the `code` and `version` fields from the response when
+    /// creating a new ledger with a pre-built chart of accounts.
+    ///
+    /// **Response:** Array of ``CoaTemplateItem`` objects with fields:
+    /// `id`, `code`, `name`, `description`, `country`, `locale`, `industry`, `version`.
+    ///
+    /// - SeeAlso: ``CoaTemplateItem``, ``CoaTemplateService``
+    case coaTemplates
 
     // MARK: - URL Construction
     
@@ -424,6 +379,7 @@ enum APIEndpoint {
     /// - `.accounts(ledgerID: id)` → `http://localhost:8080/ledgers/{id}/accounts`
     /// - `.balances(ledgerID: id)` → `http://localhost:8080/ledgers/{id}/balances`
     /// - `.commodities(namespace: "CURRENCY")` → `http://localhost:8080/commodities?namespace=CURRENCY`
+    /// - `.coaTemplates` → `http://localhost:8080/coa-templates`
     ///
     /// - Important: This property is computed on every access. Cache the value if using multiple times.
     var url: URL {
@@ -456,6 +412,8 @@ enum APIEndpoint {
             return Self.baseURL.appendingPathComponent("accounts/\(id)")
         case .accountTypes:
             return Self.baseURL.appendingPathComponent("account-types")
+        case .coaTemplates:
+            return Self.baseURL.appendingPathComponent("coa-templates")
         }
     }
 }
