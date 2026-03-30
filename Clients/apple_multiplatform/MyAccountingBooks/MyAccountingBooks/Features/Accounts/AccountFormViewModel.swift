@@ -4,51 +4,45 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-25.
-//  Last modified by León Felie Guevara Chávez on 2026-03-28
+//  Last modified by León Felie Guevara Chávez on 2026-03-29
 //  Developed with AI assistance.
 //
 
 import Foundation
 
-/// Notification posted when an account is successfully saved (created or updated).
+/// App-level notification names used for cross-view communication.
 ///
-/// This notification is posted by `AccountFormViewModel.save(mode:token:)` after
-/// successfully creating or updating an account. The notification's `object` is the
-/// ledger ID (`UUID`) of the affected ledger.
+/// Both notifications carry the affected ledger's `UUID` as their `object`,
+/// so observers can filter by ledger and avoid spurious refreshes.
 ///
-/// ## Usage
+/// | Name | Posted by | Trigger |
+/// |---|---|---|
+/// | `accountSaved` | ``AccountFormViewModel/save(mode:token:)`` | Account created or updated |
+/// | `transactionPosted` | `PostTransactionViewModel.submit(ledger:token:)` | Transaction successfully posted |
 ///
-/// **Observing account saves:**
-/// ```swift
-/// NotificationCenter.default.addObserver(
-///     forName: .accountSaved,
-///     object: nil,
-///     queue: .main
-/// ) { notification in
-///     if let ledgerId = notification.object as? UUID {
-///         // Refresh account tree for this ledger
-///         await reloadAccounts(for: ledgerId)
-///     }
-/// }
-/// ```
+/// ## SwiftUI observation pattern
 ///
-/// **In SwiftUI:**
 /// ```swift
 /// .onReceive(NotificationCenter.default.publisher(for: .accountSaved)) { notification in
 ///     if let ledgerId = notification.object as? UUID,
 ///        ledgerId == currentLedger.id {
-///         Task {
-///             await viewModel.loadAccounts(ledgerID: ledgerId, token: token)
-///         }
+///         Task { await viewModel.loadAccounts(ledgerID: ledgerId, token: token) }
 ///     }
 /// }
 /// ```
 ///
-/// - Note: Posted on successful save only (not on validation failures or API errors).
-/// - SeeAlso: ``AccountFormViewModel/save(mode:token:)``, ``AccountTreeView``
+/// - Note: Both notifications are posted on success only — not on validation failures
+///   or API errors.
+/// - SeeAlso: ``AccountFormViewModel``, ``AccountTreeView``
 extension Notification.Name {
-    /// Posted when an account is saved, with the ledger UUID as the object.
+    /// Posted when an account is saved (created or updated), with the ledger UUID as the object.
     static let accountSaved = Notification.Name("com.leonfelipe.mab.accountSaved")
+
+    /// Posted when a transaction is successfully posted, with the ledger UUID as the object.
+    ///
+    /// Observed by ``AccountTreeView`` to refresh account balances immediately after posting,
+    /// so the balance column reflects the new transaction without requiring manual reload.
+    static let transactionPosted = Notification.Name("com.leonfelipe.mab.transactionPosted")
 }
 
 /// View model managing the account creation and editing form.
@@ -405,49 +399,19 @@ final class AccountFormViewModel {
     /// ## Loading Flow
     ///
     /// 1. Sets `isLoading = true`
-    /// 2. Fetches account types from backend via `AccountService`
+    /// 2. Fetches account types from backend via ``AccountService``
     /// 3. Populates form fields based on mode (create or edit)
     /// 4. Sets `isLoading = false`
     /// 5. On error, sets `errorMessage` with user-friendly message
     ///
-    /// ## Usage Examples
-    ///
-    /// **Create with suggested parent:**
-    /// ```swift
-    /// let mode = Mode.create(ledger: ledger, suggestedParent: assetsAccount, suggestedName: nil)
-    /// await viewModel.load(mode: mode, allRoots: accountTree, token: authToken)
-    /// // selectedParent is now assetsAccount
-    /// ```
-    ///
-    /// **Create with suggested name:**
-    /// ```swift
-    /// let mode = Mode.create(ledger: ledger, suggestedParent: nil, suggestedName: "Savings")
-    /// await viewModel.load(mode: mode, allRoots: accountTree, token: authToken)
-    /// // name is now "Savings"
-    /// ```
-    ///
-    /// **Edit existing:**
-    /// ```swift
-    /// let payload = AccountFormPayload(node: existingAccount)
-    /// let mode = Mode.edit(ledger: ledger, account: payload)
-    /// await viewModel.load(mode: mode, allRoots: accountTree, token: authToken)
-    /// // All fields pre-populated from existing account
-    /// ```
-    ///
-    /// ## Parameters
-    ///
     /// - Parameters:
-    ///   - mode: The form mode (create or edit) determining pre-population behavior
-    ///   - allRoots: The complete account tree for resolving parent references and
-    ///               populating the parent/contra account pickers
-    ///   - token: Authentication token for the account types API request
+    ///   - mode: The form mode (create or edit) determining pre-population behavior.
+    ///   - allRoots: The complete account tree for resolving parent ``AccountNode``
+    ///     references and populating the parent/contra account pickers.
+    ///   - token: Authentication token for the account types API request.
     ///
-    /// ## Error Handling
-    ///
-    /// On network or parsing errors, sets `errorMessage` with the localized description.
-    /// The UI should display this in an alert or error banner.
-    ///
-    /// - Note: This method runs on the main actor and updates UI state properties.
+    /// - Note: Runs on the main actor. On network or parsing errors, sets `errorMessage`
+    ///   with the localized description; the UI should surface this in an alert or banner.
     /// - SeeAlso: ``Mode``, ``AccountService``
     @MainActor
     func load(mode: Mode, allRoots: [AccountNode], token: String) async {
@@ -502,16 +466,16 @@ final class AccountFormViewModel {
     ///
     /// ## Create Mode Flow
     ///
-    /// 1. Builds `CreateAccountRequest` from form fields
+    /// 1. Builds ``CreateAccountRequest`` from form fields
     /// 2. Posts request to backend via `AccountService.createAccount()`
-    /// 3. If opening balance provided (`hasOpeningBalance == true`):
-    ///    - Posts opening balance transaction with two splits (DR new account, CR contra)
+    /// 3. If opening balance provided (``hasOpeningBalance`` is `true`):
+    ///    posts an opening balance transaction with two splits (DR new account, CR contra)
     /// 4. Sets `didSave = true` on success
     /// 5. Posts `.accountSaved` notification with ledger ID for UI refresh
     ///
     /// ## Edit Mode Flow
     ///
-    /// 1. Builds `PatchAccountRequest` from form fields
+    /// 1. Builds ``PatchAccountRequest`` from form fields
     /// 2. Sends PATCH request to backend via `AccountService.patchAccount()`
     /// 3. Sets `didSave = true` on success
     /// 4. Posts `.accountSaved` notification with ledger ID for UI refresh
@@ -557,20 +521,18 @@ final class AccountFormViewModel {
     /// }
     /// ```
     ///
-    /// ## Parameters
-    ///
-    /// - Parameters:
-    ///   - mode: The form mode (create or edit) determining which save operation to perform
-    ///   - token: Authentication token for API requests
-    ///
     /// ## State Changes
     ///
-    /// - Sets `isSaving = true` at start, `false` when complete
-    /// - Sets `errorMessage` on failure (with localized description)
-    /// - Sets `didSave = true` on success
-    /// - Posts `.accountSaved` notification on success
+    /// - Sets `isSaving = true` at start, `false` when complete.
+    /// - Sets `errorMessage` on failure (localized description).
+    /// - Sets `didSave = true` on success.
+    /// - Posts ``Notification/Name/accountSaved`` with the ledger UUID on success.
     ///
-    /// - Note: This method runs on the main actor and updates UI state properties.
+    /// - Parameters:
+    ///   - mode: The form mode (create or edit) determining which save operation to perform.
+    ///   - token: Authentication token for API requests.
+    ///
+    /// - Note: Runs on the main actor and updates UI state properties.
     /// - SeeAlso: ``canSave``, ``Notification/Name/accountSaved``
     @MainActor
     func save(mode: Mode, token: String) async {
@@ -613,15 +575,15 @@ final class AccountFormViewModel {
 
     /// Creates a new account and optionally posts an opening balance transaction.
     ///
-    /// Builds a `CreateAccountRequest` from the current form state and sends it to
+    /// Builds a ``CreateAccountRequest`` from the current form state and sends it to
     /// the backend. If an opening balance is provided (non-zero amount with a contra
     /// account selected), automatically posts a balancing transaction.
     ///
     /// - Parameters:
-    ///   - ledger: The ledger context for the new account
-    ///   - token: Authentication token
+    ///   - ledger: The ledger context for the new account.
+    ///   - token: Authentication token.
     ///
-    /// - Throws: `APIError` if account creation or transaction posting fails
+    /// - Throws: ``APIError`` if account creation or transaction posting fails.
     private func saveCreate(ledger: LedgerResponse, token: String) async throws {
         let request = CreateAccountRequest(
             ledgerId:        ledger.id,

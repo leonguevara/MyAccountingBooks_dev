@@ -85,18 +85,23 @@ import SwiftUI
 ///
 /// ### Automatic Refresh
 ///
-/// The view observes `Notification.Name.accountSaved` posted by ``AccountFormViewModel``
-/// when accounts are successfully created or updated. When a notification is received
-/// for the current ledger, the view automatically calls `viewModel.forceReload()` to
-/// fetch the updated account tree from the backend.
+/// The view observes two notifications that each trigger `viewModel.forceReload()`:
+///
+/// | Notification | Posted by | Reason to reload |
+/// |---|---|---|
+/// | `Notification.Name.accountSaved` | ``AccountFormViewModel`` | Account created or edited |
+/// | `Notification.Name.transactionPosted` | `PostTransactionViewModel` | New transaction changes balances |
+///
+/// In both cases the notification's `object` is the ledger UUID, so the view only
+/// reloads when the event concerns the currently displayed ledger.
 ///
 /// This ensures that:
 /// - Newly created accounts appear immediately in the tree
 /// - Account edits (name, code, parent changes) are reflected without manual refresh
+/// - Account balances update automatically after a transaction is posted
 /// - The account hierarchy stays synchronized with the backend state
 ///
-/// No user action is required — the tree updates automatically as soon as the account
-/// form is saved.
+/// No user action is required — the tree updates automatically.
 ///
 /// - Important: Requires ``AuthService`` in the SwiftUI environment to obtain a valid
 ///   bearer token before loading.
@@ -209,6 +214,23 @@ struct AccountTreeView: View {
         )) { notification in
             guard let savedLedgerID = notification.object as? UUID,
                   savedLedgerID == ledger.id,
+                  let token = auth.token else { return }
+            Task {
+                await viewModel.forceReload(ledgerID: ledger.id, token: token)
+            }
+        }
+        // ── Automatic balance refresh on transaction posted ───────────────────
+        // Observes notifications posted by PostTransactionViewModel after a
+        // transaction is successfully submitted. Reloads the account tree so
+        // that balance columns reflect the newly posted amounts immediately,
+        // without requiring the user to switch away and back to the ledger.
+        //
+        // Only reloads when the notification is for this ledger.
+        .onReceive(NotificationCenter.default.publisher(
+            for: .transactionPosted
+        )) { notification in
+            guard let postedLedgerID = notification.object as? UUID,
+                  postedLedgerID == ledger.id,
                   let token = auth.token else { return }
             Task {
                 await viewModel.forceReload(ledgerID: ledger.id, token: token)
