@@ -12,14 +12,15 @@ import Foundation
 
 /// A service that encapsulates network operations related to transactions.
 ///
-/// Uses `APIClient` to fetch transactions for a given ledger. Provides a shared
-/// singleton for convenience.
+/// `TransactionService` wraps ``APIClient`` for all transaction-related routes:
 ///
-/// Usage:
-/// ```swift
-/// let token = TokenStore.shared.load()!
-/// let txs = try await TransactionService.shared.fetchTransactions(ledgerID: ledger.id, token: token)
-/// ```
+/// | Method | Route | Description |
+/// |---|---|---|
+/// | ``fetchTransactions(ledgerID:token:)`` | `GET /transactions` | List all transactions for a ledger |
+/// | ``reverseTransaction(id:memo:token:)`` | `POST /transactions/{id}/reverse` | Create a mirror reversal transaction |
+/// | ``voidTransaction(id:reason:token:)`` | `POST /transactions/{id}/void` | Mark a transaction as voided in-place |
+///
+/// - SeeAlso: ``APIClient``, ``TransactionResponse``
 final class TransactionService {
 
     /// Shared singleton instance for convenient access.
@@ -28,15 +29,15 @@ final class TransactionService {
     /// Private initializer to enforce singleton usage.
     private init() {}
 
-    /// Fetches transactions for the specified ledger.
+    /// Fetches all transactions for the specified ledger.
     ///
     /// - Parameters:
-    ///   - ledgerID: The identifier of the ledger whose transactions to fetch.
+    ///   - ledgerID: The UUID of the ledger whose transactions to fetch.
     ///   - token: A bearer token used to authorize the request.
-    /// - Returns: An array of `TransactionResponse` models.
-    /// - Throws: `APIError` for known API failures or other network-related errors.
+    /// - Returns: An array of ``TransactionResponse`` models.
+    /// - Throws: ``APIError`` for known API failures or other network-related errors.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let token = TokenStore.shared.load()!
     /// let txs = try await TransactionService.shared.fetchTransactions(ledgerID: ledger.id, token: token)
@@ -49,13 +50,18 @@ final class TransactionService {
         )
     }
     
-    /// Reverses a posted transaction by calling POST /transactions/{id}/reverse.
-    /// Creates a new mirror transaction with all split sides flipped (DEBIT↔CREDIT).
+    /// Creates a mirror reversal of a posted transaction.
+    ///
+    /// Calls `POST /transactions/{id}/reverse`. The backend produces a new transaction
+    /// with all split sides flipped (DEBIT↔CREDIT), effectively cancelling the original
+    /// without modifying it.
+    ///
     /// - Parameters:
     ///   - id: UUID of the transaction to reverse.
-    ///   - memo: Optional custom memo for the reversal transaction. Nil uses the default.
-    ///   - token: Bearer token for authorization.
-    /// - Returns: The newly created reversal TransactionResponse.
+    ///   - memo: Optional memo for the reversal transaction. Pass `nil` to use the backend default.
+    ///   - token: A bearer token used to authorize the request.
+    /// - Returns: The newly created reversal ``TransactionResponse``.
+    /// - Throws: ``APIError`` for known API failures or other network-related errors.
     func reverseTransaction(id: UUID, memo: String?, token: String) async throws -> TransactionResponse {
         // Backend accepts an optional body — send memo if provided, empty object otherwise
         struct ReverseBody: Encodable { let memo: String? }
@@ -67,13 +73,18 @@ final class TransactionService {
         )
     }
 
-    /// Voids a posted transaction by calling POST /transactions/{id}/void.
-    /// Marks the transaction as voided in-place — does not create a new transaction.
+    /// Marks a posted transaction as voided in-place.
+    ///
+    /// Calls `POST /transactions/{id}/void`. The transaction is flagged `is_voided = true`
+    /// in the database; no new transaction is created. If `reason` is provided, the backend
+    /// appends `[VOID: reason]` to the transaction memo.
+    ///
     /// - Parameters:
     ///   - id: UUID of the transaction to void.
-    ///   - reason: Optional reason appended to the transaction memo as [VOID: reason].
-    ///   - token: Bearer token for authorization.
-    /// - Returns: The updated (voided) TransactionResponse.
+    ///   - reason: Optional reason string appended to the memo. Pass `nil` to omit.
+    ///   - token: A bearer token used to authorize the request.
+    /// - Returns: The updated (voided) ``TransactionResponse``.
+    /// - Throws: ``APIError`` for known API failures or other network-related errors.
     func voidTransaction(id: UUID, reason: String?, token: String) async throws -> TransactionResponse {
         struct VoidBody: Encodable { let reason: String? }
         return try await APIClient.shared.request(
