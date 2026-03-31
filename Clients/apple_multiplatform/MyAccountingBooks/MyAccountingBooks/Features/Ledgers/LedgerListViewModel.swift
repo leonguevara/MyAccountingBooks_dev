@@ -190,8 +190,10 @@ final class LedgerListViewModel {
     /// - SeeAlso: ``SessionStore``, `restoredLedger`
     @MainActor
     func loadLedgers(token: String) async {
-        isLoading = true
-        errorMessage = nil
+        isLoading       = true
+        errorMessage    = nil
+        ledgers         = []
+        restoredLedger  = nil
         do {
             async let ledgerFetch   = service.fetchLedgers(token: token)
             async let templateFetch = LedgerService.shared.fetchCoaTemplates(token: token)

@@ -353,6 +353,7 @@ final class AuthService {
             )
         )
         TokenStore.shared.save(response.token)
+        SessionStore.shared.clearLastLedger()
         isAuthenticated = true
     }
 }
