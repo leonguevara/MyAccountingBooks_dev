@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-10.
-//  Last modified by León Felipe Guevara Chávez on 2026-03-16.
+//  Last modified by León Felipe Guevara Chávez on 2026-03-31.
 //  Developed with AI assistance
 //
 
@@ -45,6 +45,7 @@ struct MyAccountingBooksApp: App {
             if auth.isAuthenticated {
                 ContentView()
                     .environment(auth)
+                    .id(auth.currentOwnerID)   // ← force full recreation on user change
             } else {
                 LoginView()
                     .environment(auth)

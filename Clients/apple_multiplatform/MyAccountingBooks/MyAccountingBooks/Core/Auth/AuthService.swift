@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-10.
-//  Last modified by León Felipe Guevara Chávez on 2026-03-21.
+//  Last modified by León Felipe Guevara Chávez on 2026-03-31.
 //  Developed with AI assistance.
 //
 
@@ -168,6 +168,8 @@ final class AuthService {
         TokenStore.shared.isTokenValid ? TokenStore.shared.load() : nil
     }
     
+    var currentOwnerID: UUID? = nil
+    
     // MARK: - Init
 
     /**
@@ -284,6 +286,7 @@ final class AuthService {
             body: LoginRequest(email: email, password: password)
         )
         TokenStore.shared.save(response.token)
+        self.currentOwnerID = response.ownerID
         isAuthenticated = true
     }
 
@@ -323,6 +326,7 @@ final class AuthService {
      - SeeAlso: `TokenStore.delete()`, `login(email:password:)`
      */
     func logout() {
+        self.currentOwnerID = nil
         TokenStore.shared.delete()
         isAuthenticated = false
     }
@@ -353,6 +357,7 @@ final class AuthService {
             )
         )
         TokenStore.shared.save(response.token)
+        self.currentOwnerID = response.ownerID
         SessionStore.shared.clearLastLedger()
         isAuthenticated = true
     }
