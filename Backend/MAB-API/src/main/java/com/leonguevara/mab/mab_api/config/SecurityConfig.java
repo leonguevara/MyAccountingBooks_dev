@@ -100,6 +100,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/health",
                                 "/auth/login",
+                                "/auth/register",
                                 // ── Swagger UI / OpenAPI ──────────────────────────────
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",

@@ -326,5 +326,34 @@ final class AuthService {
         TokenStore.shared.delete()
         isAuthenticated = false
     }
+    
+    /// Registers a new account and returns a JWT on success.
+    ///
+    /// - Parameters:
+    ///   - email: The desired email address.
+    ///   - password: Plain-text password (minimum 8 characters).
+    ///   - displayName: Optional display name shown in the UI.
+    /// - Throws: `APIError.conflict` if the email is already taken,
+    ///           or other `APIError` cases for network/server failures.
+    func register(email: String,
+                  password: String,
+                  displayName: String?) async throws {
+        struct RegisterBody: Encodable {
+            let email: String
+            let password: String
+            let displayName: String?
+        }
+        let response: TokenResponse = try await APIClient.shared.request(
+            .register,
+            method: "POST",
+            body: RegisterBody(
+                email: email,
+                password: password,
+                displayName: displayName
+            )
+        )
+        TokenStore.shared.save(response.token)
+        isAuthenticated = true
+    }
 }
 

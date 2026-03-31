@@ -23,6 +23,8 @@ struct LoginView: View {
     @State private var isLoading = false
     /// An optional error message to present when sign-in fails.
     @State private var errorMessage: String?
+    
+    @State private var showRegister = false
 
     var body: some View {
         VStack(spacing: 24) {
@@ -46,9 +48,21 @@ struct LoginView: View {
             }
             .disabled(isLoading)
             .keyboardShortcut(.return)
+            
+            Button("Create account") {
+                showRegister = true
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.secondary)
+            .font(.subheadline)
+            
         }
         .padding(40)
         .frame(width: 420, height: 340)
+        .sheet(isPresented: $showRegister) {
+            RegisterView()
+                .environment(auth)
+        }
     }
 
     /// Performs the sign-in flow using `AuthService` and updates UI state accordingly.

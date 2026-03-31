@@ -20,7 +20,7 @@
 //          directly without SET LOCAL app.current_owner_id.
 //          TenantContext is NOT used here.
 // ============================================================
-// Last edited: 2026-03-04
+// Last edited: 2026-03-31
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -30,6 +30,7 @@ package com.leonguevara.mab.mab_api.service;
 import com.leonguevara.mab.mab_api.dto.response.TokenResponse;
 import com.leonguevara.mab.mab_api.exception.ApiException;
 import com.leonguevara.mab.mab_api.security.JwtUtil;
+import com.leonguevara.mab.mab_api.dto.request.RegisterRequest;
 
 // NamedParameterJdbcTemplate: executes SQL with named parameters.
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -154,6 +155,82 @@ public class AuthService {
         jdbc.update(updateSql, new MapSqlParameterSource("id", ownerID));
 
         // ── Step 4: Generate and return the JWT ──────────────────────────
+        String token = jwtUtil.generateToken(ownerID);
+        return new TokenResponse(token, ownerID);
+    }
+
+    /**
+     * Registers a new ledger owner with local email/password credentials.
+     * <p>
+     * Workflow:
+     * 1. Check email is not already taken (HTTP 409 if it is).
+     * 2. BCrypt-hash the plain-text password.
+     * 3. Insert ledger_owner row.
+     * 4. Insert auth_identity row (provider = 'local').
+     * 5. Return a JWT — user is immediately authenticated after registration.
+     * <p>
+     * @param  email       The desired email address.
+     * @param  password    Plain-text password (will be hashed).
+     * @param  displayName Optional display name (defaults to "No Name").
+     * @return             TokenResponse with JWT and new ownerID.
+     * @throws ApiException HTTP 409 if the email is already registered.
+     */
+    public TokenResponse register(String email, String password, String displayName) {
+
+        // ── Step 1: Check for existing email ─────────────────────────────
+        String checkSql = """
+            SELECT COUNT(*) FROM public.ledger_owner
+             WHERE email = :email
+               AND deleted_at IS NULL
+            """;
+        Integer count = jdbc.queryForObject(
+                checkSql,
+                new MapSqlParameterSource("email", email),
+                Integer.class
+        );
+        if (count != null && count > 0) {
+            throw new ApiException(HttpStatus.CONFLICT,
+                    "An account with this email already exists.");
+        }
+
+        // ── Step 2: Hash the password ─────────────────────────────────────
+        String hash = passwordEncoder.encode(password);
+
+        // ── Step 3: Insert ledger_owner ───────────────────────────────────
+        String name = (displayName != null && !displayName.isBlank())
+                ? displayName.trim()
+                : "No Name";
+
+        String insertOwner = """
+            INSERT INTO public.ledger_owner
+                   (email, password_hash, display_name, is_active)
+            VALUES (:email, :hash, :name, true)
+            RETURNING id
+            """;
+        UUID ownerID = jdbc.queryForObject(
+                insertOwner,
+                new MapSqlParameterSource()
+                        .addValue("email", email.trim().toLowerCase())
+                        .addValue("hash",  hash)
+                        .addValue("name",  name),
+                UUID.class
+        );
+
+        // ── Step 4: Insert auth_identity (local provider) ─────────────────
+        String insertIdentity = """
+            INSERT INTO public.auth_identity
+                   (ledger_owner_id, provider, provider_user_id,
+                    provider_email,  email_verified)
+            VALUES (:ownerID, 'local', :email, :email, false)
+            """;
+        jdbc.update(
+                insertIdentity,
+                new MapSqlParameterSource()
+                        .addValue("ownerID", ownerID)
+                        .addValue("email",   email.trim().toLowerCase())
+        );
+
+        // ── Step 5: Issue JWT ─────────────────────────────────────────────
         String token = jwtUtil.generateToken(ownerID);
         return new TokenResponse(token, ownerID);
     }

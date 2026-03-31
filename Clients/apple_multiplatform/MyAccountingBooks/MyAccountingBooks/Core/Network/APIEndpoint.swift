@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-10.
-//  Last modified by León Felipe Guevara Chávez on 2026-03-29.
+//  Last modified by León Felipe Guevara Chávez on 2026-03-31.
 //  Developed with AI assistance.
 //
 
@@ -336,6 +336,8 @@ enum APIEndpoint {
     /// - Parameter id: The unique identifier of the transaction to update.
     /// - SeeAlso: ``PatchTransactionRequest``, ``PatchSplitRequest``
     case patchTransaction(id: UUID)
+    
+    case register
 
     // MARK: - Commodities
 
@@ -414,6 +416,8 @@ enum APIEndpoint {
             return Self.baseURL.appendingPathComponent("account-types")
         case .coaTemplates:
             return Self.baseURL.appendingPathComponent("coa-templates")
+        case .register:
+            return Self.baseURL.appendingPathComponent("auth/register")
         }
     }
 }

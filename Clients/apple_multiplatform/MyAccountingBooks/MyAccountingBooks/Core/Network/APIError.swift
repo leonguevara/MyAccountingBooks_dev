@@ -4,6 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-09.
+//  Last modified by León Felipe Guevara Chávez on 2026-03-31.
 //  Developed with AI assistance.
 //
 
@@ -77,18 +78,21 @@ enum APIError: Error, LocalizedError {
     /// An unexpected error occurred that does not match other cases.
     /// - Parameter error: The underlying error.
     case unknown(Error)
+    
+    case conflict
 
     /// A human-readable description of the error suitable for displaying to users.
     ///
     /// Provided by `LocalizedError`.
     var errorDescription: String? {
         switch self {
-        case .invalidURL:       return "Invalid URL."
-        case .unauthorized:     return "Authentication required."
-        case .notFound:         return "Resource not found."
+        case .invalidURL:            return "Invalid URL."
+        case .unauthorized:          return "Authentication required."
+        case .notFound:              return "Resource not found."
         case .serverError(let code): return "Server error: \(code)."
         case .decodingError(let e):  return "Decoding error: \(e.localizedDescription)"
         case .unknown(let e):        return e.localizedDescription
+        case .conflict:              return "Conflicted credentilas"
         }
     }
     

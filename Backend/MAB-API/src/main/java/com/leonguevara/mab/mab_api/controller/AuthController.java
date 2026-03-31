@@ -6,7 +6,7 @@
 //          It currently implements POST /auth/login.
 //          Public route — no JWT required.
 // ============================================================
-// Last edited: 2026-03-07
+// Last edited: 2026-03-31
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -16,6 +16,7 @@ package com.leonguevara.mab.mab_api.controller;
 import com.leonguevara.mab.mab_api.dto.request.LoginRequest;
 import com.leonguevara.mab.mab_api.dto.response.TokenResponse;
 import com.leonguevara.mab.mab_api.service.AuthService;
+import com.leonguevara.mab.mab_api.dto.request.RegisterRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -37,9 +38,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 // @RequestBody: deserializes the incoming JSON body into a Java object.
 import org.springframework.web.bind.annotation.RequestBody;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 // @Valid: triggers Bean Validation on the @RequestBody object.
 //   Validation errors return HTTP 400 automatically.
-// import jakarta.validation.Valid;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -63,5 +67,31 @@ public class AuthController {
     @SecurityRequirements
     public TokenResponse login(@RequestBody LoginRequest request) {
         return authService.login(request.email(), request.password());
+    }
+
+    @PostMapping("/register")
+    @Operation(summary = "Register",
+            description = """
+               Creates a new account with email and password.
+               Returns a JWT immediately — no email verification required.
+               Returns HTTP 409 if the email is already registered.
+               """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Account created — JWT returned",
+                    content = @Content(schema = @Schema(implementation = TokenResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Validation error (invalid email, short password)",
+                    content = @Content),
+            @ApiResponse(responseCode = "409", description = "Email already registered",
+                    content = @Content)
+    })
+    @SecurityRequirements   // public endpoint — no JWT required
+    public ResponseEntity<TokenResponse> register(
+            @Valid @RequestBody RegisterRequest request) {
+        TokenResponse response = authService.register(
+                request.email(),
+                request.password(),
+                request.displayName()
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

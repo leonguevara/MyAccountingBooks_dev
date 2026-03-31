@@ -277,6 +277,7 @@ final class APIClient {
             }
         case 401: throw APIError.unauthorized
         case 404: throw APIError.notFound
+        case 409: throw APIError.conflict
         default:  throw APIError.serverError(http.statusCode)
         }
     }
