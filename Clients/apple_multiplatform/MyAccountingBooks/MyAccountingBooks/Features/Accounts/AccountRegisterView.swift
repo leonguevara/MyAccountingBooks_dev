@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-16.
-//  Last modified by León Felie Guevara Chávez on 2026-03-23
+//  Last modified by León Felie Guevara Chávez on 2026-03-30
 //  Developed with AI assistance.
 //
 
@@ -641,6 +641,13 @@ struct TransactionDetailSheet: View {
     ///
     /// Set to `true` when the user taps "Edit" in the custom navigation bar.
     @State private var showEdit = false
+    
+    // Fix #1: Adding the Void and Reverse Transaction features
+    @State private var showVoidAlert    = false
+    @State private var showReverseAlert = false
+    @State private var actionReason     = ""   // shared for both alerts
+    @State private var isActioning      = false
+    @State private var actionError: String?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -654,7 +661,20 @@ struct TransactionDetailSheet: View {
                     .font(.headline)
                     .lineLimit(1)
                 Spacer()
+                if let error = actionError {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+                if isActioning {
+                    ProgressView().controlSize(.small)
+                }
                 if !transaction.isVoided {
+                    Button("Reverse") { showReverseAlert = true }
+                        .buttonStyle(.bordered)
+                    Button("Void") { showVoidAlert = true }
+                        .buttonStyle(.bordered)
+                        .tint(.red)
                     Button("Edit") { showEdit = true }
                         .buttonStyle(.bordered)
                 }
@@ -694,5 +714,78 @@ struct TransactionDetailSheet: View {
             )
             .environment(auth)
         }
+        // Void confirmation alert
+        .alert("Void Transaction", isPresented: $showVoidAlert) {
+            TextField("Reason (optional)", text: $actionReason)
+            Button("Void", role: .destructive) {
+                Task { await performVoid() }
+            }
+            Button("Cancel", role: .cancel) { actionReason = "" }
+        } message: {
+            Text("This will mark the transaction as voided. This action cannot be undone.")
+        }
+
+        // Reverse confirmation alert
+        .alert("Reverse Transaction", isPresented: $showReverseAlert) {
+            TextField("Memo (optional)", text: $actionReason)
+            Button("Reverse") {
+                Task { await performReverse() }
+            }
+            Button("Cancel", role: .cancel) { actionReason = "" }
+        } message: {
+            Text("This will create a new transaction with all amounts reversed.")
+        }
+    }
+    
+    private func performVoid() async {
+        guard let token = auth.token else { return }
+        isActioning = true
+        actionError = nil
+        do {
+            _ = try await TransactionService.shared.voidTransaction(
+                id: transaction.id,
+                reason: actionReason.isEmpty ? nil : actionReason,
+                token: token
+            )
+            actionReason = ""
+            await onTransactionUpdated()
+            dismiss()
+            // Small yield to let the sheet dismissal animation complete
+            // before the main window's AccountTreeView processes the notification
+            try? await Task.sleep(nanoseconds: 300_000_000)   // 0.3 seconds
+            NotificationCenter.default.post(
+                name: .transactionPosted,
+                object: ledger.id        // ← use ledger.id directly
+            )
+        } catch {
+            actionError = error.localizedDescription
+        }
+        isActioning = false
+    }
+
+    private func performReverse() async {
+        guard let token = auth.token else { return }
+        isActioning = true
+        actionError = nil
+        do {
+            _ = try await TransactionService.shared.reverseTransaction(
+                id: transaction.id,
+                memo: actionReason.isEmpty ? nil : actionReason,
+                token: token
+            )
+            actionReason = ""
+            await onTransactionUpdated()
+            dismiss()
+            // Small yield to let the sheet dismissal animation complete
+            // before the main window's AccountTreeView processes the notification
+            try? await Task.sleep(nanoseconds: 300_000_000)   // 0.3 seconds
+            NotificationCenter.default.post(
+                name: .transactionPosted,
+                object: ledger.id        // ← use ledger.id directly
+            )
+        } catch {
+            actionError = error.localizedDescription
+        }
+        isActioning = false
     }
 }

@@ -128,19 +128,23 @@ final class AccountRegisterViewModel {
             let raw = split.amount   // always positive rational value
             let signed: Decimal
 
-            if debitPositive.contains(kind) {
-                signed = split.side == 0 ? raw : -raw    // debit+, credit-
+            if tx.isVoided {
+                signed = .zero
             } else {
-                signed = split.side == 1 ? raw : -raw    // credit+, debit-
+                let raw = split.amount   // always positive rational value
+                if debitPositive.contains(kind) {
+                    signed = split.side == 0 ? raw : -raw    // debit+, credit-
+                } else {
+                    signed = split.side == 1 ? raw : -raw    // credit+, debit-
+                }
+                runningBalance += signed    // ← only accumulate non-voided
             }
-
-            runningBalance += signed
 
             result.append(RegisterRow(
                 id: tx.id,
                 transaction: tx,
                 split: split,
-                accountAmount: signed,
+                accountAmount: signed,      // zero for voided rows
                 runningBalance: runningBalance
             ))
         }
