@@ -4,26 +4,31 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-10.
+//  Last modified by León Felipe Guevara Chávez on 2026-03-31.
+//  Developed with AI assistance.
 //
 
 import SwiftUI
 
-/// A simple login screen that authenticates the user using `AuthService`.
+/// Login screen — email/password fields, sign-in button, and a "Create account" link.
 ///
-/// Presents fields for email and password, shows a loading state while signing in,
-/// and displays any error message returned by the authentication flow.
+/// Delegates authentication to ``AuthService/login(email:password:)`` via ``signIn()``.
+/// On success ``AuthService/isAuthenticated`` flips to `true` and the root view swaps to
+/// the authenticated content. On failure ``errorMessage`` is displayed inline.
+///
+/// - SeeAlso: ``AuthService``, ``RegisterView``
 struct LoginView: View {
-    /// Authentication service injected from the environment.
+    /// ``AuthService`` injected from the environment by the app root.
     @Environment(AuthService.self) private var auth
-    /// The user's email input.
+    /// Email field binding.
     @State private var email = ""
-    /// The user's password input.
+    /// Password field binding.
     @State private var password = ""
-    /// Indicates whether a sign-in request is currently in progress.
+    /// `true` while ``signIn()`` is in flight; disables the button and shows "Signing in…".
     @State private var isLoading = false
-    /// An optional error message to present when sign-in fails.
+    /// Inline error text shown when ``signIn()`` throws; `nil` when no error is present.
     @State private var errorMessage: String?
-    
+    /// Controls presentation of the ``RegisterView`` sheet.
     @State private var showRegister = false
 
     var body: some View {
@@ -65,7 +70,7 @@ struct LoginView: View {
         }
     }
 
-    /// Performs the sign-in flow using `AuthService` and updates UI state accordingly.
+    /// Calls ``AuthService/login(email:password:)`` and writes any failure to ``errorMessage``.
     private func signIn() async {
         isLoading = true
         errorMessage = nil

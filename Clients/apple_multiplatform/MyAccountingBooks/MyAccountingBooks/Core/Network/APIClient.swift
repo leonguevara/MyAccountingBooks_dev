@@ -4,106 +4,42 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-10.
+//  Last modified by León Felipe Guevara Chávez on 2026-03-31.
 //  Developed with AI assistance.
 //
 
 import Foundation
 
-/**
- A lightweight HTTP client for interacting with the backend API.
-
- `APIClient` centralizes common request setup including decoding strategies,
- headers, and authentication token handling, and returns decoded models from the server.
- 
- # Features
- - Singleton pattern for consistent configuration across the app
- - Automatic JSON encoding/decoding with ISO8601 date formatting
- - Bearer token authentication support
- - Comprehensive error mapping (401, 404, 5xx, decoding errors)
- - Generic request interface supporting any `Decodable` response type
- - Swift Concurrency (async/await) support
-
- # Usage Examples
- 
- **Fetching data:**
- ```swift
- struct Ledger: Decodable { 
-     let id: UUID
-     let name: String 
- }
-
- // Simple GET request
- let ledgers: [Ledger] = try await APIClient.shared.request(.listLedgers)
- ```
- 
- **Creating resources with POST:**
- ```swift
- struct CreateLedgerBody: Encodable { 
-     let name: String 
- }
- 
- let created: Ledger = try await APIClient.shared.request(
-     .createLedger,
-     method: "POST",
-     body: CreateLedgerBody(name: "Household"),
-     token: myAuthToken
- )
- ```
-
- # Error Handling
- 
- The client provides structured error handling through the `APIError` type:
- 
- ```swift
- do {
-     let accounts: [Account] = try await APIClient.shared.request(
-         .accounts(ledgerID: id),
-         token: authToken
-     )
-     // Handle success
- } catch let apiError as APIError {
-     // Handle specific API errors
-     switch apiError {
-     case .unauthorized:
-         print("Authentication required")
-     case .notFound:
-         print("Resource not found")
-     case .serverError(let code):
-         print("Server error: \(code)")
-     case .decodingError(let error):
-         print("Failed to decode response: \(error)")
-     case .unknown(let error):
-         print("Unknown error: \(error)")
-     }
- } catch {
-     // Handle other errors (network, etc.)
-     print(error.localizedDescription)
- }
- ```
- 
- # JSON Encoding/Decoding
- 
- The client uses **camelCase** for all JSON keys (matching Swift naming conventions).
- Dates are encoded/decoded using the ISO8601 format.
- 
- To ensure proper encoding/decoding, use explicit `CodingKeys` in your models:
- 
- ```swift
- struct PostTransactionRequest: Encodable {
-     let ledgerId: UUID
-     let currencyCommodityId: UUID
-     
-     enum CodingKeys: String, CodingKey {
-         case ledgerId
-         case currencyCommodityId
-     }
- }
- ```
- 
- - Important: The backend API must accept and return camelCase JSON keys.
- - Note: Snake_case conversion has been removed. All keys use camelCase.
- - SeeAlso: `APIEndpoint`, `APIError`
- */
+/// A lightweight HTTP client for interacting with the backend API.
+///
+/// `APIClient` centralizes request setup — headers, authentication, JSON encoding/decoding —
+/// behind a single generic ``request(_:method:body:token:)`` entry point.
+///
+/// ## Features
+/// - Singleton via ``shared`` for consistent configuration across the app
+/// - Generic `async/await` interface returning any `Decodable` response type
+/// - Bearer token authentication via the `Authorization` header
+/// - camelCase JSON with ISO 8601 dates; no snake_case conversion
+/// - Typed error mapping via ``APIError`` (401, 404, 409, 5xx, decode failures)
+///
+/// ## Usage
+///
+/// ```swift
+/// // GET — no body, no token
+/// let ledgers: [LedgerResponse] = try await APIClient.shared.request(.listLedgers)
+///
+/// // POST — body + auth token
+/// let created: LedgerResponse = try await APIClient.shared.request(
+///     .createLedger,
+///     method: "POST",
+///     body: CreateLedgerBody(name: "Household"),
+///     token: auth.token
+/// )
+/// ```
+///
+/// - Important: The backend must accept and return camelCase JSON keys.
+/// - Note: All models should use explicit `CodingKeys` when field names deviate from camelCase.
+/// - SeeAlso: ``APIEndpoint``, ``APIError``
 final class APIClient {
     
     // MARK: - Properties
@@ -111,27 +47,17 @@ final class APIClient {
     /// Shared singleton instance providing consistent API client configuration throughout the app.
     static let shared = APIClient()
     
-    /// The underlying URLSession used to perform all network requests.
-    ///
-    /// Uses the shared session with default configuration. For custom configurations
-    /// (timeouts, caching policies, etc.), this could be modified to use a custom session.
+    /// The underlying `URLSession` used for all network requests.
     private let session = URLSession.shared
-    
-    /// JSON decoder configured with ISO8601 date decoding strategy.
-    ///
-    /// This decoder is reused for all API responses to ensure consistent decoding behavior.
-    /// Keys are expected to be in camelCase format matching Swift conventions.
+
+    /// JSON decoder shared across all responses; configured for ISO 8601 dates in ``init()``.
     private let decoder = JSONDecoder()
 
     // MARK: - Initialization
     
-    /// Initializes the API client with default JSON decoding configuration.
+    /// Configures the decoder with ISO 8601 date decoding.
     ///
-    /// The decoder is configured with:
-    /// - ISO8601 date decoding strategy for automatic Date parsing
-    /// - CamelCase key decoding (no conversion from snake_case)
-    ///
-    /// - Note: This initializer is private to enforce singleton usage via `APIClient.shared`.
+    /// - Note: Private to enforce singleton usage via ``shared``.
     private init() {
         // Keys are expected in camelCase format
         decoder.dateDecodingStrategy = .iso8601
@@ -139,108 +65,33 @@ final class APIClient {
 
     // MARK: - Request Method
     
-    /**
-     Performs an HTTP request to the specified endpoint and decodes the response into type `T`.
-
-     This method handles the complete request lifecycle:
-     1. Constructs the URLRequest with appropriate headers and authentication
-     2. Encodes the request body (if provided) as JSON with ISO8601 dates
-     3. Executes the network request asynchronously
-     4. Validates the HTTP response status code
-     5. Decodes the response data into the specified type `T`
-
-     - Parameters:
-       - endpoint: The `APIEndpoint` describing the route and URL to call.
-       - method: The HTTP method string (e.g., `"GET"`, `"POST"`, `"PUT"`, `"DELETE"`). Defaults to `"GET"`.
-       - body: An optional `Encodable` object to be JSON-encoded and sent as the request body.
-                If provided, it will be encoded with camelCase keys and ISO8601 date formatting.
-       - token: An optional bearer authentication token added to the `Authorization` header.
-                Required for authenticated endpoints.
-                
-     - Returns: A decoded instance of type `T` parsed from the successful response body.
-     
-     - Throws: `APIError` for known API failures:
-         - `.unauthorized` (401): Invalid or missing authentication credentials
-         - `.notFound` (404): The requested resource does not exist
-         - `.serverError(code)`: Server-side error with the specific HTTP status code (4xx or 5xx)
-         - `.decodingError(error)`: Failed to decode the response into type `T` (includes underlying error)
-         - `.unknown(error)`: Other errors such as network failures, invalid URLs, etc.
-
-     # Usage Examples
-     
-     **Simple GET request:**
-     ```swift
-     struct Ledger: Decodable { 
-         let id: UUID
-         let name: String 
-     }
-     let ledgers: [Ledger] = try await APIClient.shared.request(.listLedgers)
-     ```
-     
-     **POST request with body and authentication:**
-     ```swift
-     struct CreateTransactionBody: Encodable {
-         let ledgerId: UUID
-         let postDate: Date
-         let memo: String?
-     }
-     
-     let body = CreateTransactionBody(
-         ledgerId: ledger.id,
-         postDate: Date(),
-         memo: "Office supplies"
-     )
-     
-     let transaction: Transaction = try await APIClient.shared.request(
-         .postTransaction,
-         method: "POST",
-         body: body,
-         token: authToken
-     )
-     ```
-     
-     **Error handling:**
-     ```swift
-     do {
-         let accounts: [Account] = try await APIClient.shared.request(
-             .accounts(ledgerID: id),
-             token: token
-         )
-         print("Loaded \(accounts.count) accounts")
-     } catch APIError.unauthorized {
-         // Prompt user to sign in again
-         showLoginScreen()
-     } catch APIError.notFound {
-         // Resource doesn't exist
-         showErrorAlert("Account not found")
-     } catch APIError.decodingError(let error) {
-         // Response format issue
-         print("Failed to decode: \(error)")
-     } catch {
-         // Network or other errors
-         print("Request failed: \(error.localizedDescription)")
-     }
-     ```
-
-     # HTTP Status Code Mapping
-     
-     - **2xx (Success)**: Response data is decoded into type `T`
-     - **401 (Unauthorized)**: Throws `.unauthorized` - authentication required or failed
-     - **404 (Not Found)**: Throws `.notFound` - resource doesn't exist
-     - **Other 4xx/5xx**: Throws `.serverError(code)` - client or server error with status code
-     
-     # JSON Encoding/Decoding
-     
-     - **Request body**: Encoded with camelCase keys and ISO8601 dates
-     - **Response body**: Decoded expecting camelCase keys and ISO8601 dates
-     - **Content-Type**: Always set to `"application/json"`
-     
-     Decoding failures on successful responses (2xx) throw `.decodingError` to help diagnose
-     API contract mismatches.
-     
-     - Important: All models must use explicit `CodingKeys` to ensure camelCase JSON keys.
-     - Note: This method uses Swift Concurrency and must be called from an async context.
-     */
+    /// Performs an HTTP request to the specified endpoint and decodes the response into `T`.
+    ///
+    /// Builds a `URLRequest`, optionally encodes `body` as JSON, attaches the bearer token,
+    /// executes the request, maps the HTTP status to an ``APIError``, then decodes the
+    /// response body into `T`.
+    ///
+    /// ## Status Code Mapping
+    ///
+    /// | Status | Throws |
+    /// |---|---|
+    /// | 2xx | — (decodes into `T`) |
+    /// | 401 | ``APIError/unauthorized`` |
+    /// | 404 | ``APIError/notFound`` |
+    /// | 409 | ``APIError/conflict`` |
+    /// | other | ``APIError/serverError(_:)`` with the status code |
+    ///
+    /// Decode failures on 2xx responses throw ``APIError/decodingError(_:)`` to surface
+    /// API contract mismatches immediately.
+    ///
+    /// - Parameters:
+    ///   - endpoint: The ``APIEndpoint`` describing the route URL.
+    ///   - method: HTTP method string (`"GET"`, `"POST"`, `"PUT"`, `"DELETE"`). Defaults to `"GET"`.
+    ///   - body: Optional `Encodable` to JSON-encode as the request body (camelCase, ISO 8601 dates).
+    ///   - token: Optional bearer token added to the `Authorization` header.
+    /// - Returns: A decoded instance of `T` from the successful response body.
+    /// - Throws: ``APIError`` for all failure cases; network errors wrap as ``APIError/unknown(_:)``.
+    /// - Note: Must be called from an `async` context.
     func request<T: Decodable>(
         _ endpoint: APIEndpoint,
         method: String = "GET",

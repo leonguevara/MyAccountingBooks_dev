@@ -45,6 +45,23 @@ import org.springframework.http.ResponseEntity;
 //   Validation errors return HTTP 400 automatically.
 import jakarta.validation.Valid;
 
+/**
+ * REST controller for public authentication endpoints.
+ *
+ * <p>Handles owner account creation and credential-based login under the
+ * {@code /auth} base path. Both routes are explicitly whitelisted in
+ * {@link com.leonguevara.mab.mab_api.config.SecurityConfig} and require no JWT.
+ *
+ * <p>Available routes:
+ * <table border="1" summary="Auth routes">
+ *   <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+ *   <tr><td>POST</td><td>{@code /auth/login}</td><td>Authenticate and obtain a JWT</td></tr>
+ *   <tr><td>POST</td><td>{@code /auth/register}</td><td>Create a new owner account and obtain a JWT</td></tr>
+ * </table>
+ *
+ * @see AuthService
+ * @see com.leonguevara.mab.mab_api.config.SecurityConfig
+ */
 @RestController
 @RequestMapping("/auth")
 @Tag(name = "Auth", description = "Authentication — obtain JWT token")
@@ -52,10 +69,28 @@ public class AuthController {
 
     private final AuthService authService;
 
+    /**
+     * Constructs the controller with the required authentication service.
+     *
+     * @param authService The service handling credential validation and JWT issuance.
+     */
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
 
+    /**
+     * Authenticates an existing owner and returns a signed JWT.
+     *
+     * <p><strong>Route:</strong> {@code POST /auth/login} (public — no JWT required)
+     *
+     * <p>Delegates to {@link AuthService#login(String, String)}, which looks up the owner
+     * by email, verifies the bcrypt password hash, and issues a token valid for 24 hours.
+     *
+     * @param request The login payload containing {@code email} and {@code password}.
+     * @return A {@link TokenResponse} containing the signed JWT.
+     * @throws com.leonguevara.mab.mab_api.exception.ApiException HTTP 401 if the email
+     *         is not found or the password does not match.
+     */
     @PostMapping("/login")
     @Operation(summary = "Login",
             description = "Authenticates with email and password. Returns a JWT token valid for 24 hours.")
@@ -69,6 +104,26 @@ public class AuthController {
         return authService.login(request.email(), request.password());
     }
 
+    /**
+     * Creates a new owner account and returns a signed JWT.
+     *
+     * <p><strong>Route:</strong> {@code POST /auth/register} (public — no JWT required)
+     *
+     * <p>Delegates to {@link AuthService#register(String, String, String)}, which
+     * inserts a new row into {@code ledger_owner} with a bcrypt-hashed password and
+     * immediately issues a JWT — no email verification step is required.
+     *
+     * <p>Bean Validation ({@code @Valid}) is applied to the request body before the
+     * handler is invoked; constraint violations are returned as HTTP 400 automatically.
+     *
+     * @param request The registration payload containing {@code email}, {@code password},
+     *                and {@code displayName}.
+     * @return HTTP 201 with a {@link TokenResponse} containing the signed JWT.
+     * @throws com.leonguevara.mab.mab_api.exception.ApiException HTTP 400 if the request
+     *         body fails Bean Validation (e.g. invalid email format, password too short).
+     * @throws com.leonguevara.mab.mab_api.exception.ApiException HTTP 409 if the email
+     *         address is already registered.
+     */
     @PostMapping("/register")
     @Operation(summary = "Register",
             description = """

@@ -10,80 +10,40 @@
 
 import Foundation
 
-/// A type that represents errors that can occur when interacting with the app's networking layer.
+/// Typed errors produced by ``APIClient`` for all network and decoding failures.
 ///
-/// `APIError` provides a concise set of cases that map common failure scenarios
-/// such as invalid URLs, authentication problems, not found responses, server-side
-/// failures, and decoding issues.
+/// Each case maps to a distinct failure mode. ``errorDescription`` provides a
+/// human-readable string (via `LocalizedError`) suitable for alert messages.
+/// ``map(statusCode:underlying:)`` converts an HTTP status code to the matching
+/// case, returning `nil` for 2xx success responses.
 ///
-/// You can surface user-friendly messages via `LocalizedError` conformance using
-/// `errorDescription`.
-///
-/// Usage:
-///
-/// ```swift
-/// // Mapping a URL string to a URL or returning an error
-/// guard let url = URL(string: urlString) else { throw APIError.invalidURL }
-///
-/// // Handling decoding failures
-/// do {
-///     let model = try JSONDecoder().decode(MyModel.self, from: data)
-/// } catch {
-///     throw APIError.decodingError(error)
-/// }
-///
-/// // Surfacing a user-friendly message
-/// func presentError(_ error: Error) {
-///     let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-///     // showAlert(message)
-/// }
-/// ```
-///
-/// Mapping HTTP responses to `APIError`:
-///
-/// ```swift
-/// if let http = response as? HTTPURLResponse {
-///     switch http.statusCode {
-///     case 200..<300:
-///         break // success
-///     case 401:
-///         throw APIError.unauthorized
-///     case 404:
-///         throw APIError.notFound
-///     case 400..<600:
-///         throw APIError.serverError(http.statusCode)
-///     default:
-///         break
-///     }
-/// }
-/// ```
+/// - SeeAlso: ``APIClient``, ``APIEndpoint``
 enum APIError: Error, LocalizedError {
-    /// The constructed URL is invalid or cannot be formed.
+    /// The URL could not be constructed from the given ``APIEndpoint``.
     case invalidURL
-    
-    /// The request requires authentication or the provided credentials are invalid.
+
+    /// HTTP 401 — credentials missing or invalid; the user must log in again.
     case unauthorized
-    
-    /// The requested resource could not be found (typically HTTP 404).
+
+    /// HTTP 404 — the requested resource does not exist.
     case notFound
-    
-    /// The server responded with an error status code.
-    /// - Parameter code: The HTTP status code returned by the server.
-    case serverError(Int)
-    
-    /// Decoding of the response payload failed.
-    /// - Parameter error: The underlying decoding error.
-    case decodingError(Error)
-    
-    /// An unexpected error occurred that does not match other cases.
-    /// - Parameter error: The underlying error.
-    case unknown(Error)
-    
+
+    /// HTTP 409 — the request conflicts with existing data (e.g. duplicate email on registration).
     case conflict
 
-    /// A human-readable description of the error suitable for displaying to users.
-    ///
-    /// Provided by `LocalizedError`.
+    /// Any other non-2xx response.
+    /// - Parameter code: The HTTP status code returned by the server.
+    case serverError(Int)
+
+    /// The response body could not be decoded into the expected model.
+    /// - Parameter error: The underlying `DecodingError`.
+    case decodingError(Error)
+
+    /// A network-layer or other unexpected error not covered by the cases above.
+    /// - Parameter error: The underlying error from `URLSession` or another source.
+    case unknown(Error)
+
+    /// Human-readable description for use in alert messages (`LocalizedError`).
     var errorDescription: String? {
         switch self {
         case .invalidURL:            return "Invalid URL."
@@ -96,20 +56,12 @@ enum APIError: Error, LocalizedError {
         }
     }
     
-    /// Maps an HTTP status code and optional underlying error to an `APIError` when appropriate.
+    /// Converts an HTTP status code to the matching ``APIError`` case, or `nil` for 2xx responses.
     ///
     /// - Parameters:
     ///   - statusCode: The HTTP status code from `HTTPURLResponse`.
-    ///   - underlying: An optional lower-level error from URLSession or decoding.
-    /// - Returns: An `APIError` representing the condition, or `nil` for success codes (2xx).
-    ///
-    /// Example:
-    /// ```swift
-    /// let http = try #require(response as? HTTPURLResponse)
-    /// if let apiError = APIError.map(statusCode: http.statusCode, underlying: error) {
-    ///     throw apiError
-    /// }
-    /// ```
+    ///   - underlying: Optional lower-level error; wrapped as ``unknown(_:)`` for unrecognised codes.
+    /// - Returns: The corresponding ``APIError``, or `nil` when `statusCode` is in `200..<300`.
     static func map(statusCode: Int, underlying: Error? = nil) -> APIError? {
         switch statusCode {
         case 200..<300:

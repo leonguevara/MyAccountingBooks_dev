@@ -29,6 +29,7 @@ import Foundation
 /// | Group | Case | Method | Path |
 /// |---|---|---|---|
 /// | Auth | ``login`` | POST | `/auth/login` |
+/// | Auth | ``register`` | POST | `/auth/register` |
 /// | Ledgers | ``listLedgers`` | GET | `/ledgers` |
 /// | Ledgers | ``createLedger`` | POST | `/ledgers` |
 /// | Accounts | ``accounts(ledgerID:)`` | GET | `/ledgers/{id}/accounts` |
@@ -68,322 +69,124 @@ import Foundation
 /// - Note: ``url`` is computed on every access; assign it to a local variable if used multiple times.
 /// - SeeAlso: ``APIClient``, ``APIError``
 enum APIEndpoint {
-    /// The base URL for all API requests.
+    /// Root URL prepended to every endpoint path.
     ///
-    /// Change this to point to your staging or production server as needed.
-    /// Ensure HTTPS is used in production environments for secure communication.
-    ///
-    /// **Environments:**
-    /// - Development: `http://localhost:8080`
-    /// - Staging: `https://staging-api.example.com`
-    /// - Production: `https://api.example.com`
+    /// Update this constant to target a different environment (staging, production).
+    /// Always use HTTPS in non-development environments.
     static let baseURL = URL(string: "http://localhost:8080")!
 
     // MARK: - Auth
 
-    /// Authentication endpoint for user login.
-    ///
-    /// **Path:** `POST /auth/login`
-    ///
-    /// **Request body:** `{ "email": string, "password": string }`
-    ///
-    /// **Response:** `{ "token": string }`
+    /// `POST /auth/login` — verifies credentials and returns a signed JWT.
     case login
 
     // MARK: - Ledgers
 
-    /// Retrieves all ledgers accessible to the current user.
-    ///
-    /// **Path:** `GET /ledgers`
-    ///
-    /// **Response:** Array of ledger objects with metadata
+    /// `GET /ledgers` — returns all ledgers owned by the authenticated user.
     case listLedgers
-    
-    /// Creates a new ledger.
-    ///
-    /// **Path:** `POST /ledgers`
-    ///
-    /// **Request body:** Ledger creation data including name, currency, decimal places
-    ///
-    /// **Response:** The created ledger object
+
+    /// `POST /ledgers` — creates a new ledger with name, currency, and decimal places.
     case createLedger
 
     // MARK: - Accounts
 
-    /// Retrieves the complete chart of accounts for a given ledger.
+    /// `GET /ledgers/{ledgerID}/accounts` — returns a flat account list for the ledger.
     ///
-    /// **Path:** `GET /ledgers/{ledgerID}/accounts`
-    ///
-    /// Returns a flat list of all accounts which can be transformed into a hierarchy
-    /// using ``AccountTreeBuilder``.
-    ///
-    /// **Response:** Array of account objects with parent/child relationships
+    /// The flat list can be converted to a hierarchy via ``AccountTreeBuilder``.
     ///
     /// - Parameter ledgerID: The unique identifier of the ledger.
     case accounts(ledgerID: UUID)
     
-    /// Retrieves current balances for all accounts in a given ledger.
-    ///
-    /// **Path:** `GET /ledgers/{ledgerID}/balances`
-    ///
-    /// Returns balance information for each account as rational numbers (numerator/denominator)
-    /// to maintain precision. Balances are signed according to the account's normal balance direction.
-    ///
-    /// **Response:** Array of balance objects with:
-    /// - `accountId`: UUID linking to account
-    /// - `balanceNum`: Rational number numerator (signed)
-    /// - `balanceDenom`: Rational number denominator (scaling factor)
-    ///
-    /// **Usage Example:**
-    /// ```swift
-    /// let balances: [AccountBalanceResponse] = try await APIClient.shared.request(
-    ///     .balances(ledgerID: ledger.id),
-    ///     token: authToken
-    /// )
-    /// ```
+    /// `GET /ledgers/{ledgerID}/balances` — returns signed balances as rationals (`balanceNum / balanceDenom`)
+    /// for every account in the ledger.
     ///
     /// - Parameter ledgerID: The unique identifier of the ledger.
-    /// - SeeAlso: ``AccountBalanceResponse``, ``AccountService/fetchBalances(ledgerID:token:)``
+    /// - SeeAlso: ``AccountBalanceResponse``
     case balances(ledgerID: UUID)
     
-    /// Creates a new account in the chart of accounts.
+    /// `POST /accounts` — creates a new account in the chart of accounts.
     ///
-    /// **Path:** `POST /accounts`
+    /// The backend validates that the parent exists, the `accountTypeCode` is from the catalog,
+    /// and that the combined properties satisfy chart-of-accounts rules.
     ///
-    /// Creates a new account with the specified properties. The backend validates that the
-    /// parent account exists, the account type code is valid (if provided), and that the
-    /// combination of properties adheres to the chart of accounts rules.
-    ///
-    /// **Request body:** Account creation data (``CreateAccountRequest``)
-    /// - `ledgerId`: The ledger this account belongs to.
-    /// - `name`: Display name for the account.
-    /// - `code`: Optional account code/number.
-    /// - `parentId`: UUID of the parent account.
-    /// - `accountTypeCode`: Optional account type from the catalog.
-    /// - `accountRole`: Operational role as an ``AccountRole`` raw value
-    ///   (e.g., `101` = Bank, `200` = Accounts Payable). Pass `0` for unspecified.
-    /// - `isPlaceholder`: Whether this is an organisational placeholder.
-    /// - `isHidden`: Whether this account is hidden from UI.
-    ///
-    /// **Response:** The created account object.
-    ///
-    /// **Usage Example:**
-    /// ```swift
-    /// let request = CreateAccountRequest(
-    ///     ledgerId: ledger.id,
-    ///     name: "Business Checking",
-    ///     code: "1010",
-    ///     parentId: assetsAccountId,
-    ///     accountTypeCode: "BANK",
-    ///     accountRole: AccountRole.bank.rawValue,  // 101
-    ///     isPlaceholder: false,
-    ///     isHidden: false
-    /// )
-    /// let newAccount: AccountResponse = try await APIClient.shared.request(
-    ///     .createAccount,
-    ///     method: "POST",
-    ///     body: request,
-    ///     token: authToken
-    /// )
-    /// ```
-    ///
-    /// - SeeAlso: ``CreateAccountRequest``, ``PatchAccountRequest``, ``accountTypes``, ``AccountRole``
+    /// - SeeAlso: ``CreateAccountRequest``, ``accountTypes``, ``AccountRole``
     case createAccount
     
-    /// Partially updates an existing account.
-    ///
-    /// **Path:** `PATCH /accounts/{id}`
-    ///
-    /// Allows updating specific fields of an account without replacing the entire record.
-    /// Only the fields included in the request body will be modified; all other fields
-    /// remain unchanged. This is useful for renaming accounts, changing codes, moving
-    /// accounts in the hierarchy, or updating account properties.
-    ///
-    /// **Request body:** Partial account data (e.g., `PatchAccountRequest`)
-    /// - Only non-nil fields are updated
-    /// - Supports updating name, code, parent, account type, role, placeholder status, and visibility
-    ///
-    /// **Response:** The updated account object with all fields
-    ///
-    /// **Usage Example:**
-    /// ```swift
-    /// let updates = PatchAccountRequest(
-    ///     name: "Business Checking - Main",
-    ///     code: "1010"
-    /// )
-    /// let updated: AccountResponse = try await APIClient.shared.request(
-    ///     .patchAccount(id: accountId),
-    ///     method: "PATCH",
-    ///     body: updates,
-    ///     token: authToken
-    /// )
-    /// ```
+    /// `PATCH /accounts/{id}` — partially updates an account; only non-nil fields are modified.
     ///
     /// - Parameter id: The unique identifier of the account to update.
-    /// - Important: Changing `accountRole` or `parentId` may violate chart of accounts rules.
-    ///   The backend validates these changes before applying them.
-    /// - SeeAlso: ``PatchAccountRequest``, ``CreateAccountRequest``
+    /// - Important: Changing `accountRole` or `parentId` may violate chart-of-accounts rules;
+    ///   the backend validates before applying.
+    /// - SeeAlso: ``PatchAccountRequest``
     case patchAccount(id: UUID)
     
-    /// Retrieves the catalog of available account types.
+    /// `GET /account-types` — returns the global catalog of account type classifications.
     ///
-    /// **Path:** `GET /account-types`
+    /// Each entry carries a `code` (e.g., `"BANK"`), `kind` (Asset/Liability/…),
+    /// `normalBalance` direction, and a `sortOrder` for display ordering.
     ///
-    /// Returns the complete list of account type classifications available in the system.
-    /// Each account type has a code (e.g., "BANK", "EQUITY"), a name, a fundamental category
-    /// (kind), a normal balance direction, and a suggested sort order for display.
-    ///
-    /// **Response:** Array of account type objects with:
-    /// - `id`: Unique identifier
-    /// - `code`: Short alphanumeric code (e.g., "BANK")
-    /// - `name`: Human-readable name (e.g., "Bank Account")
-    /// - `kind`: Fundamental category (1=Asset, 2=Liability, 3=Equity, 4=Income, 5=Expense)
-    /// - `normalBalance`: Direction of normal balance (1=Debit, 2=Credit)
-    /// - `sortOrder`: Suggested ordering for display
-    ///
-    /// **Usage Example:**
-    /// ```swift
-    /// let types: [AccountTypeItem] = try await APIClient.shared.request(
-    ///     .accountTypes,
-    ///     method: "GET",
-    ///     token: authToken
-    /// )
-    ///
-    /// // Use in a picker
-    /// Picker("Account Type", selection: $selectedTypeCode) {
-    ///     ForEach(types.sorted(by: { $0.sortOrder < $1.sortOrder })) { type in
-    ///         Text(type.displayName).tag(type.code)
-    ///     }
-    /// }
-    /// ```
-    ///
-    /// - SeeAlso: ``AccountTypeItem``, ``CreateAccountRequest``, ``PatchAccountRequest``
+    /// - SeeAlso: ``AccountTypeItem``, ``CreateAccountRequest``
     case accountTypes
 
     // MARK: - Transactions
 
-    /// Retrieves all transactions for a given ledger.
-    ///
-    /// **Path:** `GET /ledgers/{ledgerID}/transactions`
-    ///
-    /// Returns complete transaction records including all split lines, dates, and metadata.
-    ///
-    /// **Response:** Array of transaction objects with splits
+    /// `GET /ledgers/{ledgerID}/transactions` — returns all transactions with splits for the ledger.
     ///
     /// - Parameter ledgerID: The unique identifier of the ledger.
     case transactions(ledgerID: UUID)
-    
-    /// Creates a new transaction.
-    ///
-    /// **Path:** `POST /transactions`
-    ///
-    /// **Request body:** Transaction data including date, memo, and balanced split lines
-    ///
-    /// **Response:** The created transaction object
+
+    /// `POST /transactions` — posts a new balanced transaction with its split lines.
     case postTransaction
-    
-    /// Reverses a previously posted transaction.
+
+    /// `POST /transactions/{id}/reverse` — creates a mirror transaction with DEBIT↔CREDIT swapped.
     ///
-    /// **Path:** `POST /transactions/{id}/reverse`
-    ///
-    /// Creates a new transaction with opposite amounts to undo the original transaction.
-    ///
-    /// **Response:** The reversing transaction object
+    /// The original transaction is not modified; the reversing entry references it via memo.
     ///
     /// - Parameter id: The unique identifier of the transaction to reverse.
     case reverseTransaction(id: UUID)
-    
-    /// Voids a previously posted transaction.
+
+    /// `POST /transactions/{id}/void` — marks a transaction as voided (`is_voided = true`).
     ///
-    /// **Path:** `POST /transactions/{id}/void`
-    ///
-    /// Marks the transaction as voided without creating a reversing entry.
-    ///
-    /// **Response:** The voided transaction object
+    /// No reversing entry is created; the transaction remains in the ledger flagged as void.
     ///
     /// - Parameter id: The unique identifier of the transaction to void.
     case voidTransaction(id: UUID)
-    
-    /// Partially updates an existing transaction.
+
+    /// `PATCH /transactions/{id}` — partially updates a transaction; only non-nil fields are modified.
     ///
-    /// **Path:** `PATCH /transactions/{id}`
-    ///
-    /// Allows updating specific fields of a transaction without replacing the entire record.
-    /// Only the fields included in the request body will be modified; all other fields remain unchanged.
-    /// This is useful for editing transaction details like memo, number, date, or individual split lines.
-    ///
-    /// **Request body:** Partial transaction data (e.g., `PatchTransactionRequest`)
-    /// - Only non-nil fields are updated
-    /// - Supports updating transaction-level fields (memo, num, postDate)
-    /// - Supports updating individual splits by splitId
-    ///
-    /// **Response:** The updated transaction object with all fields
-    ///
-    /// **Usage Example:**
-    /// ```swift
-    /// let updates = PatchTransactionRequest(
-    ///     memo: "Updated description",
-    ///     splits: [PatchSplitRequest(splitId: splitID, accountId: newAccountID)]
-    /// )
-    /// let updated: TransactionResponse = try await APIClient.shared.request(
-    ///     .patchTransaction(id: transactionID),
-    ///     method: "PATCH",
-    ///     body: updates,
-    ///     token: authToken
-    /// )
-    /// ```
+    /// Supports transaction-level fields (`memo`, `num`, `postDate`) and individual splits by `splitId`.
     ///
     /// - Parameter id: The unique identifier of the transaction to update.
-    /// - SeeAlso: ``PatchTransactionRequest``, ``PatchSplitRequest``
+    /// - SeeAlso: ``PatchTransactionRequest``
     case patchTransaction(id: UUID)
-    
+
+    /// `POST /auth/register` — creates a new owner account and returns a signed JWT immediately.
     case register
 
     // MARK: - Commodities
 
-    /// Retrieves commodities, optionally filtering by a namespace.
+    /// `GET /commodities` — returns commodities (currencies, stocks, assets), optionally filtered by namespace.
     ///
-    /// **Path:** `GET /commodities` or `GET /commodities?namespace={namespace}`
-    ///
-    /// Commodities represent currencies, stocks, or other assets tracked in the system.
-    ///
-    /// **Response:** Array of commodity objects with codes and namespaces
-    ///
-    /// - Parameter namespace: A string to filter commodities by namespace (e.g., "CURRENCY", "ISO4217").
-    ///                        Pass `nil` to retrieve all commodities.
+    /// - Parameter namespace: Namespace filter (e.g., `"CURRENCY"`, `"ISO4217"`); `nil` returns all.
     case commodities(namespace: String?)
     
     // MARK: - COA Templates
 
-    /// Retrieves all active chart-of-accounts templates from the global catalog.
+    /// `GET /coa-templates` — returns all active chart-of-accounts templates from the global catalog.
     ///
-    /// **Path:** `GET /coa-templates`
+    /// Templates are not tenant-scoped; they are shared across all users and require no owner context.
+    /// Use the `code` and `version` fields when creating a ledger with a pre-built chart of accounts.
     ///
-    /// Templates are not tenant-scoped — they are shared across all users and require
-    /// no owner context. Use the `code` and `version` fields from the response when
-    /// creating a new ledger with a pre-built chart of accounts.
-    ///
-    /// **Response:** Array of ``CoaTemplateItem`` objects with fields:
-    /// `id`, `code`, `name`, `description`, `country`, `locale`, `industry`, `version`.
-    ///
-    /// - SeeAlso: ``CoaTemplateItem``, ``CoaTemplateService``
+    /// - SeeAlso: ``CoaTemplateItem``
     case coaTemplates
 
     // MARK: - URL Construction
     
-    /// The fully-qualified URL for the endpoint, derived from `baseURL` and path components.
+    /// The fully-qualified URL for this endpoint, assembled from ``baseURL`` and the case's path.
     ///
-    /// This computed property constructs the complete URL for the endpoint by appending
-    /// the appropriate path to `baseURL` and including any query parameters.
+    /// ``commodities(namespace:)`` appends a `namespace` query item when the parameter is non-nil.
     ///
-    /// **Examples:**
-    /// - `.login` → `http://localhost:8080/auth/login`
-    /// - `.accounts(ledgerID: id)` → `http://localhost:8080/ledgers/{id}/accounts`
-    /// - `.balances(ledgerID: id)` → `http://localhost:8080/ledgers/{id}/balances`
-    /// - `.commodities(namespace: "CURRENCY")` → `http://localhost:8080/commodities?namespace=CURRENCY`
-    /// - `.coaTemplates` → `http://localhost:8080/coa-templates`
-    ///
-    /// - Important: This property is computed on every access. Cache the value if using multiple times.
+    /// - Note: Computed on every access; assign to a local constant when used more than once.
     var url: URL {
         switch self {
         case .login:

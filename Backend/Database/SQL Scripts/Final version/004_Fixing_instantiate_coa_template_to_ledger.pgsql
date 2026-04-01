@@ -1,32 +1,38 @@
 -- Function: public.instantiate_coa_template_to_ledger(uuid, uuid)
 --
 -- Purpose:
---   Materialize a Chart of Accounts (CoA) template into concrete accounts for a
---   target ledger, preserving hierarchy and wiring the ledger root account.
+--   Instantiate a CoA template into a target ledger by creating account rows,
+--   restoring the parent-child tree, and setting ledger root/template metadata.
 --
 -- Parameters:
---   p_template_id : UUID of the CoA template to instantiate.
+--   p_template_id : UUID of the source CoA template.
 --   p_ledger_id   : UUID of the destination ledger.
 --
 -- Returns:
---   UUID of the created root account for the ledger.
+--   UUID of the root account created for the destination ledger.
 --
--- Behavior summary:
---   1) Validates template and ledger prerequisites.
---   2) Inserts all accounts from template nodes (initially with parent_id NULL).
---   3) Builds a temporary node-code-to-account-id map.
---   4) Backfills parent-child relationships using that map.
---   5) Updates ledger.root_account_id and ledger.coa_template_id.
+-- Contract:
+--   - Template must exist and not be soft-deleted.
+--   - Ledger must exist and have currency_commodity_id.
+--   - Ledger must be empty (no non-deleted accounts).
+--   - Template must contain exactly one root node (parent_code IS NULL).
+--
+-- Processing outline:
+--   1) Validate preconditions.
+--   2) Insert accounts with parent_id NULL.
+--   3) Build temp map (node code -> created account id).
+--   4) Backfill parent_id using template parent_code.
+--   5) Resolve root account and update ledger metadata.
 --
 -- Failure model:
---   Raises exceptions when input invariants are not met (missing/deleted
---   template, invalid ledger currency, non-empty ledger, or invalid template
---   root shape).
+--   Raises exceptions on contract violations. No partial "best effort"
+--   behavior is attempted.
 --
 -- Notes:
---   - Placeholder nodes are inserted with account_type_id = NULL.
---   - The mapping temp table is ON COMMIT DROP and lives for this transaction.
---   - This function is intended for empty ledgers; it is not additive/merge-safe.
+--   - Placeholder template nodes become accounts with account_type_id = NULL.
+--   - Non-placeholder nodes resolve account_type_id by account_type.code.
+--   - Temporary map table is ON COMMIT DROP and transaction-scoped.
+--   - Function is designed for first-time initialization, not merge/import.
 CREATE OR REPLACE FUNCTION public.instantiate_coa_template_to_ledger(
     p_template_id uuid,
     p_ledger_id   uuid
@@ -37,8 +43,7 @@ DECLARE
     v_root_account_id       uuid;
     v_currency_commodity_id uuid;
 BEGIN
-    -- ── Preconditions and invariants ────────────────────────────────────────
-    -- Validate that source template and destination ledger are usable.
+    -- Preconditions: validate source template and destination ledger state.
 
     IF NOT EXISTS (
         SELECT 1 FROM public.coa_template
@@ -68,18 +73,16 @@ BEGIN
         RAISE EXCEPTION 'Template % must have exactly one root node (parent_code IS NULL).', p_template_id;
     END IF;
 
-    -- ── Step 1: Create mapping table ────────────────────────────────────────
-    -- Maps node code → newly created account UUID.
-    -- Must be a temp table so it persists across the two DML steps below.
+    -- Step 1: Create mapping table used across insert/backfill phases.
+    -- It maps template node code -> newly created account UUID.
 
     CREATE TEMP TABLE _node_to_account (
         node_code  text PRIMARY KEY,
         account_id uuid NOT NULL
     ) ON COMMIT DROP;
 
-    -- ── Step 2: Insert account rows (parent_id deferred) ────────────────────
-    -- Ordered by level ASC so parents exist in the mapping before children
-    -- need them in Step 3. parent_id is intentionally NULL here.
+    -- Step 2: Insert account rows with deferred parent_id.
+    -- parent_id is intentionally NULL and filled later once IDs are mapped.
 
     INSERT INTO public.account (
         ledger_id,
@@ -129,7 +132,7 @@ BEGIN
             )
         END,
         v_currency_commodity_id,
-        NULL,   -- ← parent_id: filled in Step 3
+        NULL,   -- parent_id is filled in Step 4
         now(),
         0,
         NULL
@@ -137,8 +140,7 @@ BEGIN
     WHERE n.template_id = p_template_id
     ORDER BY n.level ASC, n.code ASC;
 
-    -- ── Step 3: Populate mapping table ──────────────────────────────────────
-    -- Now that all accounts exist, build code → account_id map.
+    -- Step 3: Populate mapping table after all account IDs exist.
 
     INSERT INTO _node_to_account (node_code, account_id)
     SELECT a.code, a.id
@@ -147,7 +149,7 @@ BEGIN
       AND a.deleted_at IS NULL
       AND a.code IS NOT NULL;
 
-    -- ── Step 4: Backfill parent_id from template hierarchy ──────────────────
+    -- Step 4: Backfill parent_id from template hierarchy.
 
     UPDATE public.account a
        SET parent_id  = m_parent.account_id,
@@ -160,7 +162,7 @@ BEGIN
        AND a.id           = m_self.account_id
        AND a.ledger_id    = p_ledger_id;
 
-    -- ── Step 5: Resolve root and update ledger metadata ─────────────────────
+    -- Step 5: Resolve root and persist ledger root/template metadata.
 
     SELECT m.account_id
       INTO v_root_account_id

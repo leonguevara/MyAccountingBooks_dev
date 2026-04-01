@@ -14,7 +14,7 @@
 //            - JwtAuthFilter is registered BEFORE Spring's default
 //              username/password filter.
 // ============================================================
-// Last edited: 2026-03-04
+// Last edited: 2026-03-31
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -56,14 +56,39 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 //   Injecting via interface keeps the code flexible.
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * Spring Security configuration for the MAB REST API.
+ *
+ * <p>Produces two beans consumed by the Spring Security auto-configuration:
+ * <ul>
+ *   <li>{@link #filterChain(HttpSecurity)} — the HTTP security filter chain.</li>
+ *   <li>{@link #passwordEncoder()} — the {@link PasswordEncoder} used by
+ *       {@code AuthService} for password hashing and verification.</li>
+ * </ul>
+ *
+ * <p><strong>Key design decisions:</strong>
+ * <ul>
+ *   <li><em>CSRF disabled</em> — REST APIs authenticate via {@code Authorization} headers,
+ *       not browser-managed cookies; CSRF protection is therefore unnecessary.</li>
+ *   <li><em>Sessions disabled</em> ({@link SessionCreationPolicy#STATELESS}) — every
+ *       request carries its own JWT; no {@code HttpSession} or {@code JSESSIONID} cookie
+ *       is ever created.</li>
+ *   <li><em>{@link JwtAuthFilter} before {@code UsernamePasswordAuthenticationFilter}</em>
+ *       — JWT validation runs first on every request, short-circuiting Spring's form-login
+ *       path entirely.</li>
+ * </ul>
+ *
+ * @see JwtAuthFilter
+ * @see TenantContext
+ */
 @Configuration
 public class SecurityConfig {
 
-    // The JWT filter to insert into the Spring Security filter chain.
+    /** The JWT filter inserted into the Spring Security filter chain. */
     private final JwtAuthFilter jwtAuthFilter;
 
     /**
-     * Constructor injection of JwtAuthFilter.
+     * Constructs the configuration with the required JWT filter.
      *
      * @param jwtAuthFilter The custom JWT validation filter bean.
      */
@@ -72,12 +97,26 @@ public class SecurityConfig {
     }
 
     /**
-     * Defines and builds the HTTP security filter chain.
-     * <p>
-     * This is the central security configuration for the entire API.
+     * Builds and returns the HTTP security filter chain.
      *
-     * @param  http The HttpSecurity builder provided by Spring.
-     * @return      The configured SecurityFilterChain bean.
+     * <p>Authorization rules applied in order:
+     * <ul>
+     *   <li>{@code permitAll} — the routes below require no token:
+     *     <table border="1" summary="Public routes">
+     *       <tr><th>Path</th><th>Purpose</th></tr>
+     *       <tr><td>{@code /health}</td><td>Liveness / readiness probe</td></tr>
+     *       <tr><td>{@code /auth/login}</td><td>Obtain a JWT</td></tr>
+     *       <tr><td>{@code /auth/register}</td><td>Create a new owner account</td></tr>
+     *       <tr><td>{@code /swagger-ui.html}, {@code /swagger-ui/**}</td><td>Swagger UI</td></tr>
+     *       <tr><td>{@code /v3/api-docs}, {@code /v3/api-docs/**}</td><td>OpenAPI spec</td></tr>
+     *     </table>
+     *   </li>
+     *   <li>{@code authenticated} — every other route requires a valid JWT supplied
+     *       in the {@code Authorization: Bearer <token>} header.</li>
+     * </ul>
+     *
+     * @param  http The {@link HttpSecurity} builder provided by Spring.
+     * @return      The configured {@link SecurityFilterChain} bean.
      * @throws Exception if the security configuration fails to build.
      */
     @Bean
@@ -120,13 +159,14 @@ public class SecurityConfig {
     }
 
     /**
-     * Provides a BCryptPasswordEncoder bean for password hashing/verification.
-     * <p>
-     * BCrypt automatically handles salting and is the industry standard
-     * for storing user passwords. Used by AuthService to verify the
-     * password_hash column in the ledger_owner table.
+     * Provides a {@link BCryptPasswordEncoder} bean for password hashing and verification.
      *
-     * @return A BCryptPasswordEncoder with default strength (10 rounds).
+     * <p>BCrypt automatically generates and embeds a salt, making it resistant to
+     * rainbow-table attacks. {@code AuthService} injects this bean to verify plaintext
+     * passwords against the {@code bcrypt} hashes stored in the
+     * {@code ledger_owner.password_hash} column.
+     *
+     * @return A {@link BCryptPasswordEncoder} with default cost factor (10 rounds).
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
