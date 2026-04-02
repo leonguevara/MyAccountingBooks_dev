@@ -620,6 +620,12 @@ struct TransactionDetailSheet: View {
     /// Forwarded to `EditTransactionView` to populate account pickers when editing
     /// split assignments.
     var allAccounts: [AccountNode] = []
+    
+    // Add property
+    var payees: [PayeeResponse] = []
+    
+    // Add state for loaded payees
+    @State private var loadedPayees: [PayeeResponse] = []
 
     /// Async closure invoked after a successful edit, void, or reverse action.
     ///
@@ -702,7 +708,8 @@ struct TransactionDetailSheet: View {
                 TransactionDetailView(
                     transaction: transaction,
                     ledger: ledger,
-                    accountPaths: accountPaths
+                    accountPaths: accountPaths,
+                    payees: loadedPayees          // ← fix
                 )
             }
         }
@@ -743,6 +750,13 @@ struct TransactionDetailSheet: View {
             Button("Cancel", role: .cancel) { actionReason = "" }
         } message: {
             Text("This will create a new transaction with all amounts reversed.")
+        }
+        .task {
+            guard let token = auth.token else { return }
+            if let fetched = try? await PayeeService.shared.fetchPayees(
+                ledgerID: ledger.id, token: token) {
+                loadedPayees = fetched
+            }
         }
     }
     

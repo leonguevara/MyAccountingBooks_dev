@@ -72,6 +72,8 @@ struct TransactionResponse: Codable, Identifiable, Hashable {
     /// The collection of splits that make up this transaction.
     let splits: [SplitResponse]
     
+    let payeeId: UUID?             // ← add — nil when no payee assigned
+    
     // MARK: - Derived
 
     /// Total debit side of the transaction (should equal total credit).

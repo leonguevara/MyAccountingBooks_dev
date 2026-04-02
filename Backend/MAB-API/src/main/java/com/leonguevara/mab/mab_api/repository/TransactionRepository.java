@@ -384,7 +384,8 @@ public class TransactionRepository {
                         t.enter_date,
                         t.memo,
                         t.num,
-                        t.is_voided
+                        t.is_voided,
+                        t.payee_id,
                         FROM public.transaction t
                         WHERE t.ledger_id  = :ledgerId
                         AND t.deleted_at IS NULL
@@ -407,7 +408,8 @@ public class TransactionRepository {
                                 rs.getString("memo"),
                                 rs.getString("num"),
                                 rs.getBoolean("is_voided"),
-                                List.of()   // splits attached in step 3
+                                List.of(),   // splits attached in step 3
+                                rs.getObject("payee_id", UUID.class)
                         )
                 );
 
@@ -505,7 +507,7 @@ public class TransactionRepository {
 
         String txSql = """
                 SELECT id, ledger_id, currency_commodity_id,
-                       post_date, enter_date, memo, num, is_voided
+                       post_date, enter_date, memo, num, is_voided, payee_id
                   FROM public.transaction
                  WHERE id = :txId
                 """;
@@ -529,7 +531,8 @@ public class TransactionRepository {
                         rs.getString("memo"),
                         rs.getString("num"),
                         rs.getBoolean("is_voided"),
-                        List.of()
+                        List.of(),
+                        rs.getObject("payee_id", UUID.class)
                 ));
 
         String splitSql = """
@@ -553,7 +556,8 @@ public class TransactionRepository {
                 header.memo(),
                 header.num(),
                 header.isVoided(),
-                splits
+                splits,
+                header.payeeId()
         );
     }
 

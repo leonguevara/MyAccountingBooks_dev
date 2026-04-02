@@ -29,6 +29,8 @@ struct PatchTransactionRequest: Encodable {
     /// Optional posting date for the transaction.
     var postDate: Date?
     
+    var payeeId: UUID?        // ← add — send nil to clear, omit entirely if unchanged
+    
     /// Optional array of split line updates. Each split is identified by its UUID.
     var splits: [PatchSplitRequest]?
 

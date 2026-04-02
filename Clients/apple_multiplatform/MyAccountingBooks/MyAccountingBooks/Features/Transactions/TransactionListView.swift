@@ -349,6 +349,9 @@ struct TransactionDetailView: View {
     ///
     /// - SeeAlso: `AccountTreeBuilder.buildPathMap(from:)`, `SplitRowView.resolvedAccountName`
     var accountPaths: [UUID: String] = [:]
+    
+    // Add parameter
+    var payees: [PayeeResponse] = []
 
     var body: some View {
         ScrollView {
@@ -389,6 +392,13 @@ struct TransactionDetailView: View {
 
             if let num = transaction.num, !num.isEmpty {
                 Label("Reference #\(num)", systemImage: "number")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            
+            if let payeeId = transaction.payeeId,
+               let payee = payees.first(where: { $0.id == payeeId }) {
+                Label(payee.name, systemImage: "person")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }

@@ -74,6 +74,10 @@ final class EditTransactionViewModel {
     /// Each split represents a debit or credit to an account. Users can modify
     /// the memo and account assignment for each split line.
     var splitLines: [EditSplitLine] = []
+    
+    // Add properties
+    var selectedPayeeId: UUID? = nil
+    var usePayee: Bool = false
 
     // MARK: - UI State
 
@@ -125,6 +129,8 @@ final class EditTransactionViewModel {
         memo     = transaction.memo ?? ""
         num      = transaction.num  ?? ""
         postDate = transaction.postDate
+        selectedPayeeId = transaction.payeeId
+        usePayee        = transaction.payeeId != nil   // ← toggle on if payee exists
 
         // Build a flat account lookup for quick ID → node resolution
         func flatten(_ nodes: [AccountNode]) -> [UUID: AccountNode] {

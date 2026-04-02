@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-23.
-//  Last modified by León Felipe Guevara Chávez on 2026-03-26.
+//  Last modified by León Felipe Guevara Chávez on 2026-04-02.
 //  Developed with AI assistance.
 //
 
@@ -149,6 +149,8 @@ struct EditTransactionView: View {
     /// Automatically regenerated via `AccountTreeBuilder.buildPathMap()` whenever
     /// `currentAccounts` is updated, ensuring pickers always display current paths.
     @State private var currentPaths: [UUID: String]
+    
+    @State private var currentPayees: [PayeeResponse] = []
 
     // MARK: - Init
 
@@ -243,6 +245,13 @@ struct EditTransactionView: View {
                 }
             }
         }
+        .task {
+            guard let token = auth.token else { return }
+            if let payees = try? await PayeeService.shared.fetchPayees(
+                ledgerID: ledger.id, token: token) {
+                currentPayees = payees
+            }
+        }
     }
 
     // MARK: - Header Section
@@ -267,6 +276,42 @@ struct EditTransactionView: View {
             )
             TextField("Description (memo)", text: $viewModel.memo)
             TextField("Reference # (optional)", text: $viewModel.num)
+
+            // In headerCard — add payee row (same pattern as PostTransactionView)
+            LabeledContent("Payee") {
+                HStack(spacing: 10) {
+                    Toggle("", isOn: $viewModel.usePayee)
+                        .labelsHidden()
+                        .onChange(of: viewModel.usePayee) { _, on in
+                            if !on { viewModel.selectedPayeeId = nil }
+                        }
+                    if viewModel.usePayee {
+                        PayeePickerButton(
+                            selectedPayee: Binding(
+                                get: {
+                                    currentPayees.first { $0.id == viewModel.selectedPayeeId }
+                                },
+                                set: { viewModel.selectedPayeeId = $0?.id }
+                            ),
+                            payees: currentPayees,
+                            onCreate: { name in
+                                Task {
+                                    guard let token = auth.token else { return }
+                                    if let created = try? await PayeeService.shared.createPayee(
+                                        ledgerID: ledger.id,
+                                        name: name,
+                                        token: token
+                                    ) {
+                                        currentPayees.append(created)
+                                        currentPayees.sort { $0.name < $1.name }
+                                        viewModel.selectedPayeeId = created.id
+                                    }
+                                }
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
 

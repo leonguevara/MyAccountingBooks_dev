@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-16.
-//  Last modified by León Felie Guevara Chávez on 2026-03-29
+//  Last modified by León Felie Guevara Chávez on 2026-04-02
 //  Developed with AI assistance.
 //
 
@@ -314,7 +314,7 @@ final class PostTransactionViewModel {
     ///   property mutations happen on the main thread.
     /// - Note: Only ``SplitLine`` entries where `isComplete == true` are included in the request.
     @MainActor
-    func submit(ledger: LedgerResponse, token: String) async {
+    func submit(ledger: LedgerResponse, payeeId: UUID? = nil, token: String) async {
         guard canSubmit else { return }
 
         // Guard: currencyCommodityId must be present to identify currency for amounts
@@ -355,7 +355,7 @@ final class PostTransactionViewModel {
             memo:                 memo.isEmpty ? nil : memo,
             num:                  num.isEmpty  ? nil : num,
             status:               0,
-            payeeId:              nil,
+            payeeId:              payeeId,
             splits:               splitRequests
         )
 

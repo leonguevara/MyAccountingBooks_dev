@@ -12,7 +12,7 @@
 //          DB — clients should compute display amounts from
 //          valueNum / valueDenom themselves.
 // ============================================================
-// Last edited: 2026-03-14
+// Last edited: 2026-04-02
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -51,6 +51,7 @@ import java.util.UUID;
  * @param num                 Reference number (invoice, check, etc.). Might be null.
  * @param isVoided            Always false on creation. Becomes true after void.
  * @param splits              The split lines that were created.
+ * @param payeeId             Optional payee UUID. Might be null.
  */
 public record TransactionResponse(
         UUID           id,
@@ -61,7 +62,8 @@ public record TransactionResponse(
         String         memo,
         String         num,
         boolean        isVoided,
-        List<SplitResponse> splits
+        List<SplitResponse> splits,
+        UUID           payeeId  // nullable, null means no payee
 ) {
     /**
      * A single split line in the transaction response.

@@ -171,7 +171,6 @@ final class AccountRegisterViewModel {
         var result: [RegisterRow] = []
 
         for (tx, split) in relevant {
-            let raw = split.amount   // always positive rational value
             let signed: Decimal
 
             if tx.isVoided {
@@ -198,4 +197,3 @@ final class AccountRegisterViewModel {
         return result
     }
 }
-

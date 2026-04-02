@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-16.
-//  Last modified by León Felipe Guevara Chávez on 2026-03-29.
+//  Last modified by León Felipe Guevara Chávez on 2026-04-01.
 //  Developed with AI assistance.
 //
 
@@ -169,6 +169,11 @@ struct PostTransactionView: View {
     /// Automatically regenerated via ``AccountTreeBuilder/buildPathMap(from:)`` whenever
     /// `currentAccounts` is updated, ensuring pickers always display current paths.
     @State private var currentPaths: [UUID: String]
+    
+    // FIx: Add alongside currentAccounts and currentPaths
+    @State private var currentPayees: [PayeeResponse] = []
+    @State private var selectedPayee: PayeeResponse? = nil
+    @State private var usePayee: Bool = false
 
     // MARK: - Init
 
@@ -250,6 +255,17 @@ struct PostTransactionView: View {
                     currentAccounts = AccountTreeBuilder.build(from: flat)
                     currentPaths    = AccountTreeBuilder.buildPathMap(from: currentAccounts)
                 }
+                if let payees = try? await PayeeService.shared.fetchPayees(
+                    ledgerID: ledger.id, token: token) {
+                    currentPayees = payees
+                }
+            }
+        }
+        .task(id: ledger.id) {
+            guard let token = auth.token else { return }
+            if let payees = try? await PayeeService.shared.fetchPayees(
+                ledgerID: ledger.id, token: token) {
+                currentPayees = payees
             }
         }
     }
@@ -285,6 +301,37 @@ struct PostTransactionView: View {
                 compactLabeledRow("Reference #") {
                     TextField("Reference # (optional)", text: $viewModel.num)
                         .textFieldStyle(.roundedBorder)
+                }
+                
+                // Payee toggle + picker
+                compactLabeledRow("Payee") {
+                    HStack(spacing: 10) {
+                        Toggle("", isOn: $usePayee)
+                            .labelsHidden()
+                            .onChange(of: usePayee) { _, on in
+                                if !on { selectedPayee = nil }
+                            }
+                        if usePayee {
+                            PayeePickerButton(
+                                selectedPayee: $selectedPayee,
+                                payees: currentPayees,
+                                onCreate: { name in
+                                    Task {
+                                        guard let token = auth.token else { return }
+                                        if let created = try? await PayeeService.shared.createPayee(
+                                            ledgerID: ledger.id,
+                                            name: name,
+                                            token: token
+                                        ) {
+                                            currentPayees.append(created)
+                                            currentPayees.sort { $0.name < $1.name }
+                                            selectedPayee = created
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -497,7 +544,7 @@ struct PostTransactionView: View {
             Button {
                 Task {
                     guard let token = auth.token else { return }
-                    await viewModel.submit(ledger: ledger, token: token)
+                    await viewModel.submit(ledger: ledger, payeeId: selectedPayee?.id,token: token)
                 }
             } label: {
                 if viewModel.isSubmitting {
@@ -920,3 +967,4 @@ private struct AccountPickerRow: View {
         }
     }
 }
+

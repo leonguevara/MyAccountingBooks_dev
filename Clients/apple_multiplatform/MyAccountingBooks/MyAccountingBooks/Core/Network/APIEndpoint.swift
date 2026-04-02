@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-10.
-//  Last modified by León Felipe Guevara Chávez on 2026-03-31.
+//  Last modified by León Felipe Guevara Chávez on 2026-04-02.
 //  Developed with AI assistance.
 //
 
@@ -179,6 +179,14 @@ enum APIEndpoint {
     ///
     /// - SeeAlso: ``CoaTemplateItem``
     case coaTemplates
+    
+    /// Lists all payees for a ledger.
+    /// **Path:** `GET /ledgers/{ledgerID}/payees`
+    case payees(ledgerID: UUID)
+
+    /// Creates a new payee.
+    /// **Path:** `POST /payees`
+    case createPayee
 
     // MARK: - URL Construction
     
@@ -221,6 +229,10 @@ enum APIEndpoint {
             return Self.baseURL.appendingPathComponent("coa-templates")
         case .register:
             return Self.baseURL.appendingPathComponent("auth/register")
+        case .payees(let id):
+            return Self.baseURL.appendingPathComponent("ledgers/\(id)/payees")
+        case .createPayee:
+            return Self.baseURL.appendingPathComponent("payees")
         }
     }
 }
