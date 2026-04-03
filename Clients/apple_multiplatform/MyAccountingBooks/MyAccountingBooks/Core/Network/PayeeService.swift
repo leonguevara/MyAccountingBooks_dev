@@ -9,13 +9,25 @@
 
 import Foundation
 
-/// Network service for payee operations.
+/// Networking layer for payee endpoints.
+///
+/// Wraps ``APIClient/request(_:method:body:token:)`` for the two payee routes.
+/// All calls require a valid bearer token.
+///
+/// - SeeAlso: ``PayeeResponse``, ``CreatePayeeRequest``, ``APIEndpoint/payees(ledgerID:)``
 final class PayeeService {
 
+    /// Shared singleton instance.
     static let shared = PayeeService()
     private init() {}
 
-    /// Fetches all active payees for the given ledger.
+    /// Fetches all active payees for the given ledger (`GET /ledgers/{ledgerID}/payees`).
+    ///
+    /// - Parameters:
+    ///   - ledgerID: UUID of the ledger whose payees are requested.
+    ///   - token: Bearer token for authentication.
+    /// - Returns: Array of ``PayeeResponse`` objects ordered by name; empty if none exist.
+    /// - Throws: ``APIError`` on network or HTTP failure.
     func fetchPayees(ledgerID: UUID, token: String) async throws -> [PayeeResponse] {
         try await APIClient.shared.request(
             .payees(ledgerID: ledgerID),
@@ -24,7 +36,15 @@ final class PayeeService {
         )
     }
 
-    /// Creates a new payee and returns the created record.
+    /// Creates a new payee in the given ledger (`POST /payees`).
+    ///
+    /// - Parameters:
+    ///   - ledgerID: UUID of the ledger the payee belongs to.
+    ///   - name: Display name of the payee; must be non-blank and unique within the ledger.
+    ///   - token: Bearer token for authentication.
+    /// - Returns: The created ``PayeeResponse``.
+    /// - Throws: ``APIError/conflict`` (HTTP 409) if the name already exists in the ledger;
+    ///   ``APIError`` for other network or HTTP failures.
     func createPayee(ledgerID: UUID, name: String, token: String) async throws -> PayeeResponse {
         let body = CreatePayeeRequest(ledgerId: ledgerID, name: name)
         return try await APIClient.shared.request(

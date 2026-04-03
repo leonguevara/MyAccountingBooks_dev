@@ -19,7 +19,7 @@
 //            - ledgerId, currencyCommodityId     — structural fields
 //            - isVoided                          — use void endpoint
 // ============================================================
-// Last edited: 2026-03-22
+// Last edited: 2026-04-02
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -31,52 +31,46 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Partial update request for a transaction header and its split memos/accounts.
- * <p>
- * Implements JSON Merge Patch semantics (RFC 7396): only non-null fields are updated.
- * All fields are optional — send only what you want to modify.
- * <p>
- * <b>Important constraints:</b>
+ * Request body for {@code PATCH /transactions/{id}}.
+ *
+ * <p>Implements JSON Merge Patch semantics (RFC 7396): only non-{@code null} fields are
+ * written; all others are left unchanged. The transaction must not be voided or deleted.</p>
+ *
+ * <p><strong>Not editable via this endpoint:</strong></p>
  * <ul>
- *   <li>Cannot modify amounts (value_num/value_denom) — use reverse + repost workflow instead</li>
- *   <li>Cannot change structural fields (ledgerId, currencyCommodityId)</li>
- *   <li>Cannot void/unvoid via this endpoint — use dedicated void operation</li>
- *   <li>All split updates are applied within a single database transaction</li>
+ *   <li>Amounts ({@code value_num} / {@code value_denom}) — use the reverse + repost workflow.</li>
+ *   <li>Structural fields ({@code ledgerId}, {@code currencyCommodityId}).</li>
+ *   <li>{@code isVoided} — use the dedicated {@code POST .../void} endpoint.</li>
  * </ul>
  *
- * @param memo      New transaction-level description. Null = no change.
- * @param num       New reference/check number. Null = no change.
- * @param postDate  New effective transaction date (ISO 8601 with timezone). Null = no change.
- * @param splits    List of per-split updates. Null or empty = no split changes.
- *                  Each entry must reference an existing split within the transaction.
+ * @param memo     new transaction-level description; {@code null} = no change
+ * @param num      new reference/check number; {@code null} = no change
+ * @param postDate new effective date (ISO 8601 with timezone); {@code null} = no change
+ * @param payeeId  new payee UUID; {@code null} = no change
+ * @param splits   per-split patches; {@code null} or empty = no split changes;
+ *                 each entry must reference an existing split within the transaction
  * @see PatchSplitRequest
+ * @see com.leonguevara.mab.mab_api.repository.TransactionRepository#update
  */
 public record PatchTransactionRequest(
         String         memo,
         String         num,
         OffsetDateTime postDate,
+        UUID           payeeId,
         List<PatchSplitRequest> splits
 ) {
     /**
      * Partial update for a single split line within a transaction.
-     * <p>
-     * Allows changing the split's memo and/or the account it posts to.
-     * The split must already exist and belong to the transaction being patched.
-     * <p>
-     * <b>Account change constraints:</b>
-     * <ul>
-     *   <li>Target account must exist and belong to the same ledger</li>
-     *   <li>Account must be active (not deleted)</li>
-     *   <li>Account must be non-placeholder (leaf nodes only)</li>
-     *   <li>Database RLS policies enforce ownership validation</li>
-     * </ul>
      *
-     * @param splitId   UUID of the existing split to update. <b>Required.</b>
-     *                  Must belong to the transaction referenced in the PATCH path.
-     * @param memo      New split-level memo/note. Null = no change.
-     * @param accountId UUID of the new account to assign this split to. Null = no change.
-     *                  When provided, must reference a valid, active, non-placeholder account
-     *                  within the same ledger as the transaction.
+     * <p>Only {@code memo} and {@code accountId} are patchable; amounts are immutable.
+     * The target account must be active, non-placeholder, and within the same ledger
+     * as the transaction (enforced by FK + CHECK constraints and RLS).</p>
+     *
+     * @param splitId   UUID of the split to update; required — entries with a {@code null}
+     *                  {@code splitId} are silently skipped by the repository
+     * @param memo      new split-level memo; {@code null} = no change
+     * @param accountId UUID of the replacement account; {@code null} = no change;
+     *                  must be active, non-placeholder, and in the same ledger
      */
     public record PatchSplitRequest(
             UUID   splitId,

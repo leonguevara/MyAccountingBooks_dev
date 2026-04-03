@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-16.
-//  Last modified by León Felie Guevara Chávez on 2026-03-30
+//  Last modified by León Felie Guevara Chávez on 2026-04-02
 //  Developed with AI assistance.
 //
 
@@ -129,7 +129,7 @@ struct AccountRegisterView: View {
     // MARK: - Body
 
     var body: some View {
-        /// Switches between loading indicator, empty state, and the populated register table.
+        // Switches between loading indicator, empty state, and the populated register table.
         Group {
             if viewModel.isLoading {
                 ProgressView("Loading register…")
@@ -538,67 +538,29 @@ private struct RegisterFooterRow: View {
 
 /// Sheet wrapper presenting the full details of a tapped register transaction.
 ///
-/// `TransactionDetailSheet` embeds `TransactionDetailView` inside a custom navigation
-/// bar and adds "Reverse", "Void", "Edit", and "Done" action buttons. It is presented by
-/// ``AccountRegisterView`` whenever the user taps a row in the register.
+/// Embeds `TransactionDetailView` inside a custom navigation bar with **Reverse**,
+/// **Void**, **Edit**, and **Done** buttons. Presented by ``AccountRegisterView``
+/// when the user taps any register row.
 ///
-/// The `accountPaths` dictionary is forwarded to `TransactionDetailView` so that raw
-/// `accountId` UUIDs on each split line are resolved to human-readable account names
-/// (e.g., `"Assets:Current Assets:Cash:Checking"`) rather than truncated UUID strings.
-///
-/// ## Features
-///
-/// - **Transaction viewing**: Complete transaction metadata with all split lines
-/// - **Transaction editing**: Edit button opens `EditTransactionView` for modifications
-/// - **Transaction reversing**: Reverse button creates a new mirror transaction (DEBIT↔CREDIT)
-/// - **Transaction voiding**: Void button marks the transaction as voided in-place
-/// - **Account resolution**: Uses `accountPaths` to display full hierarchical account names
-/// - **Voided transactions**: Hides Reverse/Void/Edit buttons for voided transactions (immutable)
-/// - **Auto-refresh**: Triggers register reload via `onTransactionUpdated` after any action
-///
-/// ## Contents
-///
-/// - Complete transaction metadata: posting date, reference number, memo, voided status.
-/// - All split lines with resolved account names, memos, and debit/credit amounts.
-/// - Debit and credit column totals with balance verification.
+/// `accountPaths` is forwarded to `TransactionDetailView` so raw `accountId` UUIDs
+/// on split lines are resolved to human-readable names (e.g.,
+/// `"Assets:Current Assets:Cash:Checking"`). `loadedPayees` is fetched on `.task`
+/// via ``PayeeService`` and forwarded for payee name display.
 ///
 /// ## Edit Flow
 ///
-/// When the user taps "Edit" (non-voided transactions only):
-/// 1. `EditTransactionView` sheet is presented
-/// 2. User modifies memo, number, date, or split properties
-/// 3. Changes are submitted via PATCH to `/transactions/{id}`
-/// 4. On success, `onTransactionUpdated` is called to refresh the register
-/// 5. Both edit and detail sheets dismiss automatically
+/// Tap "Edit" → `EditTransactionView` sheet → PATCH `/transactions/{id}` →
+/// `onTransactionUpdated()` reloads the register → both sheets dismiss.
 ///
 /// ## Void / Reverse Flow
 ///
-/// Both actions show a confirmation alert with an optional text field (reason / memo).
-/// On confirmation, the appropriate ``TransactionService`` method is called, the register
-/// is refreshed via `onTransactionUpdated`, and a `.transactionPosted` notification is
-/// posted so ``AccountTreeView`` can update balances.
+/// A confirmation alert with an optional text field (reason / memo) is shown.
+/// On confirmation, the appropriate ``TransactionService`` method is called,
+/// `onTransactionUpdated()` reloads the register, the sheet dismisses, and a
+/// `.transactionPosted` notification is posted so ``AccountTreeView`` updates balances.
 ///
-/// ## Usage
-///
-/// Presented automatically by ``AccountRegisterView``:
-/// ```swift
-/// .sheet(isPresented: $viewModel.showTransactionDetail) {
-///     if let tx = viewModel.selectedTransaction {
-///         TransactionDetailSheet(
-///             transaction: tx,
-///             ledger: ledger,
-///             accountPaths: accountPaths,
-///             allAccounts: allAccountRoots,
-///             onTransactionUpdated: { await reloadRegister() }
-///         )
-///     }
-/// }
-/// ```
-///
-/// - Note: The sheet enforces a minimum frame of 600 × 480 pt to ensure all columns
-///   and metadata are readable without truncation.
-/// - Important: Voided transactions cannot be edited, reversed, or voided again;
-///   all action buttons are hidden when `transaction.isVoided` is `true`.
+/// - Note: Minimum frame 600 × 480 pt. All action buttons are hidden when
+///   `transaction.isVoided` is `true` — voided transactions are immutable.
 /// - SeeAlso: `TransactionDetailView`, `EditTransactionView`, ``AccountRegisterView``,
 ///   ``TransactionService``
 struct TransactionDetailSheet: View {
@@ -621,10 +583,12 @@ struct TransactionDetailSheet: View {
     /// split assignments.
     var allAccounts: [AccountNode] = []
     
-    // Add property
+    /// Pre-loaded payee list; currently unused (payees are loaded in `.task` via ``PayeeService``).
     var payees: [PayeeResponse] = []
-    
-    // Add state for loaded payees
+
+    /// Payees fetched on `.task` and forwarded to `TransactionDetailView` for name display.
+    ///
+    /// Populated by ``PayeeService/fetchPayees(ledgerID:token:)``; empty until the fetch completes.
     @State private var loadedPayees: [PayeeResponse] = []
 
     /// Async closure invoked after a successful edit, void, or reverse action.

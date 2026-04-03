@@ -28,7 +28,7 @@
 //
 //          5. TenantContext scopes all queries via RLS.
 // ============================================================
-// Last edited: 2026-03-22
+// Last edited: 2026-04-02
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -60,25 +60,50 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Data-access layer for all transaction operations.
+ *
+ * <p>Write operations ({@link #post}, {@link #reverse}, {@link #void_}) delegate to
+ * PostgreSQL stored functions ({@code mab_post_transaction}, {@code mab_reverse_transaction},
+ * {@code mab_void_transaction}) which enforce double-entry invariants. After each function
+ * returns a transaction UUID, a second query reads the full header + splits back — keeping
+ * DB functions focused on writing and this class focused on reading.</p>
+ *
+ * <p>The partial-update operation ({@link #update}) applies changes directly via dynamic
+ * {@code UPDATE} statements using JSON Merge Patch semantics — no stored function is involved.</p>
+ *
+ * <p>Every method wraps its SQL in {@link TenantContext#withOwner} so that
+ * {@code SET LOCAL app.current_owner_id} is issued before any query, activating
+ * PostgreSQL Row-Level Security and scoping all results to the authenticated owner.</p>
+ *
+ * <p>Split lines are serialized to JSONB using Jackson {@link ObjectMapper} —
+ * no string concatenation. See {@link #buildSplitsJson} for the expected field names.</p>
+ *
+ * @see TenantContext
+ * @see TransactionResponse
+ * @see PostTransactionRequest
+ */
 @Repository
 public class TransactionRepository {
 
-    // JDBC template for named-parameter SQL execution.
+    /** {@link NamedParameterJdbcTemplate} used for all parameterised SQL execution. */
     private final NamedParameterJdbcTemplate jdbc;
 
-    // Transaction template for TenantContext scoping.
+    /** {@link TransactionTemplate} passed to {@link TenantContext#withOwner} to scope each operation. */
     private final TransactionTemplate tx;
 
-    // Jackson ObjectMapper for building the splits JSONB array.
-    // Declared as a field to avoid re-instantiation on every call.
+    /**
+     * Jackson mapper for building the splits JSONB array in {@link #buildSplitsJson}.
+     * Declared as a field to avoid re-instantiation on every call.
+     */
     private final ObjectMapper objectMapper;
 
     /**
-     * Constructor injection of all dependencies.
+     * Constructs the repository with its required dependencies.
      *
-     * @param jdbc         JDBC template bean (from DataSourceConfig).
-     * @param tx           Transaction template bean (from DataSourceConfig).
-     * @param objectMapper Jackson JSON serializer (autoconfigured by Spring Boot).
+     * @param jdbc         named-parameter JDBC template bean
+     * @param tx           transaction template bean for {@link TenantContext#withOwner} wrapping
+     * @param objectMapper Jackson serializer (autoconfigured by Spring Boot)
      */
     public TransactionRepository(NamedParameterJdbcTemplate jdbc,
                                  TransactionTemplate tx,
@@ -88,10 +113,12 @@ public class TransactionRepository {
         this.objectMapper = objectMapper;
     }
 
-    // ── RowMapper for split lines ─────────────────────────────────────────────
-    // Maps one row from the split table to a SplitResponse record.
-    // It seems that parameter rowNum is never used, so I'm replacing it with the
-    // underscore character.
+    /**
+     * Maps one {@code split} result-set row to a {@link TransactionResponse.SplitResponse}.
+     *
+     * <p>Reads {@code id}, {@code transaction_id}, {@code account_id}, {@code side},
+     * {@code value_num}, {@code value_denom}, and {@code memo} columns.</p>
+     */
     private static final RowMapper<TransactionResponse.SplitResponse> SPLIT_MAPPER =
             (rs, _) -> new TransactionResponse.SplitResponse(
                     rs.getObject("id",         UUID.class),
@@ -104,21 +131,20 @@ public class TransactionRepository {
             );
 
     /**
-     * Posts a double-entry transaction by calling mab_post_transaction().
-     * <p>
-     * Flow:
-     *   1. Serialize the splits list to a JSONB string using Jackson.
-     *   2. Call mab_post_transaction() — returns the new transaction UUID.
-     *   3. Fetch the transaction header row using the returned UUID.
-     *   4. Fetch all split rows for the transaction.
-     *   5. Assemble and return a TransactionResponse.
-     * <p>
-     * All steps run inside a single TenantContext transaction block,
-     * so SET LOCAL app.current_owner_id is active for all queries.
+     * Posts a double-entry transaction by calling {@code mab_post_transaction()}.
      *
-     * @param  ownerID  The authenticated owner's UUID (from JWT).
-     * @param  request  The validated PostTransactionRequest from the controller.
-     * @return          The fully assembled TransactionResponse.
+     * <ol>
+     *   <li>Serialize the splits list to a JSONB string via {@link #buildSplitsJson}.</li>
+     *   <li>Call {@code mab_post_transaction()} — returns the new transaction UUID.</li>
+     *   <li>Fetch the full header + splits via {@link #fetchTransaction}.</li>
+     * </ol>
+     *
+     * <p>All steps run inside a single {@link TenantContext#withOwner} block so
+     * {@code SET LOCAL app.current_owner_id} is active for every query.</p>
+     *
+     * @param ownerID the authenticated owner's UUID (from JWT)
+     * @param request the validated {@link PostTransactionRequest} from the controller
+     * @return the fully assembled {@link TransactionResponse}
      * @throws ApiException HTTP 400 if the DB function rejects the transaction
      *                      (unbalanced splits, wrong ledger, placeholder account, etc.)
      */
@@ -175,90 +201,31 @@ public class TransactionRepository {
             }
 
             return fetchTransaction(template, txId);
-
-            // ── Step 3: Fetch the transaction header ─────────────────────────
-            /*String txSql = """
-                    SELECT id, ledger_id, currency_commodity_id,
-                           post_date, enter_date, memo, num, is_voided
-                      FROM public.transaction
-                     WHERE id = :txId
-                    """;
-
-            MapSqlParameterSource txParams =
-                    new MapSqlParameterSource("txId", txId);*/
-
-            // queryForObject: safe here — we just created this exact row.
-            // It seems that patameer rn is never used, so I'm replacing it with the
-            // underscore character.
-            /*TransactionResponse header = template.queryForObject(txSql, txParams,
-                    (rs, _) -> new TransactionResponse(
-                            rs.getObject("id",                   UUID.class),
-                            rs.getObject("ledger_id",            UUID.class),
-                            rs.getObject("currency_commodity_id",UUID.class),
-                            // getTimestamp().toInstant() converts to OffsetDateTime.
-                            rs.getTimestamp("post_date")
-                                    .toInstant()
-                                    .atOffset(java.time.ZoneOffset.UTC),
-                            rs.getTimestamp("enter_date")
-                                    .toInstant()
-                                    .atOffset(java.time.ZoneOffset.UTC),
-                            rs.getString("memo"),
-                            rs.getString("num"),
-                            rs.getBoolean("is_voided"),
-                            List.of() // splits populated in step 4
-                    ));*/
-
-            // ── Step 4: Fetch the split lines ────────────────────────────────
-            /*String splitSql = """
-                    SELECT id, account_id, side, value_num, value_denom, memo
-                      FROM public.split
-                     WHERE transaction_id = :txId
-                       AND deleted_at     IS NULL
-                     ORDER BY side ASC, id ASC
-                    """;
-
-            List<TransactionResponse.SplitResponse> splits =
-                    template.query(splitSql, txParams, SPLIT_MAPPER);*/
-
-            // ── Step 5: Assemble final response ──────────────────────────────
-            // Records are immutable — create a new instance with the splits.
-            /*assert header != null;  // To avoid the NullPointerException.
-            return new TransactionResponse(
-                    header.id(),
-                    header.ledgerId(),
-                    header.currencyCommodityId(),
-                    header.postDate(),
-                    header.enterDate(),
-                    header.memo(),
-                    header.num(),
-                    header.isVoided(),
-                    splits
-            );*/
         });
     }
 
     /**
-     * Reverses a transaction by calling mab_reverse_transaction().
-     * <p>
-     * Flow:
-     *   1. Verify the target transaction belongs to this owner (via RLS check).
-     *   2. Call mab_reverse_transaction() — returns the new reversal tx UUID.
-     *   3. Fetch the new reversal transaction header plus splits.
-     *   4. Return a full TransactionResponse for the reversal transaction.
-     * <p>
-     * DB guards (enforced inside the function):
-     *   - Transaction must exist and not be deleted.
-     *   - Transaction must not be voided.
-     *   - Transaction must not have been reversed yet.
-     *     (reversed_by_tx_id IS NULL).
+     * Reverses a transaction by calling {@code mab_reverse_transaction()}.
      *
-     * @param  ownerID  The authenticated owner's UUID (from JWT).
-     * @param  txId     The UUID of the transaction to reverse (from URL path).
-     * @param  request  Optional dates and memo for the reversal.
-     * @return          TransactionResponse for the new reversal transaction.
-     * @throws ApiException HTTP 404 if the transaction doesn't exist or
-     *                      doesn't belong to this owner.
-     * @throws ApiException HTTP 400 if DB guards reject the reversal.
+     * <ol>
+     *   <li>Verify ownership via {@link #verifyTransactionOwnership}.</li>
+     *   <li>Call {@code mab_reverse_transaction()} — returns the new reversal UUID.</li>
+     *   <li>Fetch and return the reversal transaction via {@link #fetchTransaction}.</li>
+     * </ol>
+     *
+     * <p>DB guards enforced inside the function:</p>
+     * <ul>
+     *   <li>Transaction must exist and not be deleted.</li>
+     *   <li>Transaction must not be voided.</li>
+     *   <li>Transaction must not have been reversed yet ({@code reversed_by_tx_id IS NULL}).</li>
+     * </ul>
+     *
+     * @param ownerID the authenticated owner's UUID (from JWT)
+     * @param txId    UUID of the transaction to reverse (from URL path)
+     * @param request optional post date, enter date, and memo for the reversal entry
+     * @return {@link TransactionResponse} for the newly created reversal transaction
+     * @throws ApiException HTTP 404 if the transaction does not exist or is not owned by this owner
+     * @throws ApiException HTTP 400 if DB guards reject the reversal
      */
     public TransactionResponse reverse(UUID ownerID,
                                        UUID txId,
@@ -302,28 +269,30 @@ public class TransactionRepository {
     }
 
     /**
-     * Voids a transaction by calling mab_void_transaction().
-     * <p>
-     * Voiding does NOT create a new transaction — it marks the existing
-     * transaction as voided in-place (is_voided=true, voided_at=now()).
-     * The memo is updated with "[VOID: reason]" if a reason is provided.
-     * <p>
-     * Flow:
-     *   1. Verify ownership via RLS-scoped count check.
-     *   2. Call mab_void_transaction() — returns void.
-     *   3. Fetch the updated transaction plus splits and return them.
-     * <p>
-     * DB guards:
-     *   - Transaction must exist.
-     *   - Transaction must not already be voided.
+     * Voids a transaction by calling {@code mab_void_transaction()}.
      *
-     * @param  ownerID  The authenticated owner's UUID (from JWT).
-     * @param  txId     The UUID of the transaction to void (from URL path).
-     * @param  request  Optional reason string.
-     * @return          TransactionResponse reflecting the voided state
-     *                  (isVoided will be true).
-     * @throws ApiException HTTP 404 if transaction not found or not owned.
-     * @throws ApiException HTTP 400 if the transaction is already voided.
+     * <p>Voiding does <em>not</em> create a new transaction — it marks the existing one
+     * in-place ({@code is_voided = true}, {@code voided_at = now()}). If a reason is
+     * provided the memo is prefixed with {@code [VOID: reason]}.</p>
+     *
+     * <ol>
+     *   <li>Verify ownership via {@link #verifyTransactionOwnership}.</li>
+     *   <li>Call {@code mab_void_transaction()} — returns {@code void}.</li>
+     *   <li>Fetch and return the updated transaction via {@link #fetchTransaction}.</li>
+     * </ol>
+     *
+     * <p>DB guards enforced inside the function:</p>
+     * <ul>
+     *   <li>Transaction must exist and not be deleted.</li>
+     *   <li>Transaction must not already be voided.</li>
+     * </ul>
+     *
+     * @param ownerID the authenticated owner's UUID (from JWT)
+     * @param txId    UUID of the transaction to void (from URL path)
+     * @param request optional reason string appended to the memo
+     * @return {@link TransactionResponse} reflecting the voided state ({@code isVoided = true})
+     * @throws ApiException HTTP 404 if the transaction is not found or not owned by this owner
+     * @throws ApiException HTTP 400 if the transaction is already voided
      */
     public TransactionResponse void_(UUID ownerID,
                                      UUID txId,
@@ -361,15 +330,19 @@ public class TransactionRepository {
 
         // ── Fetch transactions by ledger ─────────────────────────────────────────
 
-        /**
-         * Fetches all non-deleted transactions for a ledger with their splits.
-         * Wrapped in TenantContext so RLS is active for all queries.
-         *
-         * @param ownerID  The authenticated owner UUID (from JWT via service).
-         * @param ledgerId The ledger to fetch transactions for.
-         * @return         List of TransactionResponse with nested splits,
-         *                 ordered by post_date DESC.
-         */
+    /**
+     * Fetches all non-deleted transactions for a ledger together with their splits.
+     *
+     * <p>Uses a two-query strategy: one query loads all transaction headers, a second
+     * fetches all splits for those transactions in one round-trip ({@code ANY(:txIds)}),
+     * then splits are grouped and attached in memory. Returns an empty list when the
+     * ledger has no transactions.</p>
+     *
+     * @param ownerID  the authenticated owner's UUID (from JWT)
+     * @param ledgerId UUID of the ledger whose transactions are requested
+     * @return list of {@link TransactionResponse} with nested splits,
+     *         ordered by {@code post_date DESC, enter_date DESC}
+     */
         public List<TransactionResponse> findByLedgerId(UUID ownerID, UUID ledgerId) {
 
         return TenantContext.withOwner(ownerID, jdbc, tx, template -> {
@@ -385,7 +358,7 @@ public class TransactionRepository {
                         t.memo,
                         t.num,
                         t.is_voided,
-                        t.payee_id,
+                        t.payee_id
                         FROM public.transaction t
                         WHERE t.ledger_id  = :ledgerId
                         AND t.deleted_at IS NULL
@@ -458,15 +431,15 @@ public class TransactionRepository {
     // ── Shared private helpers ────────────────────────────────────────────────
 
     /**
-     * Verifies a transaction exists and belongs to the current RLS owner.
-     * <p>
-     * Joins transaction → ledger, which is RLS-protected.
-     * If the transaction belongs to a different owner, the JOIN
-     * returns zero rows → ApiException 404.
+     * Verifies that a transaction exists and belongs to the authenticated owner.
      *
-     * @param  template The JDBC template (already inside TenantContext).
-     * @param  txId     The transaction UUID to check.
-     * @throws ApiException HTTP 404 if not found or not owned.
+     * <p>Joins {@code transaction} to {@code ledger}; RLS hides ledger rows belonging
+     * to other owners, so the {@code COUNT} returns 0 for foreign transaction IDs,
+     * producing HTTP 404.</p>
+     *
+     * @param template the JDBC template already scoped inside {@link TenantContext#withOwner}
+     * @param txId     UUID of the transaction to check
+     * @throws ApiException HTTP 404 if the transaction is not found or not owned by the current owner
      */
     private void verifyTransactionOwnership(
             NamedParameterJdbcTemplate template, UUID txId) {
@@ -492,14 +465,14 @@ public class TransactionRepository {
     }
 
     /**
-     * Fetches a complete TransactionResponse for a given transaction UUID.
-     * <p>
-     * Reused by post(), reverse(), and void_() to avoid duplicating
-     * the header plus splits fetch logic.
+     * Fetches the complete {@link TransactionResponse} for a single transaction UUID.
      *
-     * @param  template The JDBC template (already inside TenantContext).
-     * @param  txId     The transaction UUID to fetch.
-     * @return          The fully assembled TransactionResponse.
+     * <p>Shared by {@link #post}, {@link #reverse}, {@link #void_}, and {@link #update}
+     * to avoid duplicating the two-query header + splits pattern.</p>
+     *
+     * @param template the JDBC template already scoped inside {@link TenantContext#withOwner}
+     * @param txId     UUID of the transaction to fetch
+     * @return the fully assembled {@link TransactionResponse} with all split lines attached
      */
     @SuppressWarnings("null")
     private TransactionResponse fetchTransaction(
@@ -564,11 +537,13 @@ public class TransactionRepository {
     // ── Private helpers ───────────────────────────────────────────────────────
 
     /**
-     * Serializes a list of SplitRequest objects into a JSONB-compatible
-     * JSON string for passing to mab_post_transaction().
-     * <p>
-     * Output format matches the jsonb_to_recordset() field names
-     * exactly as expected by the PostgreSQL function:
+     * Serializes a list of {@link PostTransactionRequest.SplitRequest} objects into a
+     * JSONB-compatible JSON string for passing to {@code mab_post_transaction()}.
+     *
+     * <p>Field names are {@code snake_case} to match the {@code jsonb_to_recordset()}
+     * declaration inside the PostgreSQL function:</p>
+     *
+     * <pre>{@code
      * [
      *   {
      *     "account_id":     "uuid-string",
@@ -579,16 +554,13 @@ public class TransactionRepository {
      *     "quantity_denom": 100,
      *     "memo":           "optional",
      *     "action":         null
-     *   },
-     *   ...
+     *   }
      * ]
-     * <p>
-     * Note: field names are snake_case to match the PostgreSQL
-     * jsonb_to_recordset() field declaration in the function.
+     * }</pre>
      *
-     * @param  splits The list of SplitRequest records from the HTTP request.
-     * @return        A JSON array string suitable for casting to ::jsonb.
-     * @throws ApiException HTTP 500 if JSON serialization fails (should never happen).
+     * @param splits the split lines from the HTTP request
+     * @return a compact JSON array string suitable for casting to {@code ::jsonb}
+     * @throws ApiException HTTP 500 if Jackson serialization fails (should not occur in practice)
      */
     private String buildSplitsJson(
             List<PostTransactionRequest.SplitRequest> splits) {
@@ -638,38 +610,37 @@ public class TransactionRepository {
     // ── PATCH transaction ────────────────────────────────────────────────────────
 
     /**
-     * Applies a partial update to a transaction header and/or its split lines.
-     * <p>
-     * Implements JSON Merge Patch semantics (RFC 7396) — only non-null fields
-     * are updated. All fields in the request are optional.
-     * <p>
-     * Flow:
-     *   1. Verify ownership via RLS-scoped check.
-     *   2. Update transaction header fields (memo, num, postDate) if provided.
-     *   3. Update individual split fields (memo, accountId) per splitId.
-     *   4. Fetch and return the complete updated transaction with all splits.
-     * <p>
-     * All updates execute within a single TenantContext transaction,
-     * so either all changes succeed or none are applied.
-     * <p>
-     * <b>Important constraints:</b>
+     * Applies a partial update to a transaction header and/or its split lines
+     * using JSON Merge Patch semantics (RFC 7396) — only non-{@code null} fields
+     * in the request are written; all others are left unchanged.
+     *
+     * <ol>
+     *   <li>Verify ownership via {@link #verifyTransactionOwnership}.</li>
+     *   <li>Dynamically build and execute a header {@code UPDATE} for any of
+     *       {@code memo}, {@code num}, {@code postDate}, {@code payeeId} that are non-{@code null}.</li>
+     *   <li>For each entry in {@code request.splits()}, build and execute a split
+     *       {@code UPDATE} for {@code memo} and/or {@code accountId} if non-{@code null}.</li>
+     *   <li>Fetch and return the complete updated transaction via {@link #fetchTransaction}.</li>
+     * </ol>
+     *
+     * <p>All steps execute within a single {@link TenantContext#withOwner} block —
+     * either all changes succeed or none are applied.</p>
+     *
+     * <p><strong>Constraints:</strong></p>
      * <ul>
-     *   <li>Transaction must not be voided (is_voided=false)</li>
-     *   <li>Transaction must not be deleted</li>
-     *   <li>Split accountId changes must reference valid, active, non-placeholder
-     *       accounts within the same ledger (enforced by foreign key + CHECK constraints)</li>
-     *   <li>Cannot modify amounts — use reverse + repost workflow instead</li>
-     *   <li>Increments revision and updates updated_at for each modified row</li>
+     *   <li>Transaction must not be voided ({@code is_voided = false}) or deleted.</li>
+     *   <li>Split {@code accountId} changes must reference valid, active, non-placeholder
+     *       accounts within the same ledger (enforced by FK + CHECK constraints).</li>
+     *   <li>Amounts cannot be modified — use the reverse + repost workflow instead.</li>
+     *   <li>Each modified row has its {@code revision} incremented and {@code updated_at} refreshed.</li>
      * </ul>
      *
-     * @param  ownerID  The authenticated owner's UUID (from JWT).
-     * @param  txId     UUID of the transaction to update (from URL path).
-     * @param  request  Partial update request — null fields are skipped.
-     *                  See {@link PatchTransactionRequest} for field details.
-     * @return          The fully updated TransactionResponse reflecting all changes.
-     * @throws ApiException HTTP 404 if transaction not found or not owned by this owner.
+     * @param ownerID the authenticated owner's UUID (from JWT)
+     * @param txId    UUID of the transaction to update (from URL path)
+     * @param request partial update payload — {@code null} fields are skipped
+     * @return the fully updated {@link TransactionResponse} reflecting all changes
+     * @throws ApiException HTTP 404 if the transaction is not found or not owned by this owner
      * @throws ApiException HTTP 400 if DB constraints reject the update
-     *                      (e.g., invalid accountId, voided transaction, etc.)
      * @see PatchTransactionRequest
      */
     public TransactionResponse update(UUID ownerID,
@@ -699,6 +670,10 @@ public class TransactionRepository {
                 setClauses.add("post_date = :postDate");
                 headerParams.addValue("postDate",
                         Timestamp.from(request.postDate().toInstant()));
+            }
+            if (request.payeeId() != null) {
+                setClauses.add("payee_id = :payeeId");
+                headerParams.addValue("payeeId", request.payeeId());
             }
 
             if (!setClauses.isEmpty()) {

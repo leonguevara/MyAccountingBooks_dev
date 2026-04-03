@@ -4,18 +4,30 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-04-02.
-//  Last modified by León Felipe Guevara Chávez on 2026-04-02.
 //
 
 import SwiftUI
 
+/// Expandable payee picker with inline search and a "New Payee…" creation row.
+///
+/// Renders as a compact button showing the selected payee name (or a placeholder). When
+/// expanded, displays a search field and a scrollable list of matching ``PayeeResponse``
+/// values. Typing a name and tapping "New Payee…" calls `onCreate` with the trimmed text;
+/// the caller is responsible for creating the payee and updating `payees`.
+///
+/// - SeeAlso: ``PayeeResponse``, ``PostTransactionView``, ``EditTransactionView``
 struct PayeePickerButton: View {
 
+    /// The currently selected payee; `nil` when no payee is chosen.
     @Binding var selectedPayee: PayeeResponse?
+    /// Full list of payees available for selection, pre-sorted by name.
     let payees: [PayeeResponse]
+    /// Called with the trimmed search text when the user taps "New Payee…"; no-op if text is empty.
     let onCreate: (String) -> Void
 
+    /// Whether the dropdown is currently expanded.
     @State private var isExpanded = false
+    /// Current search query; cleared each time the picker opens.
     @State private var searchText = ""
 
     var body: some View {
@@ -110,6 +122,7 @@ struct PayeePickerButton: View {
         }
     }
 
+    /// Case-insensitive name filter; returns all payees when the query is empty.
     private var filteredPayees: [PayeeResponse] {
         let q = searchText.trimmingCharacters(in: .whitespaces).lowercased()
         guard !q.isEmpty else { return payees }

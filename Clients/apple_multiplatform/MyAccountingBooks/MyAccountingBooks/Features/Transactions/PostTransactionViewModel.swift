@@ -10,121 +10,59 @@
 
 import Foundation
 
-/// View model managing the Post Transaction form state, validation, request mapping, and submission.
+/// Manages form state, balance validation, and submission for the Post Transaction sheet.
 ///
-/// `PostTransactionViewModel` is decorated with `@Observable` and orchestrates the complete
-/// transaction posting workflow, handling:
-/// - Form data management (date, memo, reference number, and split lines)
-/// - Real-time balance calculation and validation
-/// - User interaction handling (editing amounts, selecting accounts)
-/// - Mapping from form state to ``PostTransactionRequest`` / ``SplitRequest`` objects
-/// - Asynchronous submission via ``PostTransactionService``
-/// - Posting `.transactionPosted` notifications so observers (e.g. ``AccountTreeView``)
-///   can refresh balances immediately after a successful post
+/// Maintains the split line array, computes ``totalDebits``, ``totalCredits``, ``imbalance``,
+/// and ``isBalanced`` in real time. ``canSubmit`` gates the Post button (balanced, all splits
+/// complete, not already submitting). ``submit(ledger:payeeId:token:)`` maps form state to a
+/// ``PostTransactionRequest`` using rational-number encoding and posts `.transactionPosted`
+/// on success so observers such as ``AccountTreeView`` can reload balances immediately.
 ///
-/// ## Double-Entry Bookkeeping Rules
-///
-/// The view model enforces standard accounting principles:
-/// - Minimum of 2 split lines required
-/// - Each split must have either a debit **or** credit amount (mutually exclusive)
-/// - Total debits must equal total credits before submission
-/// - All splits must have an assigned account and a non-zero amount
-///
-/// ## Usage Example
-///
-/// ```swift
-/// @State private var viewModel = PostTransactionViewModel()
-///
-/// // In your submit action:
-/// await viewModel.submit(ledger: selectedLedger, token: authToken)
-///
-/// // Check for success:
-/// if viewModel.didPost {
-///     // Transaction posted successfully
-/// }
-/// ```
-///
-/// - Note: Decorated with `@Observable` (macOS 14+) for SwiftUI integration.
 /// - SeeAlso: ``PostTransactionView``, ``PostTransactionService``, ``SplitLine``
 @Observable
 final class PostTransactionViewModel {
 
     // MARK: - Form State
 
-    /// The date on which the transaction is posted.
-    ///
-    /// This represents the effective date of the transaction in the ledger.
-    /// Defaults to the current date when the form is initialized.
+    /// Effective (accounting) date of the transaction; defaults to now.
     var postDate: Date = .now
 
-    /// An optional memo (description) for the entire transaction.
-    ///
-    /// This field provides context about the transaction as a whole,
-    /// separate from individual split memos. If empty, it will be sent as `nil` to the backend.
+    /// Transaction-level memo; empty string is sent as `nil` to the backend.
     var memo: String = ""
 
-    /// An optional transaction number or reference identifier.
-    ///
-    /// Commonly used for check numbers, invoice numbers, or other reference codes.
-    /// If empty, it will be sent as `nil` to the backend.
+    /// Reference or check number; empty string is sent as `nil` to the backend.
     var num: String = ""
 
-    /// Array of split lines representing the debit and credit entries of the transaction.
-    ///
-    /// Each split line contains an account, memo, and either a debit or credit amount.
-    /// The transaction always starts with 2 empty split lines and requires a minimum of 2 lines.
-    /// Users can add additional lines as needed for complex multi-split transactions.
+    /// Split lines for the transaction; initialized with two empty lines (minimum required).
     var splits: [SplitLine] = [SplitLine(), SplitLine()]
 
     // MARK: - UI State
 
-    /// Indicates whether the transaction submission process is currently in progress.
-    ///
-    /// When `true`, the submit button should show a loading indicator and be disabled
-    /// to prevent duplicate submissions.
+    /// `true` while a submission is in progress; used to show a spinner and block duplicate taps.
     var isSubmitting = false
 
-    /// Stores an error message to display to the user if submission fails.
-    ///
-    /// This will be `nil` when there's no error, or contain a localized error description
-    /// when a submission failure occurs (network error, validation error, server error, etc.).
+    /// Localized error message set on submission failure; `nil` when no error is present.
     var errorMessage: String?
 
-    /// Flag indicating whether the transaction was successfully posted to the backend.
-    ///
-    /// When this becomes `true`, the view should trigger the `onSuccess` callback and dismiss.
-    /// This property is observed by the view to coordinate post-submission actions.
+    /// Set to `true` on successful post; observed by the view to invoke `onSuccess` and dismiss.
     var didPost = false
 
     // MARK: - Account Search
 
-    /// Maps split line IDs to their current account search text inputs.
-    ///
-    /// This dictionary maintains the search state for each split line's account picker,
-    /// allowing independent search filtering for multiple account pickers.
+    /// Per-split search text for account pickers; keyed by ``SplitLine`` `id`.
     var accountSearchTexts: [UUID: String] = [:]
 
-    /// The ID of the split line currently displaying its account picker dropdown.
-    ///
-    /// Only one account picker can be shown at a time. When set to a split line ID,
-    /// that line's picker is expanded; when `nil`, all pickers are collapsed.
+    /// ID of the split whose account picker is currently expanded; `nil` collapses all pickers.
     var showAccountPicker: UUID? = nil
 
     // MARK: - Dependencies
 
-    /// Service dependency responsible for performing the network POST request to create the transaction.
-    ///
-    /// This singleton service handles authentication, request formatting, and response parsing.
+    /// Service used to POST the transaction to the backend.
     private let service = PostTransactionService.shared
 
     // MARK: - Computed Properties
 
-    /// The total debit amount summed across all split lines.
-    ///
-    /// Iterates through all splits, parsing valid decimal values from the `debitAmount` strings.
-    /// Invalid or empty debit amounts are treated as zero and excluded from the sum.
-    ///
-    /// - Returns: The sum of all positive debit amounts as a `Decimal`.
+    /// Sum of all positive debit amounts across `splits`; invalid or empty strings contribute zero.
     var totalDebits: Decimal {
         splits.reduce(.zero) { sum, line in
             guard let d = Decimal(string: line.debitAmount), d > .zero else { return sum }
@@ -132,12 +70,7 @@ final class PostTransactionViewModel {
         }
     }
 
-    /// The total credit amount summed across all split lines.
-    ///
-    /// Iterates through all splits, parsing valid decimal values from the `creditAmount` strings.
-    /// Invalid or empty credit amounts are treated as zero and excluded from the sum.
-    ///
-    /// - Returns: The sum of all positive credit amounts as a `Decimal`.
+    /// Sum of all positive credit amounts across `splits`; invalid or empty strings contribute zero.
     var totalCredits: Decimal {
         splits.reduce(.zero) { sum, line in
             guard let c = Decimal(string: line.creditAmount), c > .zero else { return sum }
@@ -145,101 +78,59 @@ final class PostTransactionViewModel {
         }
     }
 
-    /// Indicates whether the transaction is balanced according to double-entry bookkeeping rules.
-    ///
-    /// A transaction is considered balanced when:
-    /// - Total debits equal total credits exactly
-    /// - Both totals are greater than zero
-    ///
-    /// This is a fundamental requirement for valid double-entry accounting transactions.
-    ///
-    /// - Returns: `true` if the transaction is properly balanced, `false` otherwise.
+    /// `true` when `totalDebits == totalCredits > 0`; required before the Post button is enabled.
     var isBalanced: Bool {
         totalDebits > .zero && totalDebits == totalCredits
     }
 
-    /// The difference between total debits and total credits.
-    ///
-    /// - A positive value indicates excess debits (need more credits to balance)
-    /// - A negative value indicates excess credits (need more debits to balance)
-    /// - Zero indicates a balanced transaction
-    ///
-    /// This value is used to display the imbalance amount in the UI and by the auto-balance feature.
-    ///
-    /// - Returns: The imbalance as a `Decimal` (debits minus credits).
+    /// `totalDebits − totalCredits`; positive = excess debits, negative = excess credits, zero = balanced.
     var imbalance: Decimal {
         totalDebits - totalCredits
     }
 
-    /// Indicates whether the form is valid and ready to submit.
-    ///
-    /// Submission is enabled when ALL of the following conditions are met:
-    /// - The transaction is balanced (`isBalanced` is `true`)
-    /// - All split lines are complete (have an account and non-zero amount)
-    /// - No submission is currently in progress (`isSubmitting` is `false`)
-    ///
-    /// This property is used to enable/disable the submit button in the UI.
-    ///
-    /// - Returns: `true` if the transaction can be submitted, `false` otherwise.
+    /// `true` when `isBalanced`, all splits satisfy `isComplete`, and `isSubmitting` is `false`.
     var canSubmit: Bool {
         isBalanced && splits.allSatisfy { $0.isComplete } && !isSubmitting
     }
 
     // MARK: - Split Management
 
-    /// Adds a new blank split line to the transaction.
-    ///
-    /// The new split line is initialized with empty values and appended to the end
-    /// of the splits array. Users can then populate it with an account and amount.
+    /// Appends a new blank ``SplitLine`` to `splits`.
     func addSplitLine() {
         splits.append(SplitLine())
     }
 
-    /// Removes a split line from the transaction by its unique identifier.
+    /// Removes the ``SplitLine`` with the given `id`; no-op when only 2 splits remain.
     ///
-    /// Enforces a minimum of 2 split lines. If only 2 splits remain, the removal
-    /// request is silently ignored to prevent an invalid single-sided transaction.
-    ///
-    /// - Parameter id: The `UUID` of the ``SplitLine`` to remove.
+    /// - Parameter id: UUID of the split to remove.
     func removeSplitLine(id: UUID) {
         guard splits.count > 2 else { return }  // minimum 2 splits
         splits.removeAll { $0.id == id }
     }
 
-    /// Enforces debit/credit mutual exclusivity when the debit field of a split is edited.
+    /// Clears `creditAmount` on the matching split to enforce debit/credit mutual exclusivity.
     ///
-    /// Clears `creditAmount` on the matching ``SplitLine`` so that a split cannot carry
-    /// both a debit and a credit value simultaneously. Called by ``PostTransactionView``
-    /// via the `onDebitEdited` callback whenever the debit `TextField` changes.
-    ///
-    /// - Parameter id: The `UUID` of the ``SplitLine`` whose debit field was edited.
+    /// - Parameter id: UUID of the split whose debit field changed.
     func didEditDebit(for id: UUID) {
         if let idx = splits.firstIndex(where: { $0.id == id }) {
             splits[idx].creditAmount = ""
         }
     }
 
-    /// Enforces debit/credit mutual exclusivity when the credit field of a split is edited.
+    /// Clears `debitAmount` on the matching split to enforce debit/credit mutual exclusivity.
     ///
-    /// Clears `debitAmount` on the matching ``SplitLine`` so that a split cannot carry
-    /// both a debit and a credit value simultaneously. Called by ``PostTransactionView``
-    /// via the `onCreditEdited` callback whenever the credit `TextField` changes.
-    ///
-    /// - Parameter id: The `UUID` of the ``SplitLine`` whose credit field was edited.
+    /// - Parameter id: UUID of the split whose credit field changed.
     func didEditCredit(for id: UUID) {
         if let idx = splits.firstIndex(where: { $0.id == id }) {
             splits[idx].debitAmount = ""
         }
     }
 
-    /// Assigns the selected account to a split line and collapses the account picker.
-    ///
-    /// Sets `account` on the matching ``SplitLine`` and clears ``showAccountPicker``
-    /// so the dropdown closes. No-ops silently if `id` is not found in `splits`.
+    /// Sets `account` on the matching split and clears ``showAccountPicker`` to collapse the dropdown.
     ///
     /// - Parameters:
-    ///   - account: The ``AccountNode`` selected by the user.
-    ///   - id: The `UUID` of the ``SplitLine`` to update.
+    ///   - account: The selected ``AccountNode``.
+    ///   - id: UUID of the split to update.
     func setAccount(_ account: AccountNode, for id: UUID) {
         if let idx = splits.firstIndex(where: { $0.id == id }) {
             splits[idx].account = account
@@ -249,23 +140,12 @@ final class PostTransactionViewModel {
 
     // MARK: - Auto-balance
 
-    /// Fills the last split line with the amount needed to bring the transaction into balance.
+    /// Fills the last split line with the amount needed to balance the transaction.
     ///
-    /// Reads ``imbalance`` (debits − credits) and writes into the last ``SplitLine``:
+    /// Writes the absolute value of ``imbalance`` into the last ``SplitLine`` as a credit
+    /// (when debits exceed credits) or a debit (when credits exceed debits). No-op when already balanced.
     ///
-    /// | `imbalance` sign | Action |
-    /// |---|---|
-    /// | Positive (more debits) | Sets last line's `creditAmount` to `imbalance`; clears `debitAmount` |
-    /// | Negative (more credits) | Sets last line's `debitAmount` to `abs(imbalance)`; clears `creditAmount` |
-    /// | Zero (already balanced) | No-op |
-    ///
-    /// ## Example
-    ///
-    /// Given splits: Debit $100, Credit $30, and one empty line —
-    /// calling `autoBalance()` sets the last line's `creditAmount` to `"70"`,
-    /// producing total debits = total credits = $100.
-    ///
-    /// - Note: Overwrites any existing amounts in the last split line without prompting.
+    /// - Note: Overwrites any existing amounts on the last split line without prompting.
     func autoBalance() {
         guard let lastIdx = splits.indices.last else { return }
         let diff = totalDebits - totalCredits
@@ -282,37 +162,17 @@ final class PostTransactionViewModel {
 
     // MARK: - Submit
 
-    /// Validates, maps, and asynchronously submits the transaction to the backend API.
+    /// Maps form state to a ``PostTransactionRequest`` and POSTs it to the backend.
     ///
-    /// The submission workflow follows five steps:
-    ///
-    /// 1. **Guard**: Returns immediately if ``canSubmit`` is `false`.
-    /// 2. **Currency check**: Reads `ledger.currencyCommodityId`; sets ``errorMessage`` and
-    ///    returns if the ID is absent.
-    /// 3. **Data mapping**: Converts each complete ``SplitLine`` to a ``SplitRequest``
-    ///    using rational-number encoding (see table below).
-    /// 4. **Network request**: Calls ``PostTransactionService/post(_:token:)``.
-    /// 5. **Notification**: On success, posts `Notification.Name.transactionPosted` with
-    ///    `ledger.id` as the `object` so observers such as ``AccountTreeView`` can reload
-    ///    balances immediately.
-    ///
-    /// ## Rational-Number Encoding
-    ///
-    /// | Source | Transformed to |
-    /// |---|---|
-    /// | Decimal string `"12.50"` | `valueNum = 1250`, `valueDenom = 100` |
-    /// | `ledger.decimalPlaces` (e.g. 2) | `denom = 10^2 = 100` |
-    /// | `SplitLine.side` | `0` = debit, `1` = credit |
-    /// | `quantityNum` | Always `0` (single-currency ledgers) |
+    /// Guards on ``canSubmit`` and `ledger.currencyCommodityId`. Encodes each complete
+    /// ``SplitLine`` using rational numbers: `valueNum = amount × 10^decimalPlaces`,
+    /// `valueDenom = 10^decimalPlaces`. Posts `.transactionPosted` on success.
     ///
     /// - Parameters:
-    ///   - ledger: The ``LedgerResponse`` providing `currencyCode`, `decimalPlaces`,
-    ///     and `currencyCommodityId`.
-    ///   - token: The bearer token for API authorisation.
-    ///
-    /// - Important: Must be called from a `@MainActor` context; all `@Observable`
-    ///   property mutations happen on the main thread.
-    /// - Note: Only ``SplitLine`` entries where `isComplete == true` are included in the request.
+    ///   - ledger: Provides `id`, `decimalPlaces`, and `currencyCommodityId`.
+    ///   - payeeId: Optional payee to attach; `nil` means no payee.
+    ///   - token: Bearer token for the API request.
+    /// - Important: Must be called from a `@MainActor` context.
     @MainActor
     func submit(ledger: LedgerResponse, payeeId: UUID? = nil, token: String) async {
         guard canSubmit else { return }
@@ -377,34 +237,7 @@ final class PostTransactionViewModel {
 
     // MARK: - Reset
 
-    /// Resets all form state, UI state, and dependencies to their initial values.
-    ///
-    /// This method is useful for clearing the form after a successful submission or
-    /// when the user wants to start over with a fresh transaction. It resets:
-    ///
-    /// **Form Data:**
-    /// - `postDate` → Current date
-    /// - `memo` → Empty string
-    /// - `num` → Empty string
-    /// - `splits` → Two empty split lines
-    ///
-    /// **UI State:**
-    /// - `errorMessage` → `nil`
-    /// - `didPost` → `false`
-    /// - `isSubmitting` → `false`
-    ///
-    /// **Account Search State:**
-    /// - `accountSearchTexts` → Empty dictionary
-    /// - `showAccountPicker` → `nil` (all pickers collapsed)
-    ///
-    /// ## Example
-    /// ```swift
-    /// // After successful submission
-    /// if viewModel.didPost {
-    ///     viewModel.reset()
-    ///     // Form is now ready for a new transaction
-    /// }
-    /// ```
+    /// Resets all form and UI state to initial values, ready for a new transaction entry.
     func reset() {
         postDate = .now
         memo = ""

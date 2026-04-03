@@ -4,129 +4,35 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-16.
-//  Last modified by León Felipe Guevara Chávez on 2026-04-01.
+//  Last modified by León Felipe Guevara Chávez on 2026-04-02.
 //  Developed with AI assistance.
 //
 
 import SwiftUI
 
-/// Form view for creating a new multi-split double-entry accounting transaction.
+/// Form for creating a new multi-split double-entry transaction.
 ///
-/// `PostTransactionView` provides a complete data-entry interface for posting a transaction
-/// to a ledger. It enforces double-entry bookkeeping rules throughout: the form cannot be
-/// submitted until total debits equal total credits across all split lines.
+/// Presents header fields (date, memo, reference number, payee) and a dynamic list of
+/// ``SplitLineRow`` entries with per-split account pickers and debit/credit fields.
+/// Delegates state, balance computation, and submission to ``PostTransactionViewModel``.
+/// Maintains live `currentAccounts`/`currentPaths` refreshed via `.accountSaved`
+/// notifications so newly created accounts appear in pickers without reopening the sheet.
+/// The Post button stays disabled until ``PostTransactionViewModel/canSubmit`` is `true`
+/// (balanced, ≥ 2 splits, all accounts assigned, at least one non-zero amount).
 ///
-/// ## Features
-///
-/// - **Transaction header**: Date picker, free-text memo, and optional reference number
-/// - **Dynamic split management**: Add or remove split lines freely; minimum of 2 enforced
-/// - **Account picker**: Per-split expandable dropdown with real-time search, GnuCash-style
-///   full-path labels (e.g., `"Assets:Current Assets:Cash:Checking"`), and kind-color dots
-/// - **New Account on-the-fly**: The account picker offers a "New Account…" option that
-///   opens the account creation form in a new window. The picker refreshes automatically
-///   when the new account is saved via `NotificationCenter`
-/// - **Live account list**: Automatically refreshes when accounts are saved in other windows
-/// - **Balance summary**: Live debit/credit totals with a green "Balanced" badge or a red
-///   imbalance amount
-/// - **Auto-balance**: One-tap button fills the last split line with the amount needed to
-///   bring the transaction into balance
-/// - **Submission guard**: The "Post" button is disabled until `viewModel.canSubmit` is `true`
-///   (balanced, all splits complete, not already submitting)
-/// - **Error display**: Inline red caption below the form when `viewModel.errorMessage` is set
-///
-/// ## Account Labels (GnuCash-style paths)
-///
-/// `accountPaths` is a `[UUID: String]` dictionary built by ``AccountTreeBuilder/buildPathMap(from:)``.
-/// It is threaded through to each ``SplitLineRow`` → `accountPickerButton` and ``AccountPickerRow``
-/// so that both the collapsed button label and every dropdown row show the full ancestor path
-/// rather than a bare account name or truncated code. The leaf name is always visible because
-/// long paths are truncated from the leading edge (`.truncationMode(.head)`).
-///
-/// ## Account List Refresh
-///
-/// The view maintains live `currentAccounts` and `currentPaths` state that is automatically
-/// refreshed when `.accountSaved` notifications are received. This enables the workflow:
-///
-/// 1. User opens transaction posting form
-/// 2. User clicks "New Account…" in a split line picker
-/// 3. Account form opens in new window, user creates account
-/// 4. ``AccountFormViewModel`` posts `.accountSaved` notification
-/// 5. This view receives notification, fetches updated account tree
-/// 6. Split line pickers immediately show the new account
-///
-/// No reopening of the sheet is required — accounts appear immediately.
-///
-/// ## Layout
-///
-/// ```
-/// NavigationStack
-/// └─ Form (grouped)
-///    ├─ Section "Transaction Details"  — date, memo, ref #
-///    ├─ Section "Splits"               — column headers + SplitLineRow × n + Add button
-///    ├─ Section (balance summary)      — total debits | status | total credits
-///    └─ Section (error)                — shown only when errorMessage ≠ nil
-/// ```
-///
-/// ## Usage Example
-///
-/// ```swift
-/// PostTransactionView(
-///     ledger: selectedLedger,
-///     allAccounts: allAccountRoots,
-///     accountPaths: accountPaths,
-///     onSuccess: {
-///         guard let token = auth.token else { return }
-///         await viewModel.load(ledger: ledger, account: account, token: token)
-///     }
-/// )
-/// .environment(auth)
-/// ```
-///
-/// ## Double-Entry Validation
-///
-/// The form enforces fundamental accounting rules:
-/// - Minimum 2 splits required (one debit, one credit at minimum)
-/// - Total debits must equal total credits (checked in real-time)
-/// - All splits must have an account assigned
-/// - At least one split must have a non-zero amount
-///
-/// The "Post" button remains disabled until all validation passes.
-///
-/// - Important: All splits must balance (total debits = total credits) before the "Post"
-///   button becomes active.
-/// - Note: Requires ``AuthService`` in the SwiftUI environment. The token is read from
-///   `auth.token` at the moment the "Post" button is tapped.
-/// - SeeAlso: ``PostTransactionViewModel``, ``SplitLineRow``, ``AccountPickerRow``,
-///   ``AccountTreeBuilder/buildPathMap(from:)``, ``Notification/Name/accountSaved``
+/// - Important: All splits must balance (total debits = total credits) before posting.
+/// - Note: Requires ``AuthService`` in the SwiftUI environment.
+/// - SeeAlso: ``PostTransactionViewModel``, ``SplitLineRow``, ``AccountPickerRow``
 struct PostTransactionView: View {
 
     // MARK: - Properties
 
-    /// The ledger to which the transaction will be posted.
-    ///
-    /// Used to:
-    /// - Provide currency code and decimal places for amount formatting
-    /// - Identify which ledger to post the transaction to
-    /// - Filter `.accountSaved` notifications (only reload for this ledger)
+    /// The ledger to post to; supplies `id`, `currencyCode`, and `decimalPlaces`.
     let ledger: LedgerResponse
 
-    /// Async callback invoked immediately after the transaction is successfully posted.
+    /// Async callback invoked after a successful post, before the sheet is dismissed.
     ///
-    /// Typically used by the parent view to refresh its transaction list. Called before
-    /// the sheet is dismissed, allowing the parent to reload data while the loading
-    /// indicator is still visible.
-    ///
-    /// Example:
-    /// ```swift
-    /// PostTransactionView(
-    ///     ledger: ledger,
-    ///     allAccounts: accounts,
-    ///     accountPaths: paths,
-    ///     onSuccess: {
-    ///         await registerViewModel.loadTransactions()
-    ///     }
-    /// )
-    /// ```
+    /// Typically reloads the parent's transaction list while the loading indicator is still visible.
     let onSuccess: () async -> Void
 
     // MARK: - Environment and State
@@ -137,63 +43,36 @@ struct PostTransactionView: View {
     /// Environment dismiss action used to close the sheet on cancellation or after successful posting.
     @Environment(\.dismiss) private var dismiss
 
-    /// Environment action used to open the account creation form in a new window.
-    ///
-    /// Called when the user taps "New Account…" in a split line picker. Opens a window
-    /// with ``AccountFormWindowPayload`` that optionally pre-fills the account name with
-    /// the user's search text.
+    /// Opens the account creation form in a new window when "New Account…" is tapped in a split picker.
     @Environment(\.openWindow) private var openWindow
 
-    /// View model managing form state, validation, balance computation, and submission.
-    ///
-    /// Handles:
-    /// - Split line management (add, remove, populate)
-    /// - Balance calculations (total debits, credits, imbalance)
-    /// - Auto-balance logic
-    /// - Validation rules (minimum splits, balance check, account assignment)
-    /// - Transaction submission via API
+    /// View model managing split lines, balance computations, validation, and submission.
     @State private var viewModel = PostTransactionViewModel()
 
-    /// Live account tree — seeded from `allAccounts` at init, refreshed on `.accountSaved`.
-    ///
-    /// Stored as `@State` so the picker updates immediately when a new account is
-    /// created via the "New Account…" option without reopening the sheet.
-    ///
-    /// Refreshed by fetching from ``AccountService`` and rebuilding the tree when
-    /// `.accountSaved` notifications are received for this ledger.
+    /// Live account tree seeded from `allAccounts` at init; refreshed on `.accountSaved` notifications.
     @State private var currentAccounts: [AccountNode]
 
-    /// Live path map — seeded from `accountPaths` at init, rebuilt when `currentAccounts` refreshes.
-    ///
-    /// Maps account UUIDs to GnuCash-style full paths (e.g., "Assets:Cash:Checking").
-    /// Automatically regenerated via ``AccountTreeBuilder/buildPathMap(from:)`` whenever
-    /// `currentAccounts` is updated, ensuring pickers always display current paths.
+    /// Live UUID-to-path map seeded from `accountPaths` at init; rebuilt whenever `currentAccounts` changes.
     @State private var currentPaths: [UUID: String]
-    
-    // FIx: Add alongside currentAccounts and currentPaths
+
+    /// Payees available for selection; fetched from ``PayeeService`` in `.task` and empty until complete.
     @State private var currentPayees: [PayeeResponse] = []
+    /// The payee selected via ``PayeePickerButton``; `nil` when no payee is assigned.
     @State private var selectedPayee: PayeeResponse? = nil
+    /// Whether the payee row is toggled on; toggling off clears `selectedPayee`.
     @State private var usePayee: Bool = false
 
     // MARK: - Init
 
-    /// Creates the view, seeding live account state from the values provided by the parent.
-    ///
-    /// The account tree and path map are captured at initialization and stored in local
-    /// state (`currentAccounts` and `currentPaths`). This allows the view to maintain
-    /// its own copy that can be refreshed independently when `.accountSaved` notifications
-    /// are received.
+    /// Creates the view, seeding `currentAccounts` and `currentPaths` from the provided snapshots.
     ///
     /// - Parameters:
-    ///   - ledger: The ledger context for currency info and transaction posting.
-    ///   - allAccounts: Initial account tree hierarchy (captured in state).
-    ///   - accountPaths: Initial UUID-to-path mapping (captured in state).
-    ///   - onSuccess: Async callback to invoke after successful posting.
-    ///
-    /// - Note: The `@State` properties are initialised here so they hold a mutable copy
-    ///   that can be updated independently of the parent's bindings when new accounts
-    ///   are created. Updates to the parent's `allAccounts` and `accountPaths` after init
-    ///   have no effect — only `.accountSaved` notifications trigger refreshes.
+    ///   - ledger: The ledger to post to.
+    ///   - allAccounts: Initial account tree hierarchy; captured in local state.
+    ///   - accountPaths: Initial UUID-to-path map; captured in local state.
+    ///   - onSuccess: Async callback invoked after a successful post.
+    /// - Note: Post-init changes to `allAccounts` and `accountPaths` have no effect;
+    ///   only `.accountSaved` notifications trigger refreshes.
     init(ledger: LedgerResponse,
          allAccounts: [AccountNode],
          accountPaths: [UUID: String],
@@ -272,14 +151,7 @@ struct PostTransactionView: View {
 
     // MARK: - Header Card
 
-    /// Transaction metadata inputs: posting date, memo, and optional reference number.
-    ///
-    /// Displays editable controls for:
-    /// - **Date**: `DatePicker` with date and time components (when the transaction occurred).
-    /// - **Description**: `TextField` bound to `viewModel.memo` (transaction description).
-    /// - **Reference #**: Optional text field for check numbers, invoice numbers, etc.
-    ///
-    /// All fields are editable and updates flow immediately to the view model.
+    /// Header card with date, memo, reference number, and optional payee fields.
     private var headerCard: some View {
         card(title: "Transaction Details") {
             VStack(alignment: .leading, spacing: 12) {
@@ -339,19 +211,7 @@ struct PostTransactionView: View {
 
     // MARK: - Splits Card
 
-    /// Form section displaying the split lines with column headers and add button.
-    ///
-    /// - **Column headers**: Show "Memo", "Account", "Debit", "Credit", and delete column
-    ///   (rendered by `splitColumnHeader`).
-    /// - **Split rows**: One ``SplitLineRow`` per entry in `viewModel.splits`, each with
-    ///   account picker, memo field, and debit/credit amount fields.
-    /// - **Add button**: Appends a new empty split line; no upper limit.
-    /// - **Auto-balance**: Header button that calls `viewModel.autoBalance()` to fill the
-    ///   imbalance into the last split line. Disabled when `viewModel.isBalanced` is `true`.
-    ///
-    /// The account list passed to each row is filtered to non-placeholder leaves via
-    /// ``leafAccounts``. When a user creates a new account via "New Account…", the section
-    /// automatically updates via the `.accountSaved` notification handler in `body`.
+    /// Splits card with column headers, one ``SplitLineRow`` per entry, Add Split Line button, and Auto-balance.
     private var splitsCard: some View {
         card {
             VStack(alignment: .leading, spacing: 14) {
@@ -438,17 +298,7 @@ struct PostTransactionView: View {
 
     // MARK: - Balance Summary
 
-    /// Summary section showing total debits, credits, and balance status.
-    ///
-    /// Layout (left → center → right):
-    /// - **Left**: Total debits formatted via `AmountFormatter`.
-    /// - **Center**: Balance status indicator —
-    ///   green checkmark badge (`viewModel.isBalanced == true`) or
-    ///   red imbalance amount (`abs(viewModel.imbalance)`).
-    /// - **Right**: Total credits formatted via `AmountFormatter`.
-    ///
-    /// All amounts use `ledger.currencyCode` and `ledger.decimalPlaces`.
-    /// This section updates in real-time as the user edits split amounts.
+    /// Card showing total debits (left), balance status or imbalance amount (center), and total credits (right).
     private var balanceSummaryCard: some View {
         card {
             HStack(alignment: .center) {
@@ -523,18 +373,7 @@ struct PostTransactionView: View {
 
     // MARK: - Toolbar
 
-    /// Toolbar providing **Cancel** and **Post** actions.
-    ///
-    /// - **Cancel** (`cancellationAction`): Dismisses the sheet without saving.
-    /// - **Post** (`confirmationAction`): Calls `viewModel.submit(ledger:token:)` and
-    ///   shows a `ProgressView` spinner while `viewModel.isSubmitting` is `true`.
-    ///
-    /// The Post button is disabled when `viewModel.canSubmit` is `false`, which occurs when:
-    /// - The transaction is not balanced (debits ≠ credits)
-    /// - Fewer than 2 split lines exist
-    /// - Any split is missing an account assignment
-    /// - No split has a non-zero amount
-    /// - Submission is already in progress
+    /// Cancel and Post toolbar items; Post is disabled while `viewModel.canSubmit` is `false`.
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
@@ -560,15 +399,12 @@ struct PostTransactionView: View {
     // MARK: - Helpers
 
 
-    /// Renders a horizontal label-plus-content row used in the transaction header card.
-    ///
-    /// The label is fixed at 110 pt wide and left-aligned; the content fills the
-    /// remaining width. Used for Date, Description, and Reference # fields.
+    /// Horizontal row with a 110 pt label and a full-width content view; used in `headerCard`.
     ///
     /// - Parameters:
-    ///   - title: The label text displayed to the left of the control.
-    ///   - content: The input control (e.g., `DatePicker`, `TextField`).
-    /// - Returns: An `HStack` pairing the label with the provided content.
+    ///   - title: The label text.
+    ///   - content: The input control.
+    /// - Returns: An `HStack` pairing the label with the content.
     private func compactLabeledRow<Content: View>(
         _ title: String,
         @ViewBuilder content: () -> Content
@@ -583,16 +419,12 @@ struct PostTransactionView: View {
         }
     }
 
-    /// Wraps content in a rounded-rectangle card with an optional title heading.
-    ///
-    /// All section cards in `body` (`headerCard`, `splitsCard`, `balanceSummaryCard`,
-    /// `errorCard`) are built with this helper to ensure consistent padding, background
-    /// color, corner radius, and separator border.
+    /// Wraps content in a styled rounded-rectangle card with an optional title heading.
     ///
     /// - Parameters:
-    ///   - title: Optional section heading rendered as `.title3.weight(.semibold)` above the content.
-    ///   - content: The card body view.
-    /// - Returns: A styled card view.
+    ///   - title: Optional heading rendered as `.title3.weight(.semibold)`.
+    ///   - content: The card body.
+    /// - Returns: A padded card with consistent background, corner radius, and border.
     private func card<Content: View>(
         title: String? = nil,
         @ViewBuilder content: () -> Content
@@ -614,19 +446,12 @@ struct PostTransactionView: View {
         )
     }
 
-    /// Recursively collects all postable (non-placeholder) accounts from `currentAccounts`.
+    /// Recursively collects non-placeholder ``AccountNode`` values from `currentAccounts`.
     ///
-    /// Placeholder accounts are organisational containers that cannot receive transaction
-    /// postings. This computed property recursively walks `currentAccounts` and returns
-    /// only concrete leaf accounts eligible for assignment to split lines.
+    /// Non-placeholder parents that also have children are included — they can receive postings
+    /// while still grouping child accounts.
     ///
-    /// Non-placeholder nodes that also have children are included — a non-placeholder
-    /// parent can itself receive postings while still grouping child accounts.
-    ///
-    /// - Returns: A flat `[AccountNode]` array suitable for display in split-line pickers.
-    ///
-    /// - Note: Re-evaluated each time split rows are rendered, but the operation is
-    ///   efficient since account trees are typically small (hundreds of nodes, not thousands).
+    /// - Returns: Flat array of postable accounts suitable for split-line picker display.
     private var leafAccounts: [AccountNode] {
         func collectLeaves(_ nodes: [AccountNode]) -> [AccountNode] {
             nodes.flatMap { node in
@@ -640,39 +465,15 @@ struct PostTransactionView: View {
 
 // MARK: - Split Line Row
 
-/// A view representing a single split line in the transaction posting form.
+/// A single split line row: memo, searchable account picker, debit/credit fields, and a delete button.
 ///
-/// `SplitLineRow` provides a horizontal layout with all controls needed to define
-/// one split line of a double-entry transaction:
-/// - Memo field (split-specific note)
-/// - Account picker (expandable dropdown with search)
-/// - Debit amount field
-/// - Credit amount field
-/// - Delete button (disabled when fewer than 3 splits exist)
+/// Notifies ``PostTransactionView`` of amount edits via `onDebitEdited`/`onCreditEdited` callbacks
+/// so balance totals update in real time. Delete is disabled when `canDelete` is `false`
+/// (minimum two splits required). Tapping "New Account…" calls `onCreateAccount` with the
+/// current search text so the parent can open an account creation window.
 ///
-/// ## Features
-///
-/// - **Account picker**: Searchable dropdown with GnuCash-style full paths.
-/// - **New Account option**: "New Account…" button at the bottom of the picker opens
-///   the account creation form; receives the current search text as the suggested name.
-/// - **Debit/Credit exclusivity**: The parent view model clears the opposite field
-///   when one is edited (`onDebitEdited` / `onCreditEdited` callbacks).
-/// - **Delete protection**: The delete button is disabled when `canDelete` is `false`
-///   (i.e., only 2 split lines remain, which is the minimum required for balance).
-/// - **Callback integration**: Notifies ``PostTransactionView`` of edits via closures
-///   so balance totals update in real time.
-///
-/// ## Layout
-///
-/// ```
-/// ┌──────────────┬─────────────┬────────┬────────┬────┐
-/// │    Memo      │   Account   │  Debit │ Credit │ ❌ │
-/// │  text field  │ (expandable)│  text  │  text  │    │
-/// └──────────────┴─────────────┴────────┴────────┴────┘
-/// ```
-///
-/// - Note: This is a private component used exclusively by ``PostTransactionView``.
-/// - SeeAlso: ``SplitLine``, ``AccountFormWindowPayload``
+/// - Note: Private component used exclusively by ``PostTransactionView``.
+/// - SeeAlso: ``SplitLine``
 private struct SplitLineRow: View {
 
     /// Binding to the split line being edited.
@@ -700,16 +501,9 @@ private struct SplitLineRow: View {
     /// Receives the current search text as the suggested account name.
     var onCreateAccount: ((String) -> Void)? = nil
 
-    /// Current text in the account picker search field.
-    ///
-    /// Cleared automatically when the picker opens or after an account is selected.
-    /// Also passed to `onCreateAccount` as the suggested name when "New Account…" is tapped.
+    /// Current search query in the account picker; cleared when the picker opens or an account is selected.
     @State private var searchText = ""
-
     /// Whether the account picker dropdown is currently expanded.
-    ///
-    /// Toggled by the picker button. Collapses automatically after account selection
-    /// or when "New Account…" is tapped.
     @State private var isPickerExpanded = false
 
     var body: some View {
@@ -748,17 +542,8 @@ private struct SplitLineRow: View {
 
     // MARK: - Account Picker Button
 
-    /// Expandable account picker button with search and optional "New Account…" entry.
-    ///
-    /// - **Collapsed**: Shows the selected account's full GnuCash-style path
-    ///   (from `accountPaths`) or a "Select account…" placeholder.
-    /// - **Expanded**: Shows a search field, a scrollable `LazyVStack` of
-    ///   ``filteredAccounts`` rendered as ``AccountPickerRow`` entries, and — when
-    ///   `onCreateAccount` is non-nil — a "New Account…" row at the bottom.
-    ///
-    /// The picker collapses and clears `searchText` after an account is selected or
-    /// after "New Account…" is tapped. The dropdown uses `zIndex(100)` to float
-    /// above sibling rows in the splits list.
+    /// Expandable account picker: shows selected path when collapsed; search field, filtered list,
+    /// and optional "New Account…" row when expanded. Uses `zIndex(100)` to float above sibling rows.
     private var accountPickerButton: some View {
         VStack(alignment: .leading, spacing: 6) {
             Button {
@@ -869,16 +654,7 @@ private struct SplitLineRow: View {
 
     // MARK: - Filtered Accounts
 
-    /// Filters `allAccounts` against the current `searchText`.
-    ///
-    /// Performs a case-insensitive substring search across three fields per account:
-    /// - Full GnuCash-style path from `accountPaths` (falls back to `account.name`)
-    /// - `account.code` (if present)
-    /// - `account.accountTypeCode` (if present)
-    ///
-    /// Returns `allAccounts` unfiltered when `searchText` is empty or whitespace-only.
-    ///
-    /// - Returns: The subset of `allAccounts` whose path, code, or type code matches the query.
+    /// Case-insensitive filter over full path, account code, and type code; returns all accounts when query is empty.
     private var filteredAccounts: [AccountNode] {
         let query = searchText.trimmingCharacters(in: .whitespaces).lowercased()
         guard !query.isEmpty else { return allAccounts }
@@ -893,28 +669,11 @@ private struct SplitLineRow: View {
 
 // MARK: - Account Picker Row
 
-/// A single row in the account picker dropdown inside ``SplitLineRow``.
+/// A single row in the account picker: color-coded kind dot, full hierarchical path
+/// (`.truncationMode(.head)`), and account type code as tertiary caption.
 ///
-/// Composes three elements:
-/// 1. A color-coded **kind dot** (same scheme as ``AccountRowView``).
-/// 2. The **full hierarchical path** as body text, truncated from the leading edge
-///    (`.truncationMode(.head)`) so the leaf name always remains visible.
-///    Falls back to `account.name` when `fullPath` is `nil`.
-/// 3. The **account type code** as tertiary caption below the path.
-///
-/// ## Kind Color Legend
-///
-/// | Kind | Color  | Classification |
-/// |------|--------|----------------|
-/// | 1    | Blue   | Asset          |
-/// | 2    | Red    | Liability      |
-/// | 3    | Purple | Equity         |
-/// | 4    | Green  | Income         |
-/// | 5    | Orange | Expense        |
-/// | other| Gray   | Other / System |
-///
-/// - Note: This is a private component used exclusively by ``SplitLineRow``.
-/// - SeeAlso: ``AccountNode``, ``SplitLineRow``
+/// - Note: Private component used exclusively by ``SplitLineRow``.
+/// - SeeAlso: ``AccountNode``
 private struct AccountPickerRow: View {
 
     /// The account to display.

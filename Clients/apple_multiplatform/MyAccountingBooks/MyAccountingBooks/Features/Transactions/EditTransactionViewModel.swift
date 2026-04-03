@@ -4,57 +4,20 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-23.
+//  Last modified by León Felipe Guevara Chávez on 2026-04-02.
 //  Developed with AI assistance.
 //
 
 import Foundation
 
-/// View model for editing an existing transaction in the accounting system.
+/// Manages form state and PATCH submission for editing an existing transaction.
 ///
-/// `EditTransactionViewModel` manages the form state and submission logic for modifying
-/// posted transactions. It intelligently tracks changes and submits only modified fields
-/// to the server using the PATCH endpoint, minimizing network payload and preserving
-/// unchanged data.
+/// Call ``populate(from:accountPaths:allAccounts:)`` to seed form fields from an existing
+/// ``TransactionResponse``, then ``submit(transaction:ledger:token:)`` to send only the
+/// changed fields to `PATCH /transactions/{id}`. Change detection covers memo, num, postDate,
+/// payeeId, and per-split account and memo; unchanged fields are omitted from the request.
 ///
-/// ## Features
-///
-/// - **Efficient updates**: Only sends changed fields to the server
-/// - **Pre-population**: Loads existing transaction data into editable form state
-/// - **Account resolution**: Converts account IDs to full `AccountNode` references
-/// - **Split line editing**: Supports modifying individual transaction splits
-/// - **Change detection**: Compares current values against originals to identify modifications
-/// - **Error handling**: Provides user-friendly error messages for failed submissions
-///
-/// ## Usage
-///
-/// ```swift
-/// @State private var viewModel = EditTransactionViewModel()
-///
-/// // Populate with existing transaction data
-/// viewModel.populate(
-///     from: transaction,
-///     accountPaths: accountPathMap,
-///     allAccounts: chartOfAccounts
-/// )
-///
-/// // User modifies form fields...
-/// viewModel.memo = "Updated description"
-/// viewModel.splitLines[0].account = newAccount
-///
-/// // Submit changes
-/// await viewModel.submit(
-///     transaction: transaction,
-///     ledger: currentLedger,
-///     token: authToken
-/// )
-///
-/// if viewModel.didSave {
-///     // Transaction updated successfully
-/// }
-/// ```
-///
-/// - Note: This view model uses the `@Observable` macro for SwiftUI integration.
-/// - SeeAlso: `PatchTransactionRequest`, `EditSplitLine`, `TransactionResponse`
+/// - SeeAlso: ``PatchTransactionRequest``, ``EditSplitLine``, ``EditTransactionView``
 @Observable
 final class EditTransactionViewModel {
 
@@ -69,14 +32,12 @@ final class EditTransactionViewModel {
     /// The posting date for this transaction. Defaults to current date/time.
     var postDate: Date = .now
     
-    /// The editable split lines that make up this transaction.
-    ///
-    /// Each split represents a debit or credit to an account. Users can modify
-    /// the memo and account assignment for each split line.
+    /// The editable split lines for this transaction; each exposes account and memo for modification.
     var splitLines: [EditSplitLine] = []
-    
-    // Add properties
+
+    /// The payee UUID to write; `nil` means no payee (or clear existing payee).
     var selectedPayeeId: UUID? = nil
+    /// Whether the payee row is toggled on; set to `false` to clear `selectedPayeeId`.
     var usePayee: Bool = false
 
     // MARK: - UI State
@@ -92,35 +53,16 @@ final class EditTransactionViewModel {
 
     // MARK: - Initialization
 
-    /// Populates the view model with data from an existing transaction.
+    /// Seeds form state from an existing transaction, resolving split account IDs to ``AccountNode`` references.
     ///
-    /// This method loads the transaction's current values into the editable form state,
-    /// resolving account IDs to full `AccountNode` objects for easier UI binding. It
-    /// stores the original values internally to enable change detection during submission.
-    ///
-    /// **Implementation Details:**
-    /// - Converts optional fields to empty strings for form binding
-    /// - Builds a flattened account lookup map for efficient ID resolution
-    /// - Maps each split to an `EditSplitLine` with resolved account references
-    /// - Preserves original account IDs for change detection
-    ///
-    /// **Usage:**
-    /// ```swift
-    /// viewModel.populate(
-    ///     from: existingTransaction,
-    ///     accountPaths: pathDictionary,
-    ///     allAccounts: accountHierarchy
-    /// )
-    /// ```
+    /// Flattens `allAccounts` into a UUID lookup, then maps each split to an ``EditSplitLine``
+    /// with its resolved account. Optional fields are coerced to empty strings for form binding.
     ///
     /// - Parameters:
-    ///   - transaction: The existing transaction to edit.
-    ///   - accountPaths: A dictionary mapping account IDs to their full paths (e.g., "Assets:Bank:Checking").
-    ///                   Currently used for reference; may be utilized for validation or display.
-    ///   - allAccounts: The complete chart of accounts as a hierarchical tree. Used to resolve
-    ///                  account IDs to `AccountNode` objects.
-    ///
-    /// - Note: Call this method before presenting the edit form to the user.
+    ///   - transaction: The transaction to edit; supplies initial field values.
+    ///   - accountPaths: UUID-to-path map; available for display or future validation.
+    ///   - allAccounts: Full account hierarchy used to resolve split account IDs.
+    /// - Note: Call once in `.onAppear` before the user interacts with the form.
     func populate(
         from transaction: TransactionResponse,
         accountPaths: [UUID: String],
@@ -155,50 +97,18 @@ final class EditTransactionViewModel {
 
     // MARK: - Submit
 
-    /// Submits the modified transaction data to the server.
+    /// Builds a ``PatchTransactionRequest`` from changed fields and sends it to `PATCH /transactions/{id}`.
     ///
-    /// This method performs intelligent change detection, comparing current form values
-    /// against the original transaction. Only fields that have been modified are included
-    /// in the PATCH request, minimizing network payload and reducing the chance of
-    /// conflicting updates.
-    ///
-    /// **Change Detection Strategy:**
-    /// - **Memo & Num**: Trimmed and compared to original; empty strings become `nil`
-    /// - **Post Date**: Compared with 1-second tolerance to avoid spurious updates from date picker precision
-    /// - **Split Lines**: Each split is compared individually; only changed splits are sent
-    /// - **Split Memo**: Trimmed and compared to original
-    /// - **Split Account**: Compared to original account ID
-    ///
-    /// **Submission Process:**
-    /// 1. Sets `isSubmitting = true` and clears previous errors
-    /// 2. Builds a `PatchTransactionRequest` with only changed fields
-    /// 3. Sends PATCH request to `/transactions/{id}`
-    /// 4. On success: Sets `didSave = true`
-    /// 5. On failure: Sets `errorMessage` with description
-    /// 6. Sets `isSubmitting = false` when complete
-    ///
-    /// **Usage:**
-    /// ```swift
-    /// await viewModel.submit(
-    ///     transaction: originalTransaction,
-    ///     ledger: currentLedger,
-    ///     token: userToken
-    /// )
-    ///
-    /// if viewModel.didSave {
-    ///     dismiss()
-    /// } else if let error = viewModel.errorMessage {
-    ///     // Show error alert
-    /// }
-    /// ```
+    /// Compares each form field against the original transaction: memo and num are trimmed (empty → `nil`);
+    /// postDate is compared with a 1-second tolerance to absorb date-picker precision noise; payeeId and
+    /// per-split account/memo are compared directly. Only changed fields are included. Sets `didSave = true`
+    /// on success or writes to `errorMessage` on failure.
     ///
     /// - Parameters:
-    ///   - transaction: The original transaction being edited. Used for change detection.
-    ///   - ledger: The ledger this transaction belongs to. Currently unused but available
-    ///             for future validation or audit logging.
-    ///   - token: The authentication token for API requests.
-    ///
-    /// - Note: This method must be called from the main actor context as it updates UI state.
+    ///   - transaction: The original transaction; used as the baseline for change detection.
+    ///   - ledger: The ledger context; reserved for future validation.
+    ///   - token: Bearer token for the API request.
+    /// - Note: Must be called from a `@MainActor` context as it mutates UI state.
     @MainActor
     func submit(
         transaction: TransactionResponse,
@@ -227,6 +137,11 @@ final class EditTransactionViewModel {
         let originalDate = transaction.postDate
         if abs(postDate.timeIntervalSince(originalDate)) > 1 {
             patch.postDate = postDate
+        }
+        
+        // Check payee changes
+        if selectedPayeeId != transaction.payeeId {
+            patch.payeeId = selectedPayeeId  // nil clears the payee, UUID sets it
         }
 
         // Build split patches for changed splits only

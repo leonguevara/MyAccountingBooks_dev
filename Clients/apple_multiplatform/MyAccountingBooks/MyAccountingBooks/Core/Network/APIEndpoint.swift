@@ -44,6 +44,8 @@ import Foundation
 /// | Transactions | ``voidTransaction(id:)`` | POST | `/transactions/{id}/void` |
 /// | Commodities | ``commodities(namespace:)`` | GET | `/commodities` |
 /// | COA Templates | ``coaTemplates`` | GET | `/coa-templates` |
+/// | Payees | ``payees(ledgerID:)`` | GET | `/ledgers/{id}/payees` |
+/// | Payees | ``createPayee`` | POST | `/payees` |
 ///
 /// ## Usage Example
 ///
@@ -180,12 +182,17 @@ enum APIEndpoint {
     /// - SeeAlso: ``CoaTemplateItem``
     case coaTemplates
     
-    /// Lists all payees for a ledger.
-    /// **Path:** `GET /ledgers/{ledgerID}/payees`
+    /// `GET /ledgers/{ledgerID}/payees` — returns all active payees for the ledger, ordered by name.
+    ///
+    /// - Parameter ledgerID: The unique identifier of the ledger.
+    /// - SeeAlso: ``PayeeResponse``
     case payees(ledgerID: UUID)
 
-    /// Creates a new payee.
-    /// **Path:** `POST /payees`
+    /// `POST /payees` — creates a new payee in the ledger specified by the request body.
+    ///
+    /// The `(ledgerId, name)` combination must be unique; a duplicate triggers HTTP 409.
+    ///
+    /// - SeeAlso: ``CreatePayeeRequest``, ``PayeeResponse``
     case createPayee
 
     // MARK: - URL Construction

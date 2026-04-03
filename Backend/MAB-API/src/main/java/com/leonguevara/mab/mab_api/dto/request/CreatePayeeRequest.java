@@ -16,16 +16,24 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 /**
- * Request body for POST /payees.
+ * Request body for {@code POST /payees}.
  *
- * Example JSON:
+ * <p>Validated by {@code @Valid} in {@link com.leonguevara.mab.mab_api.controller.PayeeController}.
+ * The {@code (ledgerId, name)} combination must be unique within the ledger; a duplicate
+ * triggers HTTP 409.</p>
+ *
+ * <pre>{@code
  * {
  *   "ledgerId": "4e0b6c9e-2b6b-4c2e-9b8b-3e7b1a2d8f10",
  *   "name":     "Walmart"
  * }
+ * }</pre>
  *
- * @param ledgerId UUID of the ledger to which this payee belongs.
- * @param name     Display name of the payee. Must be unique per ledger.
+ * @param ledgerId UUID of the ledger this payee belongs to. Required ({@code @NotNull}).
+ * @param name     Display name of the payee; must be non-blank ({@code @NotBlank}) and
+ *                 unique within the ledger.
+ * @see com.leonguevara.mab.mab_api.controller.PayeeController#createPayee
+ * @see com.leonguevara.mab.mab_api.dto.response.PayeeResponse
  */
 public record CreatePayeeRequest(
 

@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-16.
-//  Last modified by León Felie Guevara Chávez on 2026-03-30
+//  Last modified by León Felie Guevara Chávez on 2026-04-02
 //  Developed with AI assistance.
 //
 
@@ -34,17 +34,10 @@ struct RegisterRow: Identifiable {
 
 /// Manages state for the account register screen.
 ///
-/// Fetches all transactions for the ledger via ``TransactionService``, filters to the
-/// selected account's splits, computes signed amounts based on the account's normal
-/// balance, and accumulates a running balance for every row. Exposes selection state
-/// for the transaction detail sheet and the post-transaction flow.
-///
-/// ## Usage
-/// ```swift
-/// @State private var vm = AccountRegisterViewModel()
-/// .task { await vm.load(ledger: ledger, account: account, token: token) }
-/// .sheet(isPresented: $vm.showTransactionDetail) { /* TransactionDetailSheet */ }
-/// ```
+/// Calls ``load(ledger:account:token:)`` to fetch all transactions for the ledger via
+/// ``TransactionService``, then delegates to `buildRows` to filter, sort, sign, and
+/// accumulate a running balance for the selected account. Exposes selection state for
+/// the transaction detail sheet and the post-transaction flow.
 ///
 /// - SeeAlso: ``RegisterRow``, ``AccountRegisterView``, ``TransactionService``
 @Observable

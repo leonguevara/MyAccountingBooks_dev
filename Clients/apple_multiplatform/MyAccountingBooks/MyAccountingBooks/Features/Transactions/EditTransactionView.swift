@@ -10,107 +10,31 @@
 
 import SwiftUI
 
-/// A SwiftUI view for editing an existing transaction in the accounting system.
+/// Modal sheet for editing an existing transaction.
 ///
-/// `EditTransactionView` provides a modal sheet interface that allows users to modify
-/// transaction details including the memo, number, posting date, and individual split
-/// line properties. The view implements efficient PATCH semantics, sending only changed
-/// fields to the server to minimize network payload and preserve unchanged data.
-///
-/// ## Features
-///
-/// - **Transaction header editing**: Modify memo, number, and posting date
-/// - **Split line editing**: Change account assignments and split-specific memos
-/// - **Smart account picker**: Searchable dropdown with full account paths
-/// - **New Account on-the-fly**: "New Account…" option opens account creation in a new
-///   window. The picker refreshes immediately via `NotificationCenter` when saved.
-/// - **Live account list**: Automatically refreshes when accounts are saved in other windows
-/// - **Efficient updates**: Only sends modified fields via PATCH request
-/// - **Error handling**: Displays user-friendly error messages
-/// - **Loading states**: Shows progress indicator during submission
-/// - **Automatic dismissal**: Closes and triggers refresh on successful save
-///
-/// ## Usage
-///
-/// Present this view as a sheet when the user taps "Edit" on a transaction:
-///
-/// ```swift
-/// .sheet(isPresented: $showEditTransaction) {
-///     EditTransactionView(
-///         transaction: selectedTransaction,
-///         ledger: currentLedger,
-///         allAccounts: chartOfAccounts,
-///         accountPaths: accountPathDictionary,
-///         onSuccess: {
-///             await refreshTransactions()
-///         }
-///     )
-/// }
-/// ```
-///
-/// ## Account List Refresh
-///
-/// The view maintains live `currentAccounts` and `currentPaths` state that is automatically
-/// refreshed when `.accountSaved` notifications are received. This ensures that:
-///
-/// - Users can create accounts while editing a transaction
-/// - New accounts appear immediately in the split line pickers
-/// - The account hierarchy stays synchronized across windows
-///
-/// The refresh flow:
-/// 1. User opens transaction edit view
-/// 2. User clicks "New Account…" in split line picker
-/// 3. Account form opens in new window, user creates account
-/// 4. `AccountFormViewModel` posts `.accountSaved` notification
-/// 5. This view receives notification, fetches updated account tree
-/// 6. Split line pickers immediately show the new account
-///
-/// ## PATCH Semantics
-///
-/// Only fields that have changed are included in the PATCH request:
-/// - Transaction header: memo, num, postDate
-/// - Split lines: account assignment, split memo
-///
-/// Unchanged fields are omitted, preserving server state for concurrent edits.
+/// Presents editable controls for the transaction header (memo, number, post date, payee)
+/// and each split line (account, memo). Delegates form state and PATCH construction to
+/// ``EditTransactionViewModel``, which sends only changed fields to the server. Maintains
+/// live `currentAccounts`/`currentPaths` state refreshed via `.accountSaved` notifications,
+/// so newly created accounts appear in split pickers without dismissing this sheet.
 ///
 /// - Note: Designed for macOS with a minimum window size of 620×480 points.
-/// - Important: Requires `AuthService` in the SwiftUI environment for API authentication.
-/// - SeeAlso: `EditTransactionViewModel`, `EditSplitLine`, `TransactionDetailSheet`,
-///   `AccountFormWindowPayload`, `Notification.Name.accountSaved`
+/// - Important: Requires ``AuthService`` in the SwiftUI environment for API authentication.
+/// - SeeAlso: ``EditTransactionViewModel``, ``EditSplitLine``, ``TransactionDetailSheet``
 struct EditTransactionView: View {
 
     // MARK: - Properties
 
-    /// The transaction being edited, containing original values for comparison.
-    ///
-    /// Used by the view model to determine which fields have changed and need to
-    /// be included in the PATCH request.
+    /// The transaction being edited; supplies original field values for PATCH comparison.
     let transaction: TransactionResponse
-    
-    /// The ledger context, providing currency and decimal place information.
-    ///
-    /// Used when creating new accounts and for identifying which ledger's accounts
-    /// should be refreshed when receiving `.accountSaved` notifications.
+
+    /// The ledger context; provides `id` for account/payee fetches and `.accountSaved` filtering.
     let ledger: LedgerResponse
-    
-    /// Callback invoked after successfully saving the transaction.
+
+    /// Async callback invoked after a successful save, before the sheet is dismissed.
     ///
-    /// Typically used by the parent view to refresh its transaction list. Called
-    /// before the sheet is dismissed, allowing the parent to reload data while
-    /// the loading indicator is still visible.
-    ///
-    /// Example:
-    /// ```swift
-    /// EditTransactionView(
-    ///     transaction: txn,
-    ///     ledger: ledger,
-    ///     allAccounts: accounts,
-    ///     accountPaths: paths,
-    ///     onSuccess: {
-    ///         await viewModel.loadTransactions()
-    ///     }
-    /// )
-    /// ```
+    /// Typically reloads the parent's transaction list. Called while the loading indicator
+    /// is still visible, so the parent can reload data before the sheet disappears.
     let onSuccess: () async -> Void
 
     // MARK: - Environment
@@ -121,58 +45,35 @@ struct EditTransactionView: View {
     /// SwiftUI dismiss action used to close the sheet after saving or canceling.
     @Environment(\.dismiss) private var dismiss
 
-    /// Environment action used to open the account creation form in a new window.
-    ///
-    /// Called when the user taps "New Account…" in a split line picker. Opens a
-    /// window with `AccountFormWindowPayload` that optionally pre-fills the account
-    /// name with the user's search text.
+    /// Opens the account creation form in a new window when "New Account…" is tapped in a split picker.
     @Environment(\.openWindow) private var openWindow
 
     // MARK: - State
 
-    /// View model managing form state, validation, and submission logic.
-    ///
-    /// Populated in `.onAppear` with the original transaction values and updated
-    /// as the user modifies fields. Handles PATCH request construction and submission.
+    /// View model managing form state and PATCH construction; populated in `.onAppear`.
     @State private var viewModel = EditTransactionViewModel()
 
-    /// Live account tree — seeded from `allAccounts` at init, refreshed on `.accountSaved`.
-    ///
-    /// Maintained as local state to support immediate updates when new accounts are
-    /// created in other windows. Refreshed by fetching from `AccountService` and
-    /// rebuilding the tree when `.accountSaved` notifications are received for this ledger.
+    /// Live account tree seeded from `allAccounts` at init; refreshed on `.accountSaved` notifications.
     @State private var currentAccounts: [AccountNode]
 
-    /// Live path map — seeded from `accountPaths` at init, rebuilt when `currentAccounts` refreshes.
-    ///
-    /// Maps account UUIDs to GnuCash-style full paths (e.g., "Assets:Cash:Checking").
-    /// Automatically regenerated via `AccountTreeBuilder.buildPathMap()` whenever
-    /// `currentAccounts` is updated, ensuring pickers always display current paths.
+    /// Live UUID-to-path map seeded from `accountPaths` at init; rebuilt whenever `currentAccounts` changes.
     @State private var currentPaths: [UUID: String]
-    
+
+    /// Payees available for selection; fetched from ``PayeeService`` in `.task` and empty until complete.
     @State private var currentPayees: [PayeeResponse] = []
 
     // MARK: - Init
 
-    /**
-     Creates a new edit transaction view with initial account data.
-     
-     The account tree and path map are captured at initialization and stored in local
-     state (`currentAccounts` and `currentPaths`). This allows the view to maintain
-     its own copy that can be refreshed independently when `.accountSaved` notifications
-     are received.
-     
-     - Parameters:
-       - transaction: The transaction to edit, containing original field values
-       - ledger: The ledger context for currency info and account filtering
-       - allAccounts: Initial account tree hierarchy (captured in state)
-       - accountPaths: Initial UUID-to-path mapping (captured in state)
-       - onSuccess: Async callback to invoke after successful save
-     
-     - Note: The `allAccounts` and `accountPaths` parameters seed local state but are
-       not retained directly. Updates to these parameters after init have no effect —
-       only `.accountSaved` notifications trigger refreshes.
-     */
+    /// Creates the view, seeding `currentAccounts` and `currentPaths` from the provided snapshots.
+    ///
+    /// - Parameters:
+    ///   - transaction: The transaction to edit; supplies original field values for PATCH comparison.
+    ///   - ledger: The ledger context for account and payee fetches.
+    ///   - allAccounts: Initial account tree hierarchy; captured in local state.
+    ///   - accountPaths: Initial UUID-to-path map; captured in local state.
+    ///   - onSuccess: Async callback invoked after a successful save.
+    /// - Note: `allAccounts` and `accountPaths` seed state only; post-init changes to these
+    ///   parameters have no effect — only `.accountSaved` notifications trigger refreshes.
     init(transaction: TransactionResponse,
          ledger: LedgerResponse,
          allAccounts: [AccountNode],
@@ -256,17 +157,7 @@ struct EditTransactionView: View {
 
     // MARK: - Header Section
 
-    /**
-     Form section for editing transaction-level fields.
-     
-     Displays editable controls for:
-     - **Date**: DatePicker with date and time components
-     - **Description**: TextField bound to `viewModel.memo`
-     - **Reference #**: Optional text field for check numbers, invoice numbers, etc.
-     
-     All changes are tracked by the view model and included in the PATCH request
-     only if they differ from the original transaction values.
-     */
+    /// Form section for date, memo, reference number, and payee; all fields tracked by the view model.
     private var headerSection: some View {
         Section("Transaction Details") {
             DatePicker(
@@ -317,18 +208,7 @@ struct EditTransactionView: View {
 
     // MARK: - Splits Section
 
-    /**
-     Form section displaying editable split lines.
-     
-     Each split line shows:
-     - Account picker with search and "New Account..." option
-     - Split-specific memo field
-     
-     The account list is filtered to leaf accounts only (non-placeholders) via
-     the `leafAccounts` computed property. When a user creates a new account via
-     the "New Account..." option, this section automatically updates via the
-     `.accountSaved` notification handler.
-     */
+    /// Form section listing editable split lines; each row exposes an account picker and a memo field.
     private var splitsSection: some View {
         Section("Split Lines") {
             ForEach($viewModel.splitLines) { $line in
@@ -351,15 +231,7 @@ struct EditTransactionView: View {
 
     // MARK: - Toolbar
 
-    /**
-     Toolbar with cancel and save actions.
-     
-     - **Cancel**: Dismisses the sheet without saving
-     - **Save**: Submits changes via view model, shows spinner during submission
-     
-     The save button is disabled while `viewModel.isSubmitting` is true to prevent
-     duplicate requests.
-     */
+    /// Cancel and Save toolbar items; Save is disabled while `viewModel.isSubmitting` is `true`.
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
@@ -388,18 +260,9 @@ struct EditTransactionView: View {
 
     // MARK: - Helpers
 
-    /**
-     Returns only the leaf (non-placeholder) accounts from `currentAccounts`.
-     
-     Placeholder accounts are organizational containers that cannot have transactions
-     posted to them. This method recursively filters the account tree to return only
-     accounts that can be assigned to split lines.
-     
-     - Returns: Flat array of leaf `AccountNode` values suitable for picker display
-     
-     - Note: Called each time `splitsSection` is rendered, but the operation is
-       efficient since account trees are typically small (hundreds of nodes, not thousands).
-     */
+    /// Recursively collects non-placeholder ``AccountNode`` values from `currentAccounts`.
+    ///
+    /// - Returns: Flat array of leaf accounts suitable for split-line picker display.
     private var leafAccounts: [AccountNode] {
         func collectLeaves(_ nodes: [AccountNode]) -> [AccountNode] {
             nodes.flatMap { node in
@@ -414,41 +277,14 @@ struct EditTransactionView: View {
 
 // MARK: - Edit Split Line Row
 
-/**
- A view representing a single editable split line within the transaction edit form.
- 
- `EditSplitLineRow` provides UI controls for modifying a split's account assignment
- and memo. Features a custom account picker with search functionality and an option
- to create new accounts on the fly.
- 
- ## Features
- 
- - **Account picker**: Dropdown with search and full account path display
- - **New Account option**: "New Account…" button opens account creation form
- - **Search pre-fill**: Passes search text as suggested account name
- - **Split memo**: Optional text field for split-specific notes
- 
- ## Account Picker Behavior
- 
- The picker displays leaf accounts with:
- - Color-coded kind indicators (blue=Asset, red=Liability, etc.)
- - Full hierarchical paths (e.g., "Assets:Current Assets:Checking")
- - Account type codes as secondary text
- - Real-time search filtering on path, name, and code
- 
- ## New Account Workflow
- 
- When the user types in the search field and clicks "New Account…":
- 1. Picker collapses and clears search text
- 2. `onCreateAccount` callback fires with search text as suggested name
- 3. Parent view opens account form in new window with pre-filled name
- 4. User creates account and saves
- 5. `.accountSaved` notification triggers account list refresh
- 6. New account appears in picker immediately
- 
- - Note: This is a private component used exclusively by `EditTransactionView`.
- - SeeAlso: `EditSplitLine`, `AccountFormWindowPayload`
- */
+/// A single editable split line row: searchable account picker and a split-memo field.
+///
+/// Tapping "New Account…" at the bottom of the picker calls `onCreateAccount` with the
+/// current search text as the suggested name, allowing the parent to open an account
+/// creation window without dismissing the edit sheet.
+///
+/// - Note: Private component used exclusively by ``EditTransactionView``.
+/// - SeeAlso: ``EditSplitLine``
 private struct EditSplitLineRow: View {
 
     /// Binding to the split line being edited.
@@ -464,7 +300,9 @@ private struct EditSplitLineRow: View {
     /// Receives the current search text as the suggested account name.
     var onCreateAccount: ((String) -> Void)? = nil
 
+    /// Current search query typed into the account picker's search field.
     @State private var searchText = ""
+    /// Whether the account picker dropdown is currently expanded.
     @State private var isPickerExpanded = false
 
     var body: some View {
@@ -485,17 +323,8 @@ private struct EditSplitLineRow: View {
 
     // MARK: - Account Picker
 
-    /**
-     Expandable account picker button with search and new account options.
-     
-     When collapsed, shows the currently selected account's full path or a
-     placeholder prompt. When expanded, displays a search field and scrollable
-     list of filtered accounts, plus a "New Account…" option if the callback
-     is provided.
-     
-     The picker automatically collapses after selecting an account or creating
-     a new one, and clears the search field for the next use.
-     */
+    /// Expandable account picker showing the selected path when collapsed; a search field,
+    /// filtered account list, and optional "New Account…" row when expanded.
     private var accountPickerButton: some View {
         VStack(alignment: .leading, spacing: 0) {
             Button {
@@ -598,16 +427,7 @@ private struct EditSplitLineRow: View {
         }
     }
 
-    /**
-     Filters accounts based on search query.
-     
-     Performs case-insensitive search against:
-     - Account full path (e.g., "Assets:Cash:Checking")
-     - Account name
-     - Account code (if present)
-     
-     Returns all accounts when search is empty.
-     */
+    /// Case-insensitive filter over full path, name, and account code; returns all accounts when query is empty.
     private var filteredAccounts: [AccountNode] {
         let query = searchText.trimmingCharacters(in: .whitespaces).lowercased()
         guard !query.isEmpty else { return allAccounts }
@@ -621,24 +441,9 @@ private struct EditSplitLineRow: View {
 
 // MARK: - Account Picker Row (edit context)
 
-/**
- A single row in the account picker dropdown.
- 
- Displays an account with:
- - Color-coded kind indicator dot
- - Full hierarchical path as primary text
- - Account type code as secondary text
- 
- The kind indicator uses the same color scheme as other account views:
- - Blue: Asset
- - Red: Liability
- - Purple: Equity
- - Green: Income
- - Orange: Expense
- - Gray: Other/System
- 
- - Note: This is a private component used by `EditSplitLineRow`.
- */
+/// A single row in the account picker: color-coded kind dot, full hierarchical path, and type code.
+///
+/// - Note: Private component used by ``EditSplitLineRow``.
 private struct EditAccountPickerRow: View {
 
     /// The account to display.
