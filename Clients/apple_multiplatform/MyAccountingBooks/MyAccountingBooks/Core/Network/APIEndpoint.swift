@@ -4,71 +4,20 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-10.
-//  Last modified by León Felipe Guevara Chávez on 2026-04-02.
+//  Last modified by León Felipe Guevara Chávez on 2026-04-03.
 //  Developed with AI assistance.
 //
 
 import Foundation
 
-/// Describes all backend API endpoints and constructs concrete `URL` values for requests.
+/// Typed enum of all backend API routes; the ``url`` computed property assembles the full `URL`.
 ///
-/// `APIEndpoint` centralizes the path logic for all backend routes, providing a single
-/// source of truth for building request URLs. All endpoints are built from the shared
-/// ``baseURL``, which can be changed to target different environments.
+/// Each case maps to one HTTP endpoint. Cases that require a resource identifier carry it as an
+/// associated value. ``commodities(namespace:)`` appends an optional query parameter.
+/// Change ``baseURL`` to target a different environment.
 ///
-/// ## Features
-///
-/// - **Type-safe endpoints**: Each route is an enum case — no raw strings scattered across the codebase.
-/// - **Associated values**: Endpoints requiring IDs carry them as labeled parameters.
-/// - **URL construction**: The ``url`` computed property assembles the full URL.
-/// - **Query parameters**: Endpoints such as ``commodities(namespace:)`` support optional query strings.
-/// - **Environment switching**: Update ``baseURL`` to point to staging or production.
-///
-/// ## Available Endpoints
-///
-/// | Group | Case | Method | Path |
-/// |---|---|---|---|
-/// | Auth | ``login`` | POST | `/auth/login` |
-/// | Auth | ``register`` | POST | `/auth/register` |
-/// | Ledgers | ``listLedgers`` | GET | `/ledgers` |
-/// | Ledgers | ``createLedger`` | POST | `/ledgers` |
-/// | Accounts | ``accounts(ledgerID:)`` | GET | `/ledgers/{id}/accounts` |
-/// | Accounts | ``balances(ledgerID:)`` | GET | `/ledgers/{id}/balances` |
-/// | Accounts | ``createAccount`` | POST | `/accounts` |
-/// | Accounts | ``patchAccount(id:)`` | PATCH | `/accounts/{id}` |
-/// | Accounts | ``accountTypes`` | GET | `/account-types` |
-/// | Transactions | ``transactions(ledgerID:)`` | GET | `/ledgers/{id}/transactions` |
-/// | Transactions | ``postTransaction`` | POST | `/transactions` |
-/// | Transactions | ``patchTransaction(id:)`` | PATCH | `/transactions/{id}` |
-/// | Transactions | ``reverseTransaction(id:)`` | POST | `/transactions/{id}/reverse` |
-/// | Transactions | ``voidTransaction(id:)`` | POST | `/transactions/{id}/void` |
-/// | Commodities | ``commodities(namespace:)`` | GET | `/commodities` |
-/// | COA Templates | ``coaTemplates`` | GET | `/coa-templates` |
-/// | Payees | ``payees(ledgerID:)`` | GET | `/ledgers/{id}/payees` |
-/// | Payees | ``createPayee`` | POST | `/payees` |
-///
-/// ## Usage Example
-///
-/// ```swift
-/// // Direct URL access
-/// let loginURL = APIEndpoint.login.url
-///
-/// // With APIClient
-/// let ledgers: [LedgerResponse] = try await APIClient.shared.request(
-///     .listLedgers,
-///     method: "GET",
-///     token: authToken
-/// )
-///
-/// // Ledger-scoped endpoint
-/// let accounts: [AccountResponse] = try await APIClient.shared.request(
-///     .accounts(ledgerID: ledger.id),
-///     token: authToken
-/// )
-/// ```
-///
-/// - Important: Always use HTTPS in production environments for secure communication.
-/// - Note: ``url`` is computed on every access; assign it to a local variable if used multiple times.
+/// - Important: Always use HTTPS in non-development environments.
+/// - Note: ``url`` is computed on every access; assign it to a local constant when used more than once.
 /// - SeeAlso: ``APIClient``, ``APIError``
 enum APIEndpoint {
     /// Root URL prepended to every endpoint path.
@@ -182,6 +131,8 @@ enum APIEndpoint {
     /// - SeeAlso: ``CoaTemplateItem``
     case coaTemplates
     
+    // MARK: - Payees
+    
     /// `GET /ledgers/{ledgerID}/payees` — returns all active payees for the ledger, ordered by name.
     ///
     /// - Parameter ledgerID: The unique identifier of the ledger.
@@ -194,6 +145,24 @@ enum APIEndpoint {
     ///
     /// - SeeAlso: ``CreatePayeeRequest``, ``PayeeResponse``
     case createPayee
+    
+    // MARK: - Prices
+    
+    /// `GET /ledgers/{ledgerID}/prices` — returns all active price entries for the ledger, ordered by date descending.
+    ///
+    /// - Parameter ledgerID: The unique identifier of the ledger.
+    case prices(ledgerID: UUID)
+
+    /// `POST /ledgers/{ledgerID}/prices` — records a new exchange rate entry for the ledger.
+    ///
+    /// - Parameter ledgerID: The unique identifier of the ledger.
+    /// - SeeAlso: ``CreatePriceRequest``, ``PriceResponse``
+    case createPrice(ledgerID: UUID)
+
+    /// `DELETE /prices/{id}` — soft-deletes a price entry by setting `deleted_at = now()`.
+    ///
+    /// - Parameter id: The unique identifier of the price entry to delete.
+    case deletePrice(id: UUID)
 
     // MARK: - URL Construction
     
@@ -240,6 +209,12 @@ enum APIEndpoint {
             return Self.baseURL.appendingPathComponent("ledgers/\(id)/payees")
         case .createPayee:
             return Self.baseURL.appendingPathComponent("payees")
+        case .prices(let id):
+            return Self.baseURL.appendingPathComponent("ledgers/\(id)/prices")
+        case .createPrice(let id):
+            return Self.baseURL.appendingPathComponent("ledgers/\(id)/prices")
+        case .deletePrice(let id):
+            return Self.baseURL.appendingPathComponent("prices/\(id)")
         }
     }
 }

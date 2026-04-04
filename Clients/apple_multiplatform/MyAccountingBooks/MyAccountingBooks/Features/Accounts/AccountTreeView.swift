@@ -45,6 +45,8 @@ struct AccountTreeView: View {
 
     /// Controls presentation of the Reports sheet.
     @State private var showReports = false
+    /// Controls presentation of the Exchange Rates (`PriceListView`) sheet.
+    @State private var showPrices = false
 
     /// Environment action used to open dedicated windows (register and form windows).
     @Environment(\.openWindow) private var openWindow
@@ -62,10 +64,6 @@ struct AccountTreeView: View {
         }
         .navigationTitle(ledger.name)
         .searchable(text: $viewModel.searchText, prompt: "Search accounts…")
-        // ── Toolbar: New Account button ───────────────────────────────────────
-        // Opens account creation form with no pre-selected parent (nil) and no
-        // suggested name. User must choose parent from the full account tree picker
-        // and provide a name for the new account.
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
@@ -88,18 +86,20 @@ struct AccountTreeView: View {
                 }
                 .help("View financial reports")
             }
+            ToolbarItem(placement: .secondaryAction) {
+                Button {
+                    showPrices = true
+                } label: {
+                    Label("Exchange Rates", systemImage: "arrow.left.arrow.right.circle")
+                }
+                .help("Manage exchange rates")
+            }
         }
-        // ─────────────────────────────────────────────────────────────────────
         .task(id: ledger.id) {
             guard let token = auth.token else { return }
-            // Small yield to avoid racing with other concurrent tasks
-            // that may also trigger on the same view appearance cycle.
             await Task.yield()
             await viewModel.loadAccounts(ledgerID: ledger.id, token: token)
         }
-        // Expand all parent nodes whenever the tree loads or reloads.
-        // expandAll() inserts every parent UUID into expandedIDs so that
-        // all DisclosureGroups open by default. The user may collapse branches.
         .onChange(of: viewModel.roots) { _, newRoots in
             expandAll(newRoots)
         }
@@ -114,14 +114,6 @@ struct AccountTreeView: View {
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
-        // ── Automatic refresh on account changes ──────────────────────────────
-        // Observes notifications posted by AccountFormViewModel when accounts are
-        // saved (created or updated). When a notification is received for this
-        // ledger, forces a reload to fetch the updated account tree.
-        //
-        // This ensures that newly created accounts appear immediately, and that
-        // edits (name changes, parent moves, etc.) are reflected without requiring
-        // manual refresh or app restart.
         .onReceive(NotificationCenter.default.publisher(
             for: .accountSaved
         )) { notification in
@@ -132,13 +124,6 @@ struct AccountTreeView: View {
                 await viewModel.forceReload(ledgerID: ledger.id, token: token)
             }
         }
-        // ── Automatic balance refresh on transaction posted ───────────────────
-        // Observes notifications posted by PostTransactionViewModel after a
-        // transaction is successfully submitted. Reloads the account tree so
-        // that balance columns reflect the newly posted amounts immediately,
-        // without requiring the user to switch away and back to the ledger.
-        //
-        // Only reloads when the notification is for this ledger.
         .onReceive(NotificationCenter.default.publisher(
             for: .transactionPosted
         )) { notification in
@@ -156,6 +141,10 @@ struct AccountTreeView: View {
                 balances: viewModel.balances
             )
             .environment(auth)
+        }
+        .sheet(isPresented: $showPrices) {
+            PriceListView(ledger: ledger)
+                .environment(auth)
         }
     }
 
@@ -327,7 +316,6 @@ private struct AccountRowView: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            // Kind indicator dot — color-coded per account classification.
             Circle()
                 .fill(kindColor)
                 .frame(width: 8, height: 8)
@@ -352,8 +340,6 @@ private struct AccountRowView: View {
 
             Spacer()
 
-            // Balance: suppressed for the root account (parentId == nil) since it
-            // aggregates the entire ledger and adds no useful information to the tree.
             if let balance, node.account.parentId != nil {
                 Text(formattedBalance(balance))
                     .font(.body.monospacedDigit())
@@ -382,8 +368,6 @@ private struct AccountRowView: View {
     /// - Returns: A grouped-decimal string prefixed with the currency code and symbol.
     private func formattedBalance(_ b: AccountBalanceResponse) -> String {
         let decimalPlaces = ledger.decimalPlaces
-        // Use NumberFormatter directly — it reliably enforces minimum fraction digits
-        // even for zero values, unlike Decimal.FormatStyle.Currency(code: "").
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.minimumFractionDigits = decimalPlaces
@@ -399,7 +383,6 @@ private struct AccountRowView: View {
     /// - Parameter code: An ISO 4217 currency code (e.g., `"USD"`, `"MXN"`).
     /// - Returns: The currency symbol, or `code` if unrecognised.
     private static func currencySymbol(for code: String) -> String {
-        // Use NumberFormatter — it knows the symbol for every ISO 4217 code
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencyCode = code
