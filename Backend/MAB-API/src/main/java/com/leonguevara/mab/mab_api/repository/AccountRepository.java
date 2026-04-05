@@ -32,7 +32,7 @@
 //             clients can apply operational-role logic (Banks,
 //             Cash, Memo) without a separate lookup call.
 // ============================================================
-// Last edited: 2026-03-28
+// Last edited: 2026-04-04
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -124,7 +124,9 @@ public class AccountRepository {
                     rs.getString("at_code"),
                     // account_role: operational role smallint (0=Unspecified, 101=banks,
                     // 210=Accounts payable). Clients use this for special display/validation rules.
-                    rs.getInt("account_role")
+                    rs.getInt("account_role"),
+
+                    rs.getObject("commodity_id", UUID.class)
             );
 
     /**
@@ -163,7 +165,8 @@ public class AccountRepository {
                         a.is_hidden,
                         a.kind,
                         at.code   AS at_code,
-                        a.account_role
+                        a.account_role,
+                        a.commodity_id
                     FROM  public.account      a
                     -- LEFT JOIN: placeholder accounts have no account_type_id.
                     -- Using LEFT JOIN ensures they are included in results.
@@ -285,7 +288,9 @@ public class AccountRepository {
 
             short kind         = ((Number) parentRow.get("kind")).shortValue();
             int   commodityScu = ((Number) parentRow.get("commodity_scu")).intValue();
-            UUID  commodityId  = (UUID) parentRow.get("commodity_id");
+            UUID  commodityId  = request.commodityId() != null
+                    ? request.commodityId()
+                    : (UUID) parentRow.get("commodity_id");
 
             String insertSql = """
             INSERT INTO public.account (
@@ -426,6 +431,10 @@ public class AccountRepository {
                 setClauses.add("is_hidden = :isHidden");
                 params.addValue("isHidden", request.isHidden());
             }
+            if (request.commodityId() != null) {
+                setClauses.add("commodity_id = :commodityId");
+                params.addValue("commodityId", request.commodityId());
+            }
 
             if (!setClauses.isEmpty()) {
                 setClauses.add("updated_at = now()");
@@ -501,7 +510,8 @@ public class AccountRepository {
         String sql = """
         SELECT a.id, a.name, a.code, a.parent_id,
                a.is_placeholder, a.is_hidden, a.kind,
-               at.code AS at_code, a.account_role
+               at.code AS at_code, a.account_role,
+               a.commodity_id
           FROM public.account a
           LEFT JOIN public.account_type at ON at.id = a.account_type_id
          WHERE a.id = :id AND a.deleted_at IS NULL

@@ -230,6 +230,16 @@ final class AccountFormViewModel {
     /// and normal balance direction. Placeholder accounts don't require a type.
     var selectedAccountType: AccountTypeItem?
     
+    /// Available commodities loaded at form startup (CURRENCY namespace only).
+    var availableCommodities: [CommodityResponse] = []
+
+    /// The commodity selected for this account. nil = inherit from parent.
+    var selectedCommodity: CommodityResponse? = nil
+
+    /// The commodity UUID when the form was first loaded (edit mode).
+    /// Used for change detection in savePatch().
+    var originalCommodityId: UUID? = nil
+
     /// The operational role for this account, stored as the raw `Int` value of ``AccountRole``.
     ///
     /// Defaults to `0` (``AccountRole/unspecified``). Use ``AccountRole`` raw values when
@@ -417,7 +427,12 @@ final class AccountFormViewModel {
     func load(mode: Mode, allRoots: [AccountNode], token: String) async {
         isLoading = true
         do {
+            async let typesFetch  = AccountService.shared.fetchAccountTypes(token: token)
+            async let commodFetch: [CommodityResponse] = APIClient.shared.request(
+                .commodities(namespace: "CURRENCY"), method: "GET", token: token
+            )
             accountTypes = try await AccountService.shared.fetchAccountTypes(token: token)
+            availableCommodities = (try? await commodFetch) ?? []
 
             switch mode {
             case .create(_, let suggestedParent, let suggestedName):
@@ -432,6 +447,8 @@ final class AccountFormViewModel {
                 isPlaceholder = existing.isPlaceholder
                 isHidden      = existing.isHidden
                 accountRole   = existing.accountRole
+                selectedCommodity   = availableCommodities.first { $0.id == existing.commodityId }
+                originalCommodityId = existing.commodityId
 
                 // Resolve parent node
                 selectedParent = findNode(id: existing.parentId, in: allRoots)
@@ -593,7 +610,8 @@ final class AccountFormViewModel {
             accountTypeCode: isPlaceholder ? nil : selectedAccountType?.code,
             accountRole:     accountRole,
             isPlaceholder:   isPlaceholder,
-            isHidden:        isHidden
+            isHidden:        isHidden,
+            commodityId:     selectedCommodity?.id
         )
         let created = try await AccountService.shared.createAccount(request, token: token)
 
@@ -633,7 +651,8 @@ final class AccountFormViewModel {
             accountTypeCode: isPlaceholder ? nil : selectedAccountType?.code,
             accountRole:     accountRole != originalRole ? accountRole : nil,
             isPlaceholder:   isPlaceholder,
-            isHidden:        isHidden
+            isHidden:        isHidden,
+            commodityId:     selectedCommodity?.id != originalCommodityId ? selectedCommodity?.id : nil
         )
         _ = try await AccountService.shared.patchAccount(
             id: accountId, request, token: token
@@ -694,7 +713,7 @@ final class AccountFormViewModel {
                     side:          0,           // debit new account
                     valueNum:      valueNum,
                     valueDenom:    denom,
-                    quantityNum:   0,
+                    quantityNum:   valueNum,
                     quantityDenom: denom,
                     memo:          nil,
                     action:        nil

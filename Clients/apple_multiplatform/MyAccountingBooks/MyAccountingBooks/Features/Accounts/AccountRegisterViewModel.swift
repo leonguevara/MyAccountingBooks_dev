@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-16.
-//  Last modified by León Felie Guevara Chávez on 2026-04-02
+//  Last modified by León Felipe Guevara Chávez on 2026-04-04
 //  Developed with AI assistance.
 //
 
@@ -13,31 +13,31 @@ import Foundation
 // MARK: - Register Row
 
 /// A single row in the account register.
-///
-/// Combines a transaction header with the specific split for this account and the
-/// running balance up to and including this transaction. Useful for driving a table UI
-/// where each row is tappable to reveal full transaction details.
 struct RegisterRow: Identifiable {
-    /// Transaction identifier (mirrors `transaction.id`).
-    let id: UUID                        // transaction id
-    /// The full transaction associated with this row.
-    let transaction: TransactionResponse
-    /// The split within the transaction that belongs to the current account.
-    let split: SplitResponse            // the split belonging to this account
-    /// The signed amount for this account (sign derived from account kind/normal balance).
-    let accountAmount: Decimal          // signed per normal balance
-    /// The cumulative balance for the account up to and including this row.
-    let runningBalance: Decimal         // cumulative balance to this row
+    let id:             UUID
+    let transaction:    TransactionResponse
+    let split:          SplitResponse
+    /// Signed amount in the **account's display currency**:
+    /// - Native currency (quantity) for foreign-currency accounts
+    /// - Base currency (value) for same-currency accounts
+    let accountAmount:  Decimal
+    /// Cumulative balance in the account's display currency.
+    let runningBalance: Decimal
 }
 
 // MARK: - ViewModel
 
 /// Manages state for the account register screen.
 ///
-/// Calls ``load(ledger:account:token:)`` to fetch all transactions for the ledger via
-/// ``TransactionService``, then delegates to `buildRows` to filter, sort, sign, and
-/// accumulate a running balance for the selected account. Exposes selection state for
-/// the transaction detail sheet and the post-transaction flow.
+/// ## Multi-currency behaviour
+///
+/// When the account's `commodityId` differs from the ledger's `currencyCommodityId`,
+/// the register displays amounts in the account's **native currency** using
+/// `split.quantityAmount` instead of `split.amount`. The running balance is
+/// accumulated in the same native currency.
+///
+/// The `isForeignCurrency` flag on this view model is read by ``AccountRegisterView``
+/// to select the correct currency code and decimal places for formatting.
 ///
 /// - SeeAlso: ``RegisterRow``, ``AccountRegisterView``, ``TransactionService``
 @Observable
@@ -45,73 +45,51 @@ final class AccountRegisterViewModel {
 
     // MARK: - State
 
-    /// The register rows to display, sorted oldest-first for running-balance accumulation.
-    ///
-    /// Each ``RegisterRow`` carries the transaction, the account's split, the signed amount,
-    /// and the cumulative balance up to that row. The UI may reverse the order for display.
-    var rows: [RegisterRow] = []
-
-    /// Indicates whether a network operation is in progress.
-    ///
-    /// Set to `true` at the start of ``load(ledger:account:token:)`` and cleared when
-    /// it completes, regardless of success or failure.
-    var isLoading = false
-
-    /// An optional error message to present when operations fail.
-    ///
-    /// Set when the transaction fetch throws. Should be displayed in an alert and
-    /// cleared by setting to `nil`.
+    var rows:         [RegisterRow] = []
+    var isLoading     = false
     var errorMessage: String?
 
-    /// The transaction selected by tapping a register row.
-    ///
-    /// Set before `showTransactionDetail` is toggled to `true` so the detail sheet
-    /// has a value to display as soon as it appears.
-    var selectedTransaction: TransactionResponse?
-
-    /// Controls presentation of the transaction detail sheet.
-    ///
-    /// Set to `true` when the user taps a row; the sheet reads `selectedTransaction`.
+    var selectedTransaction:  TransactionResponse?
     var showTransactionDetail = false
+    var showPostTransaction   = false
 
-    /// Controls presentation of the post-transaction sheet.
-    ///
-    /// Set to `true` by the `+` toolbar button and the empty-state CTA button.
-    var showPostTransaction = false
+    /// True when the current account's commodity differs from the ledger's base currency.
+    /// Read by the view to choose the correct currency code for amount formatting.
+    var isForeignCurrency = false
 
     // MARK: - Dependencies
 
-    /// Service used to fetch transactions from the backend.
     private let service = TransactionService.shared
 
     // MARK: - Load
 
-    /// Fetches all transactions for the ledger and rebuilds the register rows for the given account.
+    /// Fetches all transactions for the ledger and builds register rows for the account.
     ///
-    /// Delegates to ``TransactionService/fetchTransactions(ledgerID:token:)``, then passes the
-    /// result to `buildRows(transactions:accountID:kind:)` which filters, sorts, signs, and
-    /// accumulates a running balance. On failure the error is written to `errorMessage` and
-    /// `rows` is left unchanged.
-    ///
-    /// - Parameters:
-    ///   - ledger: The ledger whose transactions are fetched (supplies `ledgerID`).
-    ///   - account: The account whose register is being displayed (supplies `id` and `kind`).
-    ///   - token: A bearer token used to authorize the request.
-    /// - Note: Errors are captured in `errorMessage`; this method does not throw.
-    /// - Important: Must be called from a `@MainActor` context for UI state updates.
+    /// Sets ``isForeignCurrency`` based on whether `account.account.commodityId` differs
+    /// from `ledger.currencyCommodityId`. When true, `buildRows` uses `quantityAmount`
+    /// (native currency) instead of `amount` (base currency) for each split.
     @MainActor
     func load(ledger: LedgerResponse, account: AccountNode, token: String) async {
         isLoading = true
         errorMessage = nil
+
+        // Determine currency mode once, before building rows.
+        let accountCommodity = account.account.commodityId
+        let ledgerCommodity  = ledger.currencyCommodityId
+        isForeignCurrency = accountCommodity != nil
+                         && ledgerCommodity  != nil
+                         && accountCommodity != ledgerCommodity
+
         do {
             let allTransactions = try await service.fetchTransactions(
                 ledgerID: ledger.id,
                 token: token
             )
             rows = Self.buildRows(
-                transactions: allTransactions,
-                accountID: account.id,
-                kind: account.account.kind
+                transactions:     allTransactions,
+                accountID:        account.id,
+                kind:             account.account.kind,
+                isForeignCurrency: isForeignCurrency
             )
         } catch {
             errorMessage = error.localizedDescription
@@ -121,44 +99,31 @@ final class AccountRegisterViewModel {
 
     // MARK: - Row Builder
 
-    /// Builds register rows for an account from a flat list of transactions.
+    /// Builds register rows for an account from a flat transaction list.
     ///
-    /// 1. Filters to transactions that contain a split for `accountID`.
-    /// 2. Sorts oldest-first (`postDate` ascending) for running-balance accumulation.
-    /// 3. Signs each amount by the account's normal balance:
+    /// When `isForeignCurrency` is true, uses `split.quantityAmount` (native currency)
+    /// for both the signed amount and the running balance. Otherwise uses `split.amount`
+    /// (base currency).
     ///
-    /// | `kind` values | Normal balance | Debit effect | Credit effect |
-    /// |---|---|---|---|
-    /// | 1 (Asset), 5 (Expense), 6 (CostOfSales) | Debit | `+` | `−` |
-    /// | 2 (Liability), 3 (Equity), 4 (Income) | Credit | `−` | `+` |
-    ///
-    /// 4. Voided transactions contribute `signed = 0` and do **not** advance the running balance.
-    ///
-    /// - Parameters:
-    ///   - transactions: The full ledger transaction list from ``TransactionService``.
-    ///   - accountID: UUID of the account to filter splits for.
-    ///   - kind: The account's `kind` integer, used to determine the normal-balance sign rule.
-    /// - Returns: An array of ``RegisterRow`` values sorted oldest-first, ready for display.
+    /// Normal-balance sign rules:
+    /// - Assets / Expenses (kind 1, 5, 6): debit = positive, credit = negative
+    /// - Liabilities / Equity / Income (kind 2, 3, 4): credit = positive, debit = negative
     private static func buildRows(
-        transactions: [TransactionResponse],
-        accountID: UUID,
-        kind: Int
+        transactions:      [TransactionResponse],
+        accountID:         UUID,
+        kind:              Int,
+        isForeignCurrency: Bool
     ) -> [RegisterRow] {
 
-        // Filter to transactions that have a split for this account
         let relevant = transactions
             .compactMap { tx -> (TransactionResponse, SplitResponse)? in
                 guard let split = tx.splits.first(where: { $0.accountId == accountID })
                 else { return nil }
                 return (tx, split)
             }
-            // Oldest first for running balance accumulation
             .sorted { $0.0.postDate < $1.0.postDate }
 
-        // Compute signed amount per normal balance:
-        // Assets/Expenses (kind 1, 5, 6): debit = positive, credit = negative
-        // Liabilities/Equity/Income (kind 2, 3, 4): credit = positive, debit = negative
-        let debitPositive: Set<Int> = [1, 5, 6]  // Asset, Expense, CostOfSales
+        let debitPositive: Set<Int> = [1, 5, 6]
 
         var runningBalance: Decimal = .zero
         var result: [RegisterRow] = []
@@ -169,20 +134,23 @@ final class AccountRegisterViewModel {
             if tx.isVoided {
                 signed = .zero
             } else {
-                let raw = split.amount   // always positive rational value
+                // Use native currency (quantity) for foreign accounts,
+                // base currency (value) for same-currency accounts.
+                let raw = isForeignCurrency ? split.quantityAmount : split.amount
+
                 if debitPositive.contains(kind) {
-                    signed = split.side == 0 ? raw : -raw    // debit+, credit-
+                    signed = split.side == 0 ? raw : -raw
                 } else {
-                    signed = split.side == 1 ? raw : -raw    // credit+, debit-
+                    signed = split.side == 1 ? raw : -raw
                 }
-                runningBalance += signed    // ← only accumulate non-voided
+                runningBalance += signed
             }
 
             result.append(RegisterRow(
-                id: tx.id,
-                transaction: tx,
-                split: split,
-                accountAmount: signed,      // zero for voided rows
+                id:             tx.id,
+                transaction:    tx,
+                split:          split,
+                accountAmount:  signed,
                 runningBalance: runningBalance
             ))
         }

@@ -4,241 +4,195 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-16.
+//  Last modified by León Felipe Guevara Chávez on 2026-04-04
 //  Developed with AI assistance.
 //
 
 import Foundation
 
-/// Models used for posting a full transaction with multiple splits to the backend.
-///
-/// Rational amounts are represented as numerator/denominator pairs to maintain precision.
-/// The ledger transaction consists of a main transaction record plus one or more splits.
-/// 
-/// # Overview
-/// - `PostTransactionRequest`: Encodable model representing the full transaction payload.
-/// - `SplitRequest`: Encodable model for each split line of the transaction.
-/// - `SplitLine`: Form state model for user input with decimal strings, convertible to `SplitRequest`.
-///
-/// # Usage example
-/// ```swift
-/// let split = SplitRequest(accountId: UUID(uuidString: "SOME_UUID")!,
-///                          side: 0,
-///                          valueNum: 100,
-///                          valueDenom: 1,
-///                          quantityNum: 100,
-///                          quantityDenom: 1,
-///                          memo: "Sample split",
-///                          action: nil)
-/// let request = PostTransactionRequest(ledgerId: UUID(uuidString: "LEDGER_UUID")!,
-///                                      currencyCommodityId: UUID(uuidString: "CURRENCY_UUID")!,
-///                                      postDate: Date(),
-///                                      enterDate: nil,
-///                                      memo: "Transaction memo",
-///                                      num: "123",
-///                                      status: 0,
-///                                      payeeId: nil,
-///                                      splits: [split])
-/// ```
- 
 // MARK: - Request Models
 
 /// Encodable payload for posting a full transaction with multiple splits.
-/// 
-/// The transaction is tied to a specific ledger and currency commodity.
-/// Dates are optional; if provided, they must be valid and typically `postDate` is the effective date.
-/// The `status` field denotes the transaction status (e.g., cleared, reconciled).
-/// The `splits` array must contain at least one split and the total debits and credits must balance.
-/// 
-/// # Example
-/// ```swift
-/// let split = SplitRequest(accountId: UUID(uuidString: "ACCOUNT_UUID")!,
-///                          side: 0,
-///                          valueNum: 500,
-///                          valueDenom: 100,
-///                          quantityNum: 500,
-///                          quantityDenom: 100,
-///                          memo: "Split memo",
-///                          action: nil)
-/// let request = PostTransactionRequest(ledgerId: UUID(uuidString: "LEDGER_UUID")!,
-///                                      currencyCommodityId: UUID(uuidString: "CURRENCY_UUID")!,
-///                                      postDate: Date(),
-///                                      enterDate: Date(),
-///                                      memo: "Transaction memo",
-///                                      num: "TX123",
-///                                      status: 1,
-///                                      payeeId: UUID(uuidString: "PAYEE_UUID"),
-///                                      splits: [split])
-/// ```
 struct PostTransactionRequest: Encodable {
-    /// Ledger identifier where the transaction belongs.
-    let ledgerId: UUID
-    
-    /// Currency commodity identifier for the transaction amounts.
+    let ledgerId:            UUID
     let currencyCommodityId: UUID
-    
-    /// Posting date of the transaction (optional).
-    let postDate: Date?
-    
-    /// Enter date of the transaction (optional).
-    let enterDate: Date?
-    
-    /// Optional memo for the transaction.
-    let memo: String?
-    
-    /// Optional user-assigned transaction number or reference.
-    let num: String?
-    
-    /// Status code representing transaction state (e.g., 0 = pending, 1 = cleared).
-    let status: Int
-    
-    /// Optional payee identifier for the transaction.
-    let payeeId: UUID?
-    
-    /// Array of split lines belonging to this transaction; must balance.
-    let splits: [SplitRequest]
-    
-    /// Explicit keys — ensures exact camelCase names regardless of encoder strategy.
+    let postDate:            Date?
+    let enterDate:           Date?
+    let memo:                String?
+    let num:                 String?
+    let status:              Int
+    let payeeId:             UUID?
+    let splits:              [SplitRequest]
+
     enum CodingKeys: String, CodingKey {
-        case ledgerId
-        case currencyCommodityId
-        case postDate
-        case enterDate
-        case memo
-        case num
-        case status
-        case payeeId
-        case splits
+        case ledgerId, currencyCommodityId
+        case postDate, enterDate
+        case memo, num, status, payeeId, splits
     }
 }
 
-/// Represents one split line in a transaction; encodable for posting.
+/// Encodable model for one split line sent to the backend.
 ///
-/// `side` indicates debit (0) or credit (1).
-/// Amounts and quantities are represented as rational numbers: numerator/denominator pairs.
-///
-/// # Example
-/// ```swift
-/// let split = SplitRequest(accountId: UUID(uuidString: "ACCOUNT_UUID")!,
-///                          side: 1,
-///                          valueNum: 250,
-///                          valueDenom: 100,
-///                          quantityNum: 250,
-///                          quantityDenom: 100,
-///                          memo: "Payment split",
-///                          action: nil)
-/// ```
+/// # Multi-currency semantics
+/// - `valueNum / valueDenom` — amount in the **transaction's base currency** (ledger currency).
+/// - `quantityNum / quantityDenom` — amount in the **account's native currency**.
+///   For same-currency splits these equal the value fields.
+///   For foreign-currency splits these carry the foreign amount.
 struct SplitRequest: Encodable {
-    /// Account identifier for this split.
-    let accountId: UUID
-    
-    /// Split side: 0 = debit, 1 = credit.
-    let side: Int
-    
-    /// Numerator for the split's value amount.
-    let valueNum: Int
-    
-    /// Denominator for the split's value amount.
-    let valueDenom: Int
-    
-    /// Numerator for the split's quantity amount.
-    let quantityNum: Int
-    
-    /// Denominator for the split's quantity amount.
+    let accountId:     UUID
+    let side:          Int
+    let valueNum:      Int
+    let valueDenom:    Int
+    let quantityNum:   Int
     let quantityDenom: Int
-    
-    /// Optional memo for this split.
-    let memo: String?
-    
-    /// Optional action string (e.g., "delete", "update").
-    let action: String?
-    
-    /// Explicit keys — ensures exact camelCase names regardless of encoder strategy.
+    let memo:          String?
+    let action:        String?
+
     enum CodingKeys: String, CodingKey {
-        case accountId
-        case side
-        case valueNum
-        case valueDenom
-        case quantityNum
-        case quantityDenom
-        case memo
-        case action
+        case accountId, side
+        case valueNum, valueDenom
+        case quantityNum, quantityDenom
+        case memo, action
     }
 }
 
 // MARK: - Split Line (form state)
 
-/// Editable form-state model representing one split line in the Post Transaction form.
+/// Editable form-state model for one split line in the Post Transaction form.
 ///
-/// This model uses user-facing decimal strings for amounts (`debitAmount`, `creditAmount`).
-/// On submission, these decimal values can be converted to rational numbers for `SplitRequest`.
-/// The `side` property is derived automatically:
-/// - `0` if there is a positive debit amount,
-/// - `1` otherwise (credit).
+/// ## Multi-currency support
 ///
-/// # Usage example
-/// ```swift
-/// let denom = 100
-/// let splitRequest = SplitRequest(
-///     accountId: splitLine.account!.id,
-///     side: splitLine.side,
-///     valueNum: splitLine.toValueNum(denom: denom),
-///     valueDenom: denom,
-///     quantityNum: splitLine.toValueNum(denom: denom),
-///     quantityDenom: denom,
-///     memo: splitLine.memo,
-///     action: nil
-/// )
-/// ```
+/// When the selected account has a different `commodityId` than the ledger's base
+/// currency, the split enters **foreign-currency mode**:
+///
+/// - `foreignAmount` holds the amount in the foreign currency (e.g. "100" USD).
+/// - `exchangeRate` holds the rate to convert to base currency (e.g. "17.89" MXN per USD).
+/// - `debitAmount` / `creditAmount` are computed from `foreignAmount × exchangeRate`
+///   and are read-only in this mode.
+///
+/// In same-currency mode (the default), `foreignAmount` and `exchangeRate` are empty
+/// and `debitAmount` / `creditAmount` are the user's direct inputs.
+///
+/// ## Balance contribution
+///
+/// In both modes, `baseAmount` is the amount that counts toward `totalDebits` /
+/// `totalCredits`. In foreign mode this is `foreignAmount × exchangeRate`; in
+/// same-currency mode it is `effectiveAmount`.
 struct SplitLine: Identifiable {
-    /// Unique identifier for this split line.
     let id = UUID()
-    
-    /// Optional selected account node for this split.
+
+    // MARK: - Account
+
+    /// The selected account for this split. nil until the user picks one.
     var account: AccountNode?
-    
-    /// User-edited debit amount as a decimal string.
-    var debitAmount: String  = ""
-    
-    /// User-edited credit amount as a decimal string.
+
+    // MARK: - Same-currency amounts (direct user input)
+
+    /// Debit amount string entered by the user (same-currency mode).
+    var debitAmount:  String = ""
+    /// Credit amount string entered by the user (same-currency mode).
     var creditAmount: String = ""
-    
-    /// Optional memo text for this split.
-    var memo: String         = ""
+
+    // MARK: - Foreign-currency amounts
+
+    /// Amount in the account's native foreign currency.
+    /// Empty in same-currency mode; populated by the user in foreign-currency mode.
+    var foreignAmount: String = ""
+
+    /// Exchange rate: units of base currency per 1 unit of foreign currency.
+    /// Pre-filled from the price table when available; editable by the user.
+    /// Empty triggers a warning and blocks submission.
+    var exchangeRate: String = ""
+
+    // MARK: - Memo
+
+    var memo: String = ""
+
+    // MARK: - Foreign-currency mode detection
+
+    /// True when the account has a foreign commodity AND the ledger's commodity is known.
+    /// Set by the view model after an account is selected.
+    var isForeignCurrency: Bool = false
 
     // MARK: - Derived
 
-    /// Returns true if this line has a selected account and a non-zero amount (debit or credit).
-    /// Returns false if account is nil or amounts are zero or invalid.
+    /// True if this split can be included in the transaction.
+    /// Foreign-currency mode requires a valid foreignAmount AND a non-empty exchangeRate.
     var isComplete: Bool {
         guard account != nil else { return false }
+        if isForeignCurrency {
+            let fa = Decimal(string: foreignAmount.trimmingCharacters(in: .whitespaces)) ?? .zero
+            let er = Decimal(string: exchangeRate.trimmingCharacters(in: .whitespaces)) ?? .zero
+            return fa > .zero && er > .zero
+        }
         let d = Decimal(string: debitAmount) ?? .zero
         let c = Decimal(string: creditAmount) ?? .zero
         return d > .zero || c > .zero
     }
 
-    /// Returns the effective amount as a positive decimal regardless of side.
-    /// If debit amount is positive, returns debit; else returns positive credit amount.
-    /// Returns zero if neither amount is positive or invalid.
+    /// True when in foreign-currency mode but the exchange rate field is empty.
+    /// Used to show a warning in the UI and block submission.
+    var isMissingRate: Bool {
+        guard isForeignCurrency else { return false }
+        let fa = Decimal(string: foreignAmount.trimmingCharacters(in: .whitespaces)) ?? .zero
+        let er = Decimal(string: exchangeRate.trimmingCharacters(in: .whitespaces)) ?? .zero
+        return fa > .zero && er == .zero
+    }
+
+    /// The effective amount in the **base currency** that contributes to balance totals.
+    ///
+    /// Foreign mode: `foreignAmount × exchangeRate`
+    /// Same-currency mode: the non-zero debit or credit amount.
+    var baseAmount: Decimal {
+        if isForeignCurrency {
+            let fa = Decimal(string: foreignAmount.trimmingCharacters(in: .whitespaces)) ?? .zero
+            let er = Decimal(string: exchangeRate.trimmingCharacters(in: .whitespaces)) ?? .zero
+            return fa * er
+        }
+        return effectiveAmount
+    }
+
+    /// The raw effective amount (same-currency mode only).
     var effectiveAmount: Decimal {
         if let d = Decimal(string: debitAmount), d > .zero { return d }
         if let c = Decimal(string: creditAmount), c > .zero { return c }
         return .zero
     }
 
-    /// Returns the side of the split line:
-    /// - `0` (debit) if debitAmount is a positive decimal,
-    /// - `1` (credit) otherwise (including zero or invalid debitAmount).
+    /// 0 = DEBIT, 1 = CREDIT.
     var side: Int {
+        if isForeignCurrency {
+            // In foreign mode side is determined by debitAmount / creditAmount
+            // which are set by the UI toggle.
+            if let d = Decimal(string: debitAmount), d > .zero { return 0 }
+            return 1
+        }
         if let d = Decimal(string: debitAmount), d > .zero { return 0 }
         return 1
     }
 
-    /// Converts the effective decimal amount to an integer numerator using the given denominator.
-    /// - Parameter denom: The denominator to scale the decimal amount.
-    /// - Returns: The integer numerator value (amount * denom), truncated toward zero.
+    // MARK: - Rational conversion helpers
+
+    /// `valueNum` for the **base currency** value (same-currency or converted foreign).
     func toValueNum(denom: Int) -> Int {
-        let amount = effectiveAmount
+        let amount: Decimal
+        if isForeignCurrency {
+            amount = baseAmount
+        } else {
+            amount = effectiveAmount
+        }
         let num = amount * Decimal(denom)
         return Int(truncating: num as NSDecimalNumber)
+    }
+
+    /// `quantityNum` for the **account's native currency**.
+    /// Same as `toValueNum` for same-currency splits.
+    func toQuantityNum(quantityDenom: Int) -> Int {
+        if isForeignCurrency {
+            let fa = Decimal(string: foreignAmount.trimmingCharacters(in: .whitespaces)) ?? .zero
+            let num = fa * Decimal(quantityDenom)
+            return Int(truncating: num as NSDecimalNumber)
+        }
+        return toValueNum(denom: quantityDenom)
     }
 }

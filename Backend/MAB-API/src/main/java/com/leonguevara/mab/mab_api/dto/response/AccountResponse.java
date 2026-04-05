@@ -19,8 +19,13 @@
 //          (e.g. 0=Normal, 1=Control, 2=Tax, 3=Memo).
 //          Clients use this to apply special handling rules
 //          without a separate lookup call.
+//
+//          commodityId: the UUID of the commodity (currency)
+//          assigned to this account. Null if no commodity is
+//          explicitly assigned (most accounts inherit from
+//          the ledger's currency via the parent account).
 // ============================================================
-// Last edited: 2026-03-28
+// Last edited: 2026-04-04
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -43,7 +48,8 @@ import java.util.UUID;
  *   "isHidden":        false,
  *   "kind":            1,
  *   "accountTypeCode": "CASH",
- *   "accountRole":     0
+ *   "accountRole":     0,
+ *   "commodityId":     "uuid-of-mxn-commodity"
  * }
  * }</pre>
  *
@@ -62,6 +68,8 @@ import java.util.UUID;
  * @param accountRole     Operational role of the account: 0=Unspecified, 101=Banks,
  *                        200=Account payables. Clients use this to apply special
  *                        display or validation rules without a separate lookup.
+ * @param commodityId     UUID of the commodity (currency) assigned to this account.
+ *                        Null if no explicit commodity is assigned.
  */
 public record AccountResponse(
         UUID    id,
@@ -72,5 +80,6 @@ public record AccountResponse(
         boolean isHidden,
         int     kind,
         String  accountTypeCode,
-        int     accountRole
+        int     accountRole,
+        UUID    commodityId          // nullable — null means no explicit commodity assigned
 ) {}

@@ -90,6 +90,23 @@ struct PostTransactionView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
                     headerCard
+                    // Missing exchange rate warning
+                    if viewModel.hasMissingRates {
+                        HStack(spacing: 8) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.orange)
+                            Text("One or more foreign-currency splits are missing an exchange rate. Enter a rate to enable posting.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(12)
+                        .background(Color.orange.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+                        )
+                    }
                     splitsCard
                     balanceSummaryCard
 
@@ -142,10 +159,15 @@ struct PostTransactionView: View {
         }
         .task(id: ledger.id) {
             guard let token = auth.token else { return }
-            if let payees = try? await PayeeService.shared.fetchPayees(
-                ledgerID: ledger.id, token: token) {
-                currentPayees = payees
-            }
+            // Seed ledger commodity for foreign-currency detection
+            viewModel.ledgerCommodityId = ledger.currencyCommodityId
+
+            // Load payees and prices in parallel
+            async let payeeFetch  = PayeeService.shared.fetchPayees(ledgerID: ledger.id, token: token)
+            async let priceFetch  = PriceNetworkService.shared.fetchPrices(ledgerID: ledger.id, token: token)
+
+            if let payees = try? await payeeFetch { currentPayees = payees }
+            if let prices = try? await priceFetch { viewModel.prices = prices }
         }
     }
 
@@ -249,6 +271,9 @@ struct PostTransactionView: View {
                                     suggestedParentId: nil,
                                     suggestedName: suggestedName.isEmpty ? nil : suggestedName
                                 ))
+                            },
+                            onAccountSelected: { account in
+                                viewModel.setAccount(account, for: line.id)
                             }
                         )
                     }
@@ -500,6 +525,10 @@ private struct SplitLineRow: View {
     /// Optional callback invoked when the user taps "New Account…" in the picker.
     /// Receives the current search text as the suggested account name.
     var onCreateAccount: ((String) -> Void)? = nil
+    
+    /// Optional callback invoked when the user selects an account in the picker.
+    /// Used by the parent to trigger multi-currency detection via `viewModel.setAccount`.
+    var onAccountSelected: ((AccountNode) -> Void)? = nil
 
     /// Current search query in the account picker; cleared when the picker opens or an account is selected.
     @State private var searchText = ""
@@ -507,36 +536,133 @@ private struct SplitLineRow: View {
     @State private var isPickerExpanded = false
 
     var body: some View {
-        HStack(alignment: .top, spacing: 8) {
-            TextField("", text: $line.memo)
-                .textFieldStyle(.roundedBorder)
-                .frame(minWidth: 160, idealWidth: 220, maxWidth: 260)
+        VStack(alignment: .leading, spacing: 6) {
+            // ── Main row (same layout as before) ──────────────────────
+            HStack(alignment: .top, spacing: 8) {
+                TextField("", text: $line.memo)
+                    .textFieldStyle(.roundedBorder)
+                    .frame(minWidth: 160, idealWidth: 220, maxWidth: 260)
 
-            accountPickerButton
-                .frame(maxWidth: .infinity, alignment: .leading)
+                accountPickerButton
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
 
-            TextField("", text: $line.debitAmount)
-                .textFieldStyle(.roundedBorder)
-                .multilineTextAlignment(.trailing)
-                .frame(width: 100)
-                .onChange(of: line.debitAmount) { _, _ in onDebitEdited() }
+                if line.isForeignCurrency {
+                    // Read-only base-currency equivalent
+                    
+                    let baseVal = line.baseAmount
+                    let displayBase: String = {
+                        if baseVal > .zero {
+                            return (line.side == 0 ? "+" : "-") + String(describing: baseVal)
+                        } else {
+                            return "—"
+                        }
+                    }()
+                    Text(verbatim: displayBase)
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                        .frame(width: 100, alignment: .trailing)
+                        .padding(.top, 6)
 
-            TextField("", text: $line.creditAmount)
-                .textFieldStyle(.roundedBorder)
-                .multilineTextAlignment(.trailing)
-                .frame(width: 100)
-                .onChange(of: line.creditAmount) { _, _ in onCreditEdited() }
+                    Color.clear.frame(width: 100)   // credit column placeholder
+                } else {
+                    TextField("", text: $line.debitAmount)
+                        .textFieldStyle(.roundedBorder)
+                        .multilineTextAlignment(.trailing)
+                        .frame(width: 100)
+                        .onChange(of: line.debitAmount) { _, _ in onDebitEdited() }
 
-            Button(role: .destructive) {
-                onDelete()
-            } label: {
-                Image(systemName: "minus.circle.fill")
-                    .foregroundStyle(canDelete ? .red : .secondary)
+                    TextField("", text: $line.creditAmount)
+                        .textFieldStyle(.roundedBorder)
+                        .multilineTextAlignment(.trailing)
+                        .frame(width: 100)
+                        .onChange(of: line.creditAmount) { _, _ in onCreditEdited() }
+                }
+
+                Button(role: .destructive) { onDelete() } label: {
+                    Image(systemName: "minus.circle.fill")
+                        .foregroundStyle(canDelete ? .red : .secondary)
+                }
+                .buttonStyle(.plain)
+                .disabled(!canDelete)
+                .frame(width: 24, alignment: .center)
+                .padding(.top, 6)
             }
-            .buttonStyle(.plain)
-            .disabled(!canDelete)
-            .frame(width: 24, alignment: .center)
-            .padding(.top, 6)
+
+            // ── Foreign-currency sub-row ───────────────────────────────
+            if line.isForeignCurrency {
+                HStack(spacing: 8) {
+                    // Indent to align with account picker
+                    Spacer().frame(minWidth: 160, idealWidth: 220, maxWidth: 260)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(spacing: 12) {
+                            // Foreign amount with debit/credit toggle
+                            HStack(spacing: 6) {
+                                Picker("", selection: Binding(
+                                    get: { line.side },
+                                    set: { newSide in
+                                        if newSide == 0 {
+                                            line.debitAmount  = line.foreignAmount
+                                            line.creditAmount = ""
+                                        } else {
+                                            line.creditAmount = line.foreignAmount
+                                            line.debitAmount  = ""
+                                        }
+                                        onDebitEdited()
+                                    }
+                                )) {
+                                    Text("DR").tag(0)
+                                    Text("CR").tag(1)
+                                }
+                                .labelsHidden()
+                                .frame(width: 60)
+
+                                TextField("Foreign amount", text: $line.foreignAmount)
+                                    .textFieldStyle(.roundedBorder)
+                                    .frame(width: 100)
+                                    .onChange(of: line.foreignAmount) { _, _ in
+                                        // keep debit/credit in sync
+                                        if line.side == 0 {
+                                            line.debitAmount  = line.foreignAmount
+                                            line.creditAmount = ""
+                                        } else {
+                                            line.creditAmount = line.foreignAmount
+                                            line.debitAmount  = ""
+                                        }
+                                        onDebitEdited()
+                                    }
+                            }
+
+                            // Exchange rate
+                            HStack(spacing: 4) {
+                                Text("Rate:")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                TextField("e.g. 17.89", text: $line.exchangeRate)
+                                    .textFieldStyle(.roundedBorder)
+                                    .frame(width: 90)
+                                    .onChange(of: line.exchangeRate) { _, _ in onDebitEdited() }
+
+                                if line.isMissingRate && !line.foreignAmount.isEmpty {
+                                    Image(systemName: "exclamationmark.triangle.fill")
+                                        .foregroundStyle(.orange)
+                                        .font(.caption)
+                                }
+                            }
+                        }
+
+                        if line.isMissingRate && !line.foreignAmount.isEmpty {
+                            Text("Enter an exchange rate to post this split.")
+                                .font(.caption2)
+                                .foregroundStyle(.orange)
+                        }
+                    }
+
+                    Spacer()
+                }
+                .padding(.bottom, 4)
+            }
         }
     }
 
@@ -602,6 +728,7 @@ private struct SplitLineRow: View {
                                 .contentShape(Rectangle())
                                 .onTapGesture {
                                     line.account = account
+                                    onAccountSelected?(account)
                                     isPickerExpanded = false
                                     searchText = ""
                                 }

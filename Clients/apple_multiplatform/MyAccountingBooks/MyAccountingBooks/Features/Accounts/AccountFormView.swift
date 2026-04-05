@@ -321,6 +321,18 @@ struct AccountFormView: View {
                     leafOnly: false
                 )
             }
+            FormRow(label: "Currency") {
+                Picker("", selection: $viewModel.selectedCommodity) {
+                    Text("Inherit from parent")
+                        .tag(CommodityResponse?.none)
+                    ForEach(viewModel.availableCommodities) { c in
+                        Text("\(c.mnemonic) — \(c.fullName ?? c.mnemonic)")
+                            .tag(CommodityResponse?.some(c))
+                    }
+                }
+                .labelsHidden()
+                .frame(maxWidth: .infinity)
+            }
         }
     }
 

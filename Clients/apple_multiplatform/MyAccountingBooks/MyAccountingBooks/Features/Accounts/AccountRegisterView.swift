@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-16.
-//  Last modified by León Felie Guevara Chávez on 2026-04-02
+//  Last modified by León Felie Guevara Chávez on 2026-04-03
 //  Developed with AI assistance.
 //
 
@@ -126,6 +126,37 @@ struct AccountRegisterView: View {
     /// - SeeAlso: ``AccountTreeBuilder``
     @State private var accountPaths: [UUID: String] = [:]
 
+    /// Active commodities (CURRENCY namespace) loaded alongside transactions.
+    /// Used to resolve the account's native commodity for foreign-currency formatting.
+    @State private var allCommodities: [CommodityResponse] = []
+
+    // MARK: - Display currency helpers
+
+    /// The currency code to use when formatting register amounts and balances.
+    ///
+    /// Returns the account's native commodity mnemonic (e.g. "USD") when the account
+    /// is foreign-currency; falls back to the ledger's base currency code (e.g. "MXN").
+    private var displayCurrencyCode: String {
+        guard viewModel.isForeignCurrency,
+              let commodityId = account.account.commodityId,
+              let commodity   = allCommodities.first(where: { $0.id == commodityId })
+        else { return ledger.currencyCode }
+        return commodity.mnemonic
+    }
+
+    /// The decimal places to use when formatting register amounts and balances.
+    ///
+    /// Derives decimal places from the commodity's `fraction` field
+    /// (e.g. fraction=100 → 2 places). Falls back to the ledger's `decimalPlaces`.
+    private var displayDecimalPlaces: Int {
+        guard viewModel.isForeignCurrency,
+              let commodityId = account.account.commodityId,
+              let commodity   = allCommodities.first(where: { $0.id == commodityId }),
+              commodity.fraction > 0
+        else { return ledger.decimalPlaces }
+        return Int(log10(Double(commodity.fraction)))
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -161,6 +192,9 @@ struct AccountRegisterView: View {
                 ledgerID: ledger.id,
                 token: token
             )
+            async let commodityLoad: [CommodityResponse] = (try? await APIClient.shared.request(
+                .commodities(namespace: "CURRENCY"), method: "GET", token: token
+            )) ?? []
 
             // Await transactions first so the register renders quickly
             await txLoad
@@ -168,6 +202,7 @@ struct AccountRegisterView: View {
                 allAccountRoots = AccountTreeBuilder.build(from: flat)
                 accountPaths    = AccountTreeBuilder.buildPathMap(from: allAccountRoots)
             }
+            allCommodities = await commodityLoad
         }
         .alert(
             "Error",
@@ -249,7 +284,9 @@ struct AccountRegisterView: View {
                     ForEach(viewModel.rows) { row in
                         RegisterDataRow(
                             row: row,
-                            ledger: ledger
+                            ledger: ledger,
+                            displayCurrencyCode:  displayCurrencyCode,
+                            displayDecimalPlaces: displayDecimalPlaces
                         )
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -273,7 +310,9 @@ struct AccountRegisterView: View {
             // Footer: current balance
             RegisterFooterRow(
                 balance: viewModel.rows.last?.runningBalance ?? .zero,
-                ledger: ledger
+                ledger: ledger,
+                displayCurrencyCode:  displayCurrencyCode,
+                displayDecimalPlaces: displayDecimalPlaces
             )
         }
         .background(Color(nsColor: .controlBackgroundColor))
@@ -413,6 +452,10 @@ private struct RegisterDataRow: View {
     let row: RegisterRow
     /// The ledger context for currency code and decimal-place formatting.
     let ledger: LedgerResponse
+    /// Currency code to use for amount formatting (account's native currency when foreign).
+    let displayCurrencyCode:  String
+    /// Decimal places to use for formatting (derived from commodity fraction when foreign).
+    let displayDecimalPlaces: Int
 
     var body: some View {
         HStack(spacing: 0) {
@@ -466,21 +509,21 @@ private struct RegisterDataRow: View {
         .padding(.vertical, 8)
     }
 
-    /// Formats `row.accountAmount` using the ledger's currency code and decimal places.
+    /// Formats `row.accountAmount` using the account's display currency and decimal places.
     private var formattedAmount: String {
         AmountFormatter.format(
             row.accountAmount,
-            currencyCode: ledger.currencyCode,
-            decimalPlaces: ledger.decimalPlaces
+            currencyCode: displayCurrencyCode,
+            decimalPlaces: displayDecimalPlaces
         )
     }
 
-    /// Formats `row.runningBalance` using the ledger's currency code and decimal places.
+    /// Formats `row.runningBalance` using the account's display currency and decimal places.
     private var formattedBalance: String {
         AmountFormatter.format(
             row.runningBalance,
-            currencyCode: ledger.currencyCode,
-            decimalPlaces: ledger.decimalPlaces
+            currencyCode: displayCurrencyCode,
+            decimalPlaces: displayDecimalPlaces
         )
     }
 
@@ -514,6 +557,10 @@ private struct RegisterFooterRow: View {
     let balance: Decimal
     /// The ledger context for currency code and decimal-place formatting.
     let ledger: LedgerResponse
+    /// Currency code to use for balance formatting (account's native currency when foreign).
+    let displayCurrencyCode:  String
+    /// Decimal places to use for formatting (derived from commodity fraction when foreign).
+    let displayDecimalPlaces: Int
 
     var body: some View {
         HStack {
@@ -522,8 +569,8 @@ private struct RegisterFooterRow: View {
             Spacer()
             Text(AmountFormatter.format(
                 balance,
-                currencyCode: ledger.currencyCode,
-                decimalPlaces: ledger.decimalPlaces
+                currencyCode: displayCurrencyCode,
+                decimalPlaces: displayDecimalPlaces
             ))
             .font(.subheadline.bold().monospacedDigit())
             .foregroundStyle(balance >= 0 ? Color.primary : Color.red)

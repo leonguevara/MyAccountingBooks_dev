@@ -160,11 +160,14 @@ struct CreateAccountRequest: Encodable {
 
     /// If `true`, this account is hidden from most UI views (e.g., inactive accounts).
     let isHidden: Bool
+    
+    /// Optional commodity UUID override. nil = inherit from parent account.
+    let commodityId: UUID?
 
     enum CodingKeys: String, CodingKey {
         case ledgerId, name, code, parentId
         case accountTypeCode, accountRole
-        case isPlaceholder, isHidden
+        case isPlaceholder, isHidden, commodityId
     }
 }
 
@@ -252,11 +255,14 @@ struct PatchAccountRequest: Encodable {
     
     /// Updated visibility status. If nil, the existing status is preserved.
     var isHidden: Bool?
+    
+    /// Optional commodity UUID override. nil = inherit from parent account.
+    let commodityId: UUID?
 
     enum CodingKeys: String, CodingKey {
         case name, code, parentId
         case accountTypeCode, accountRole
-        case isPlaceholder, isHidden
+        case isPlaceholder, isHidden, commodityId
     }
 }
 
@@ -423,6 +429,9 @@ struct AccountFormPayload: Hashable, Codable {
     /// intent via ``AccountRole``. `kind` is inherited from the parent account on the backend
     /// and is included here for read-only display purposes.
     let kind: Int
+    
+    /// The commodity UUID of this account (e.g. USD, MXN). nil if not explicitly assigned.
+    let commodityId: UUID?
 
     /// Initializes a payload from an existing ``AccountNode``.
     ///
@@ -440,5 +449,6 @@ struct AccountFormPayload: Hashable, Codable {
         self.isPlaceholder   = node.isPlaceholder
         self.isHidden        = node.isHidden
         self.kind            = node.account.kind
+        self.commodityId     = node.account.commodityId
     }
 }

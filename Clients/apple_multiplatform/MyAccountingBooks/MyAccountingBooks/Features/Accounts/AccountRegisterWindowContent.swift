@@ -4,7 +4,7 @@
 //  MyAccountingBooks
 //
 //  Created by León Felipe Guevara Chávez on 2026-03-16.
-//  Last modified by León Felie Guevara Chávez on 2026-03-28
+//  Last modified by León Felipe Guevara Chávez on 2026-04-04
 //  Developed with AI assistance.
 //
 
@@ -23,43 +23,27 @@ import SwiftUI
 /// `accountRole` is always `0` (``AccountRole/unspecified``) because the register view
 /// uses the node only for display and balance queries, not for operational role logic.
 ///
-/// ## Window Registration
-///
-/// ```swift
-/// WindowGroup(for: AccountRegisterWindowPayload.self) { $payload in
-///     if let payload {
-///         AccountRegisterWindowContent(payload: payload)
-///     }
-/// }
-/// ```
-///
 /// - SeeAlso: ``AccountRegisterWindowPayload``, ``AccountRegisterView``, ``AccountNode``
 struct AccountRegisterWindowContent: View {
 
     let payload: AccountRegisterWindowPayload
     @Environment(AuthService.self) private var auth
 
-    /// Wraps ``AccountRegisterView`` in a `NavigationStack` and injects ``AuthService`` from the environment.
     var body: some View {
         NavigationStack {
             AccountRegisterView(
-                ledger: payload.ledger,
+                ledger:  payload.ledger,
                 account: reconstructedNode
             )
             .environment(auth)
         }
     }
 
-    /// Reconstructs a minimal ``AccountNode`` from the window payload for use in ``AccountRegisterView``.
+    /// Reconstructs a minimal ``AccountNode`` from the window payload.
     ///
-    /// The node is built from the ``AccountFormPayload`` stored in ``AccountRegisterWindowPayload/account``.
-    /// Two fields are deliberately simplified:
-    ///
-    /// - `parentId` is set to `nil` — the register view only needs the account itself, not its position in the hierarchy.
-    /// - `accountRole` is set to `0` (``AccountRole/unspecified``) — the register view queries balances and
-    ///   displays entries but never branches on operational role.
-    ///
-    /// - Returns: An ``AccountNode`` with an empty `children` array and the fields above hardcoded.
+    /// - `parentId` is `nil` — not needed by the register view.
+    /// - `accountRole` is `0` — not used by the register view.
+    /// - `commodityId` is `nil` — not needed for register display.
     private var reconstructedNode: AccountNode {
         let p = payload.account
         let response = AccountResponse(
@@ -71,9 +55,9 @@ struct AccountRegisterWindowContent: View {
             isHidden:        p.isHidden,
             kind:            p.kind,
             accountTypeCode: p.accountTypeCode,
-            accountRole:     0
+            accountRole:     0,
+            commodityId:     nil        // ← not needed for register display
         )
         return AccountNode(account: response, children: [])
     }
 }
-

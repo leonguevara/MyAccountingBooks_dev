@@ -127,6 +127,8 @@ public class TransactionRepository {
                     rs.getInt("side"),
                     rs.getLong("value_num"),
                     rs.getInt("value_denom"),
+                    rs.getLong("quantity_num"),
+                    rs.getInt("quantity_denom"),
                     rs.getString("memo")
             );
 
@@ -401,6 +403,8 @@ public class TransactionRepository {
                         s.side,
                         s.value_num,
                         s.value_denom,
+                        s.quantity_num,
+                        s.quantity_denom,
                         s.memo
                         FROM public.split s
                         WHERE s.transaction_id = ANY(:txIds)
@@ -509,7 +513,9 @@ public class TransactionRepository {
                 ));
 
         String splitSql = """
-                SELECT id, transaction_id, account_id, side, value_num, value_denom, memo
+                SELECT id, transaction_id, account_id, side,
+                       value_num, value_denom, 
+                       quantity_num, quantity_denom, memo
                   FROM public.split
                  WHERE transaction_id = :txId
                    AND deleted_at     IS NULL
