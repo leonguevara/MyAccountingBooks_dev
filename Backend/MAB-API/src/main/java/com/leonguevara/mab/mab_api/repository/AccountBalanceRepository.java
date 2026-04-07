@@ -2,17 +2,17 @@
 // AccountBalanceRepository.java
 // Package: com.leonguevara.mab.mab_api.repository
 //
-// Purpose: Computes signed rational balances for every account
-//          in a ledger, always expressed in the ledger's base
-//          currency (value_num / value_denom).
+// Purpose: Computes two signed rational balances per account:
 //
-//          The AccountTree always shows balances in the ledger's
-//          base currency — foreign-currency accounts display their
-//          MXN equivalent, not their native USD/EUR amount.
-//          The AccountRegisterView handles per-account native
-//          currency display separately using quantity fields.
+//   BASE (value_num/value_denom)   — ledger's base currency (MXN)
+//   NATIVE (quantity_num/quantity_denom) — account's own commodity (USD)
+//
+// GnuCash model: each leaf account shows its own-currency balance
+// ("USD $ 600.00") alongside a converted base-currency figure
+// ("MXN $ 10,734.00"). Parent placeholders always roll up in
+// base currency (handled client-side in AccountTreeViewModel).
 // ============================================================
-// Last edited: 2026-04-04
+// Last edited: 2026-04-06
 // Author: León Felipe Guevara Chávez
 // Developed with AI assistance.
 // ============================================================
@@ -32,23 +32,20 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Data access layer for account balance computation.
+ * Computes signed base-currency and native-currency balances for every
+ * non-deleted account in a ledger.
  *
- * <p>Returns signed rational balances for every non-deleted account in a ledger.
- * All balances are expressed in the <b>ledger's base currency</b> using
- * {@code value_num / value_denom}. This is correct for the AccountTree, which
- * always shows amounts in the ledger's currency regardless of each account's
- * native commodity.</p>
+ * <p>For same-currency accounts {@code quantity_num == value_num}, so both
+ * balances are identical. The client uses {@code AccountResponse.commodityId}
+ * to decide which column to show — it does not compare the two values here.
  *
- * <p>The AccountRegisterView uses {@code quantity_num / quantity_denom} from
- * split responses to display amounts in the account's native currency.
- * That logic lives in the Swift client, not here.</p>
- *
- * <p>Balance formula:
- * <pre>
- *   balance_num   = SUM(CASE WHEN side=0 THEN value_num ELSE -value_num END)
- *   balance_denom = COALESCE(MAX(value_denom), 10^decimal_places)
- * </pre>
+ * <p>Invariants:
+ * <ul>
+ *   <li>Voided transactions excluded.</li>
+ *   <li>Soft-deleted rows excluded.</li>
+ *   <li>Accounts with no splits: both numerators are 0.</li>
+ *   <li>RLS activated via {@link TenantContext#withOwner}.</li>
+ * </ul>
  *
  * @see TenantContext
  * @see AccountBalanceResponse
@@ -67,17 +64,20 @@ public class AccountBalanceRepository {
 
     private static final RowMapper<AccountBalanceResponse> BALANCE_MAPPER =
             (rs, _) -> new AccountBalanceResponse(
-                    rs.getObject("account_id",  UUID.class),
+                    rs.getObject("account_id",          UUID.class),
                     rs.getLong("balance_num"),
-                    rs.getInt("balance_denom")
+                    rs.getInt("balance_denom"),
+                    rs.getLong("native_balance_num"),
+                    rs.getInt("native_balance_denom")
             );
 
     /**
-     * Returns the signed base-currency balance for every account in the ledger.
+     * Returns base-currency and native-currency balances for every account
+     * in the ledger, ordered by account code.
      *
      * @param ownerID  authenticated owner UUID for RLS.
      * @param ledgerId the ledger whose balances are requested.
-     * @return flat list of {@link AccountBalanceResponse}, ordered by account code.
+     * @return flat list of {@link AccountBalanceResponse}.
      */
     public List<AccountBalanceResponse> findByLedger(UUID ownerID, UUID ledgerId) {
         return TenantContext.withOwner(ownerID, jdbc, tx, template -> {
@@ -85,22 +85,37 @@ public class AccountBalanceRepository {
             String sql = """
                     SELECT
                         a.id                                             AS account_id,
+
+                        -- Base currency: always in ledger's currency (MXN).
+                        -- Used for tree roll-ups and parent balance display.
                         COALESCE(
-                            SUM(
-                                CASE WHEN s.side = 0
+                            SUM(CASE WHEN s.side = 0
                                      THEN  s.value_num
-                                     ELSE -s.value_num
-                                END
-                            ), 0
+                                     ELSE -s.value_num END),
+                            0
                         )                                                AS balance_num,
-                        COALESCE(MAX(s.value_denom), l.decimal_places_denom) AS balance_denom
+                        COALESCE(MAX(s.value_denom), l.denom_fallback)   AS balance_denom,
+
+                        -- Native currency: in account's own commodity (USD for USD accts).
+                        -- Used for tree native column and register view.
+                        -- Equals base balance for same-currency accounts.
+                        COALESCE(
+                            SUM(CASE WHEN s.side = 0
+                                     THEN  s.quantity_num
+                                     ELSE -s.quantity_num END),
+                            0
+                        )                                                AS native_balance_num,
+                        COALESCE(MAX(s.quantity_denom), l.denom_fallback) AS native_balance_denom
+
                     FROM public.account a
+
                     JOIN (
                         SELECT id,
-                               CAST(POWER(10, decimal_places) AS integer) AS decimal_places_denom
+                               CAST(POWER(10, decimal_places) AS integer) AS denom_fallback
                           FROM public.ledger
                          WHERE id = :ledgerId
                     ) l ON a.ledger_id = l.id
+
                     LEFT JOIN (
                         SELECT s.*
                           FROM public.split s
@@ -110,9 +125,11 @@ public class AccountBalanceRepository {
                            AND t.is_voided  = false
                          WHERE s.deleted_at IS NULL
                     ) s ON s.account_id = a.id
+
                     WHERE a.ledger_id  = :ledgerId
                       AND a.deleted_at IS NULL
-                    GROUP BY a.id, l.decimal_places_denom
+
+                    GROUP BY a.id, l.denom_fallback
                     ORDER BY a.code ASC
                     """;
 

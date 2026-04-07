@@ -723,7 +723,7 @@ final class AccountFormViewModel {
                     side:          1,           // credit contra account
                     valueNum:      valueNum,
                     valueDenom:    denom,
-                    quantityNum:   0,
+                    quantityNum:   valueNum,
                     quantityDenom: denom,
                     memo:          nil,
                     action:        nil

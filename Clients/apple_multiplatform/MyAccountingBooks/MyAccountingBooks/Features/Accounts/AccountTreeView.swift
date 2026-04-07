@@ -45,8 +45,11 @@ struct AccountTreeView: View {
 
     /// Controls presentation of the Reports sheet.
     @State private var showReports = false
+    
     /// Controls presentation of the Exchange Rates (`PriceListView`) sheet.
     @State private var showPrices = false
+    
+    @State private var allCommodities: [CommodityResponse] = []
 
     /// Environment action used to open dedicated windows (register and form windows).
     @Environment(\.openWindow) private var openWindow
@@ -99,6 +102,14 @@ struct AccountTreeView: View {
             guard let token = auth.token else { return }
             await Task.yield()
             await viewModel.loadAccounts(ledgerID: ledger.id, token: token)
+            // Load commodities alongside accounts (for native-currency tree column)
+            if let commodities = try? await APIClient.shared.request(
+                APIEndpoint.commodities(namespace: "CURRENCY"),
+                method: "GET",
+                token: token
+            ) as [CommodityResponse] {
+                allCommodities = commodities
+            }
         }
         .onChange(of: viewModel.roots) { _, newRoots in
             expandAll(newRoots)
@@ -176,7 +187,7 @@ struct AccountTreeView: View {
     private func accountRow(for node: AccountNode) -> AnyView {
         if node.children.isEmpty {
             return AnyView(
-                AccountRowView(node: node, balance: viewModel.balances[node.id], ledger: ledger)
+                AccountRowView(node: node, balance: viewModel.balances[node.id], ledger: ledger, allCommodities: allCommodities)
                     .tag(node)
                     .simultaneousGesture(
                         TapGesture(count: 2).onEnded {
@@ -201,7 +212,7 @@ struct AccountTreeView: View {
                         accountRow(for: child)
                     }
                 } label: {
-                    AccountRowView(node: node, balance: viewModel.balances[node.id], ledger: ledger)
+                    AccountRowView(node: node, balance: viewModel.balances[node.id], ledger: ledger, allCommodities: allCommodities)
                         .tag(node)
                         .contextMenu { contextMenuItems(for: node) }
                 }
@@ -313,6 +324,9 @@ private struct AccountRowView: View {
 
     /// The owning ledger; supplies `decimalPlaces` and `currencyCode` for balance formatting.
     let ledger: LedgerResponse
+    
+    /// Full commodity catalog for resolving the account's native currency.
+    var allCommodities: [CommodityResponse] = []
 
     var body: some View {
         HStack(spacing: 10) {
@@ -341,13 +355,26 @@ private struct AccountRowView: View {
             Spacer()
 
             if let balance, node.account.parentId != nil {
-                Text(formattedBalance(balance))
-                    .font(.body.monospacedDigit())
-                    .foregroundStyle(
-                        balance.balanceNum >= 0 ? Color.primary : Color.red
-                    )
-            }
+                HStack(spacing: 12) {
+                    // Native-currency column: only for leaf foreign-currency accounts.
+                    // Placeholder parents always show base currency in both columns.
+                    if !node.isPlaceholder, let native = nativeCurrencyDisplay(balance) {
+                        Text(native.text)
+                            .font(.body.monospacedDigit())
+                            .foregroundStyle(
+                                balance.nativeBalanceNum >= 0 ? Color.primary : Color.red
+                            )
+                    }
 
+                    // Base-currency column: always shown.
+                    Text(formattedBalance(balance))
+                        .font(.body.monospacedDigit())
+                        .foregroundStyle(
+                            balance.balanceNum >= 0 ? Color.primary : Color.red
+                        )
+                }
+            }
+            
             if node.isHidden {
                 Image(systemName: "eye.slash")
                     .font(.caption)
@@ -401,5 +428,31 @@ private struct AccountRowView: View {
         case 5:  return .orange      // Expense
         default: return .gray
         }
+    }
+    
+    /// Returns the formatted native-currency balance when the account's commodity
+    /// differs from the ledger's base currency, or `nil` for same-currency accounts.
+    private func nativeCurrencyDisplay(
+        _ b: AccountBalanceResponse
+    ) -> (text: String, isNegative: Bool)? {
+        guard
+            let commodityId = node.account.commodityId,
+            commodityId != ledger.currencyCommodityId,
+            let commodity = allCommodities.first(where: { $0.id == commodityId })
+        else { return nil }
+
+        let decimalPlaces = commodity.fraction > 0
+            ? Int(log10(Double(commodity.fraction)))
+            : ledger.decimalPlaces
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = decimalPlaces
+        formatter.maximumFractionDigits = decimalPlaces
+        formatter.usesGroupingSeparator = true
+        let amount = formatter.string(from: b.nativeBalance as NSDecimalNumber)
+                     ?? "\(b.nativeBalance)"
+        let symbol = Self.currencySymbol(for: commodity.mnemonic)
+        let text = "\(commodity.mnemonic) \(symbol) \(amount)"
+        return (text: text, isNegative: b.nativeBalanceNum < 0)
     }
 }

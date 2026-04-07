@@ -207,8 +207,6 @@ final class PostTransactionViewModel {
                         memo:          line.memo.isEmpty ? nil : line.memo,
                         action:        nil
                     )
-                    // suppress unused variable warning
-                    let _ = acctCommodity
                 } else {
                     // Same-currency split: value == quantity
                     return SplitRequest(

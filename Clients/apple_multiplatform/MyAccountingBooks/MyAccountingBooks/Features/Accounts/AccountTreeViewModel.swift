@@ -295,10 +295,15 @@ final class AccountTreeViewModel {
             guard !node.children.isEmpty else { continue }
             let rolled = computeSubtreeBalance(node)
             let denom = firstDenom(in: node.children) ?? 100
+            // Parent placeholders always roll up in base currency.
+            // Native currency roll-up is meaningless when children have
+            // different commodities, so we reuse the base values.
             balances[node.id] = AccountBalanceResponse(
-                accountId:    node.id,
-                balanceNum:   rolled,
-                balanceDenom: denom
+                accountId:          node.id,
+                balanceNum:         rolled,
+                balanceDenom:       denom,
+                nativeBalanceNum:   rolled,   // same as base for parents
+                nativeBalanceDenom: denom
             )
         }
     }
@@ -335,7 +340,9 @@ final class AccountTreeViewModel {
         balances[node.id] = AccountBalanceResponse(
             accountId:    node.id,
             balanceNum:   childSum,
-            balanceDenom: denom
+            balanceDenom: denom,
+            nativeBalanceNum:   childSum,   // parents roll up in base currency
+            nativeBalanceDenom: denom
         )
 
         return childSum
